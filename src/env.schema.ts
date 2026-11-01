@@ -13,6 +13,8 @@ const optionalUrl = z.url().optional();
 
 export const serverSchema = {
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  /** Set by Vercel. Gates dev-only pages such as /styleguide (hidden in production). */
+  VERCEL_ENV: z.enum(["development", "preview", "production"]).optional(),
 
   // Supabase (Phase 3)
   SUPABASE_SECRET_KEY: optionalString,

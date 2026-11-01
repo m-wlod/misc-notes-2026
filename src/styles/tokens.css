@@ -1,0 +1,77 @@
+/*
+ * Design tokens: direction A, "research note" (chosen 2026-11-01, see docs/DESIGN.md).
+ * The single source of truth for colour, type, radii, motion and layering.
+ * Components use these through Tailwind utilities (mapped in globals.css) or var(--…).
+ * src/styles/tokens.test.ts checks every text/background pair against WCAG AA.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Colour: neutrals carry the UI. */
+  --bg: #f6f1e7; /* warm paper */
+  --surface: #fbf8f2; /* inputs, raised panels */
+  --sunken: #efe8da; /* code, table header */
+  --ink: #1b2230; /* blue-black text */
+  --ink-muted: #5d6472;
+  --rule: #ddd4c3; /* hairlines, decorative */
+  --rule-strong: #8a806c; /* control borders (3:1 against surface) */
+  --grid: #e7dfd0; /* chart grid lines */
+
+  /* Colour: one accent, for actions and focus only. */
+  --accent: #b4440e; /* signal orange: fills */
+  --accent-text: #a33d0c; /* signal orange: text and links */
+  --on-accent: #fff8f0;
+  --focus: #b4440e;
+
+  /* Colour: semantic. Red and green mean correctness or data direction, never decoration. */
+  --correct: #2f6b3a;
+  --wrong: #a8322b;
+  --data-up: #2f6b3a;
+  --data-down: #a8322b;
+
+  /* Type */
+  --measure: 68ch;
+  --leading-reading: 1.6;
+  --leading-ui: 1.45;
+
+  /* Radii: small, never pill-shaped containers. */
+  --r-sm: 2px;
+  --r: 3px;
+  --r-md: 4px;
+
+  /* Motion: 150ms max, functional only. */
+  --duration-fast: 100ms;
+  --duration: 150ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Layering */
+  --z-sticky: 10;
+  --z-dropdown: 20;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #121826; /* deep ink */
+  --surface: #182032;
+  --sunken: #0e1320;
+  --ink: #e7e3da;
+  --ink-muted: #9aa1ae;
+  --rule: #2a3346;
+  --rule-strong: #66728c;
+  --grid: #1e2638;
+
+  --accent: #e8763a;
+  --accent-text: #f08a52;
+  --on-accent: #1a0e06;
+  --focus: #f08a52;
+
+  --correct: #7bc48a;
+  --wrong: #f0857b;
+  --data-up: #7bc48a;
+  --data-down: #f0857b;
+}
