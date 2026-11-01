@@ -5,8 +5,6 @@ import { useLocale, useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 
 import { ThemeSwitch } from "@/components/theme/theme-switch";
-import { SearchIcon } from "@/components/ui/icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/overlays";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing, type AppPathname } from "@/i18n/routing";
 import { cx } from "@/lib/cx";
@@ -66,19 +64,5 @@ export function LocaleSwitch({ compact = false }: { compact?: boolean }) {
 }
 
 /** Search arrives in Phase 5; until then the button says so instead of pretending. */
-export function SearchButton() {
-  const t = useTranslations("common.search");
-  return (
-    <Popover>
-      <PopoverTrigger
-        aria-label={t("label")}
-        className="flex size-9 items-center justify-center rounded text-ink-muted hover:bg-sunken hover:text-ink"
-      >
-        <SearchIcon />
-      </PopoverTrigger>
-      <PopoverContent label={t("label")} align="end">
-        {t("comingSoon")}
-      </PopoverContent>
-    </Popover>
-  );
-}
+/** Site search (Phase 5b): a dialog with lessons and glossary terms. */
+export { SearchDialog as SearchButton } from "@/features/search/search-dialog";

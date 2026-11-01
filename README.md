@@ -32,6 +32,7 @@ pnpm dev                        # http://localhost:3000
 
 - The curriculum outline (tracks → modules → lesson order) is `content/curriculum.ts`. Lessons are MDX in `content/<locale>/tracks/<track>/<module>/<id>.mdx`; unwritten ones have the body `<Stub />`. Glossary terms are YAML in `content/glossary/`. `pnpm content:build` (also run by `build`, `lint` and `typecheck`) validates them and compiles them into `.velite/`, imported as `#content`.
 - Invalid content fails the build with `file: field: reason`. Components and authoring rules: `src/components/content/README.md`.
+- `pnpm content:build` also writes the search indexes (`public/search/<locale>.json`, generated, not committed).
 - Preview any lesson, drafts included, at `/pl/dev/content-preview` (dev and previews only).
 
 ## Routing and translations

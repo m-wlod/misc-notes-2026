@@ -22,7 +22,18 @@
   },
   "search": {
     "label": "Szukaj",
-    "comingSoon": "Wyszukiwarka lekcji, pojęć i zadań pojawi się w etapie 5."
+    "close": "Zamknij wyszukiwanie",
+    "placeholder": "Lekcja lub pojęcie, np. rozkład, Kelly",
+    "hint": "Wpisz co najmniej 2 litery. Polskie znaki są opcjonalne.",
+    "loading": "Wczytywanie…",
+    "error": "Nie udało się wczytać wyszukiwarki. Spróbuj ponownie.",
+    "empty": "Brak wyników dla „{term}”.",
+    "count": "{count, plural, one {# wynik} few {# wyniki} many {# wyników} other {# wyniku}}",
+    "results": "Wyniki wyszukiwania",
+    "groups": {
+      "lesson": "Lekcje",
+      "term": "Słowniczek"
+    }
   },
   "footer": {
     "legal": "Informacje prawne",

@@ -15,7 +15,12 @@ import { curriculum } from "../../content/curriculum";
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = resolveSiteUrl(env);
-  const hrefs: StaticPathname[] = ["/", ...Object.values(SECTIONS).map((s) => s.href), "/textbook"];
+  const hrefs: StaticPathname[] = [
+    "/",
+    ...Object.values(SECTIONS).map((s) => s.href),
+    "/textbook",
+    "/map",
+  ];
   type Href = Parameters<typeof getPathname>[0]["href"];
   const abs = (href: Href, locale: Locale) => new URL(getPathname({ href, locale }), base).href;
   const entry = (hrefFor: (locale: Locale) => Href) =>

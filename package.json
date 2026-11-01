@@ -28,6 +28,7 @@
     "prepare": "husky && next typegen"
   },
   "dependencies": {
+    "@orama/orama": "^3.1.18",
     "@shikijs/rehype": "^4.5.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.118.0",

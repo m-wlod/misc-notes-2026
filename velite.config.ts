@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 import rehypeShiki from "@shikijs/rehype";
@@ -11,6 +11,8 @@ import { defineCollection, defineConfig, s } from "velite";
 import { curriculum } from "./content/curriculum";
 import { rehypeNumbering } from "./src/features/content/rehype-numbering";
 import { termRefsIn, validateContent, validateCurriculum } from "./src/features/content/validate";
+import { buildSearchDocs } from "./src/features/search/docs";
+import { routing } from "./src/i18n/routing";
 
 /**
  * Content layer (Phase 4). `pnpm content:build` compiles content/ into typed data in
@@ -79,6 +81,8 @@ const lessons = defineCollection({
       hasDepth: /<Depth\b/.test(meta.content ?? ""),
       /** Body is just <Stub />: listed in the curriculum, shown as "in preparation". */
       isStub: /^\s*<Stub\s*\/>\s*$/.test(meta.content ?? ""),
+      /** Plain text for the search index (headings, prose, math source). */
+      text: (meta.plain ?? "").replaceAll(/\s+/g, " ").trim().slice(0, 4000),
     })),
 });
 
@@ -118,6 +122,19 @@ export default defineConfig({
       rehypeSlug,
       [rehypeShiki, { theme: codeTheme, langs: ["python", "typescript", "bash", "text"] }],
     ],
+  },
+  /** Search indexes (public/search/<locale>.json), loaded by the search dialog on demand. */
+  complete: ({ lessons, glossary }) => {
+    if (process.env.CONTENT_ROOT) return;
+    const paths = {
+      learn: routing.pathnames["/learn"],
+      glossary: routing.pathnames["/glossary"],
+    };
+    mkdirSync("public/search", { recursive: true });
+    for (const locale of routing.locales) {
+      const docs = buildSearchDocs(locale, curriculum, lessons, glossary, paths);
+      writeFileSync(`public/search/${locale}.json`, JSON.stringify(docs));
+    }
   },
   prepare: ({ lessons, glossary }) => {
     const errors = lessons.flatMap((l) => {

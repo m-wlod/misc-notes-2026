@@ -3,6 +3,8 @@
  * Pure functions, so the Polish-specific rules are unit-tested.
  */
 
+import { fold } from "@/lib/text/fold";
+
 export type GlossaryEntry = {
   id: string;
   /** Name in the page locale, and in the other locale (both are searchable). */
@@ -12,10 +14,7 @@ export type GlossaryEntry = {
   sample: boolean;
 };
 
-/** Diacritics off, lowercase: "Wartość" → "wartosc". ł/Ł don't decompose in Unicode. */
-export function fold(text: string): string {
-  return text.normalize("NFD").replaceAll(/\p{M}/gu, "").replaceAll(/[łŁ]/g, "l").toLowerCase();
-}
+export { fold } from "@/lib/text/fold";
 
 export function sortEntries(entries: readonly GlossaryEntry[], locale: string): GlossaryEntry[] {
   const collator = new Intl.Collator(locale, { sensitivity: "base" });

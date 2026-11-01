@@ -2,7 +2,8 @@
   "views": {
     "label": "Curriculum view",
     "path": "Path",
-    "textbook": "Textbook"
+    "textbook": "Textbook",
+    "map": "Map"
   },
   "path": {
     "title": "Learning path",
@@ -34,5 +35,21 @@
   "module": "Module {number}",
   "openTrack": "Open track",
   "allTracks": "Whole path",
-  "stubNote": "Lessons in preparation already have their place in the curriculum, level and prerequisites. Content will arrive gradually."
+  "stubNote": "Lessons in preparation already have their place in the curriculum, level and prerequisites. Content will arrive gradually.",
+  "map": {
+    "title": "Prerequisite map",
+    "lead": "Every lesson and how they depend on each other. An arrow starts at the lesson worth knowing first.",
+    "textAlternative": "The same content as a list: Textbook.",
+    "track": "Track",
+    "allTracks": "All tracks",
+    "levels": "Levels",
+    "level": "Level {level}",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "reset": "Show all",
+    "help": "Drag to move. The mouse wheel or the + and − keys zoom, arrow keys move.",
+    "canvas": "Prerequisite map: {count, plural, one {# lesson} other {# lessons}}",
+    "nodeLabel": "{title}, lesson {number}, {state}",
+    "showing": "Highlighted: {count} of {total}"
+  }
 }
