@@ -2,6 +2,7 @@ import type { routing } from "./i18n/routing";
 import type account from "../messages/pl/account.json";
 import type auth from "../messages/pl/auth.json";
 import type common from "../messages/pl/common.json";
+import type content from "../messages/pl/content.json";
 import type errors from "../messages/pl/errors.json";
 import type home from "../messages/pl/home.json";
 import type nav from "../messages/pl/nav.json";
@@ -25,6 +26,7 @@ declare module "next-intl" {
       onboarding: typeof onboarding;
       placement: typeof placement;
       account: typeof account;
+      content: typeof content;
     };
     Formats: typeof formats;
   }

@@ -28,6 +28,12 @@ pnpm dev                        # http://localhost:3000
 - `pnpm test:db` runs the RLS and account tests against a Supabase database. CI runs it in Docker on every PR. The local Docker stack is optional and unstable on low-memory machines; a cloud dev project is planned (see docs/PROGRESS.md). A new table must be added to `supabase/tests/rls.test.ts` or the suite fails.
 - Server code uses `src/lib/db/server.ts` (acts as the signed-in user). `src/lib/db/admin.ts` uses the secret key and bypasses RLS: only for server-owned writes, after checking the user.
 
+## Content
+
+- Lessons are MDX in `content/<locale>/tracks/**`, glossary terms are YAML in `content/glossary/`. `pnpm content:build` (also run by `build`, `lint` and `typecheck`) validates them and compiles them into `.velite/`, imported as `#content`.
+- Invalid content fails the build with `file: field: reason`. Components and authoring rules: `src/components/content/README.md`.
+- Preview any lesson, drafts included, at `/pl/dev/content-preview` (dev and previews only).
+
 ## Routing and translations
 
 - Every page lives under `src/app/[locale]/` and is served at a locale prefix: `/pl/...` (default) or `/en/...`.
@@ -43,6 +49,7 @@ pnpm dev                        # http://localhost:3000
 | `pnpm lint` / `lint:fix`       | ESLint (zero warnings allowed)                                             |
 | `pnpm format` / `format:check` | Prettier                                                                   |
 | `pnpm typecheck`               | Route type generation + `tsc --noEmit`                                     |
+| `pnpm content:build`           | Validate and compile content (MDX lessons, glossary) into `.velite/`       |
 | `pnpm i18n:check`              | Key, placeholder and file parity between `messages/pl` and `messages/en`   |
 | `pnpm test` / `test:watch`     | Vitest unit tests                                                          |
 | `pnpm test:db`                 | RLS and account tests against a Supabase database (CI runs them in Docker) |

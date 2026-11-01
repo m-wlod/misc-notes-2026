@@ -30,6 +30,19 @@
   --data-up: #2f6b3a;
   --data-down: #a8322b;
 
+  /* Code (Shiki css-variables theme). No red/green: those are semantic. AA on --sunken. */
+  --code-foreground: var(--ink);
+  --code-background: var(--sunken);
+  --code-token-keyword: #a33d0c;
+  --code-token-string: #2c527a;
+  --code-token-string-expression: #2c527a;
+  --code-token-constant: #6b3a7d;
+  --code-token-comment: #5d6472;
+  --code-token-function: var(--ink);
+  --code-token-parameter: var(--ink);
+  --code-token-punctuation: #5d6472;
+  --code-token-link: #a33d0c;
+
   /* Type: next/font variables first, then local fallbacks. */
   --stack-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
   --stack-sans: var(--font-plex-sans), system-ui, sans-serif;
@@ -77,4 +90,12 @@
   --wrong: #f0857b;
   --data-up: #7bc48a;
   --data-down: #f0857b;
+
+  --code-token-keyword: #f08a52;
+  --code-token-string: #8fb6dd;
+  --code-token-string-expression: #8fb6dd;
+  --code-token-constant: #cfa6dc;
+  --code-token-comment: #9aa1ae;
+  --code-token-punctuation: #9aa1ae;
+  --code-token-link: #f08a52;
 }

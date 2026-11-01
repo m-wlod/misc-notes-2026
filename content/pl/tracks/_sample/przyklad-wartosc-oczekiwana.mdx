@@ -1,0 +1,103 @@
+---
+id: przyklad-wartosc-oczekiwana
+slug: przyklad-wartosc-oczekiwana
+locale: pl
+title: "Przykład: wartość oczekiwana zakładu"
+summary: Przykładowa lekcja, która pokazuje wszystkie elementy podręcznika na prostym przykładzie zakładu i strategii podwajania stawki.
+level: 1
+prerequisites: []
+estimatedMinutes: 8
+status: draft
+sample: true
+sources:
+  - book: "Przykładowe źródło (lekcja demonstracyjna)"
+    chapter: "1"
+    page: 1
+glossaryTerms: [expected-value, variance, martingale]
+---
+
+<Intuition>
+Jeśli ten sam zakład powtarzasz setki razy, pojedyncze wyniki przestają mieć znaczenie. Liczy się to, ile średnio zyskujesz lub tracisz na jednej rozgrywce.
+</Intuition>
+
+## Średni wynik zakładu
+
+Rzut uczciwą kostką daje od 1 do 6 oczek, każde z prawdopodobieństwem $\tfrac{1}{6}$. Średnio wypada $3{,}5$ oczka, choć tej liczby nie da się wyrzucić.<Sidenote>Wartość oczekiwana nie musi być wynikiem, który może się zdarzyć.</Sidenote>
+
+<Definition title="Wartość oczekiwana">
+Zmienna losowa $X$ przyjmuje wartości $x_1, \dots, x_n$ z prawdopodobieństwami $p_1, \dots, p_n$. Jej wartość oczekiwana to
+
+$$
+\mathbb{E}[X] = \sum_{i=1}^{n} p_i \, x_i \label{ev}
+$$
+</Definition>
+
+<Example title="Zakład prawie po równo">
+Wygrywasz 1 zł z prawdopodobieństwem $0{,}48$ i przegrywasz 1 zł z prawdopodobieństwem $0{,}52$. Ze wzoru <EqRef to="ev" />:
+
+$$
+\mathbb{E}[X] = 0{,}48 \cdot 1 + 0{,}52 \cdot (-1) = -0{,}04
+$$
+
+Na każdej złotówce stawki tracisz średnio 4 grosze.
+</Example>
+
+## Rozrzut wyników
+
+Sama średnia nie mówi, jak bardzo wyniki się wahają. Do tego służy wariancja.<Sidenote>Odchylenie standardowe to pierwiastek z wariancji, w tych samych jednostkach co wynik.</Sidenote>
+
+<Theorem title="Wariancja przez momenty">
+Dla każdej zmiennej losowej o skończonej wariancji
+
+$$
+\operatorname{Var}(X) = \mathbb{E}[X^2] - \left(\mathbb{E}[X]\right)^2 \label{var}
+$$
+</Theorem>
+
+<Proof>
+Z definicji $\operatorname{Var}(X) = \mathbb{E}\big[(X - \mu)^2\big]$, gdzie $\mu = \mathbb{E}[X]$. Rozwijamy kwadrat i korzystamy z liniowości wartości oczekiwanej:
+$\mathbb{E}[X^2] - 2\mu\,\mathbb{E}[X] + \mu^2 = \mathbb{E}[X^2] - \mu^2$.
+</Proof>
+
+W zakładzie z przykładu $X^2 = 1$ zawsze, więc ze wzoru <EqRef to="var" /> wariancja wynosi $1 - 0{,}04^2 = 0{,}9984$.
+
+<KeyFormula>
+$$
+\mathbb{E}[X] = \sum_i p_i \, x_i
+$$
+</KeyFormula>
+
+## Strategia podwajania stawki
+
+<GuruMyth claim="Po każdej przegranej podwój stawkę. Pierwsza wygrana odrobi wszystkie straty i da zysk, więc system zawsze wygrywa." debunk="martingale-doubling">
+Ograniczmy się do 7 kolejnych podwojeń (stawki 1, 2, 4, …, 64 zł; łącznie 127 zł). Wszystkie przegrywamy z prawdopodobieństwem $0{,}52^7 \approx 0{,}0103$. Wartość oczekiwana jednej serii to
+
+$$
+0{,}9897 \cdot 1 - 0{,}0103 \cdot 127 \approx -0{,}316
+$$
+
+System zamienia częste małe zyski na rzadką, dużą stratę. Średnio nadal tracisz.
+</GuruMyth>
+
+<Figure caption="Przykładowa ścieżka błądzenia losowego przez 250 dni (dane wygenerowane, ziarno 7)." meta="μ = 0 · σ = 1% · ziarno 7">
+  <RandomWalk seed={7} days={250} />
+</Figure>
+
+<Simulation id="martingale-bankroll" caption="Tysiąc graczy stosuje podwajanie stawki: ilu z nich zbankrutuje?" />
+
+Te same liczby możesz sprawdzić w Pythonie:
+
+<PythonCell>
+```python
+q = 0.52
+p_ruin = q**7
+ev = (1 - p_ruin) * 1 - p_ruin * 127
+print(round(p_ruin, 4), round(ev, 3))  # 0.0103 -0.316
+```
+</PythonCell>
+
+<InterviewTip>
+Pytanie o strategię podwajania to klasyk. Pokaż, że wartość oczekiwana jednej serii jest ujemna, i powiedz wprost, że żaden system obstawiania nie zmienia znaku wartości oczekiwanej pojedynczego zakładu.
+</InterviewTip>
+
+<ExerciseRef id="ev-coin-bet" title="Policz wartość oczekiwaną zakładu na monetę" />

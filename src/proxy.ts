@@ -2,26 +2,24 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import createMiddleware from "next-intl/middleware";
 
-import { isStyleguideEnabled } from "@/config/runtime";
+import { isInternalPath, isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import { routing } from "@/i18n/routing";
 
 const handleI18nRouting = createMiddleware(routing);
 
-const STYLEGUIDE = /^\/(?:(?:pl|en)\/)?styleguide(?:\/|$)/;
-
 /**
  * Next.js 16 proxy (formerly middleware). Per CLAUDE.md it only redirects, rewrites,
  * hides routes or refreshes cookies; authorization always lives in RLS and server code.
  *
- * 1. Hide the internal style guide outside development and previews (review M11).
+ * 1. Hide internal tools (style guide, /dev) outside development and previews (review M11).
  * 2. Locale routing (next-intl): prefix-less URLs redirect to /pl or /en using the
  *    NEXT_LOCALE cookie, then Accept-Language, then Polish.
  * 3. Supabase session refresh: keeps the auth cookie fresh. It makes no access
  *    decisions; pages and server actions check the user themselves.
  */
 export async function proxy(request: NextRequest) {
-  if (STYLEGUIDE.test(request.nextUrl.pathname) && !isStyleguideEnabled(env)) {
+  if (isInternalPath(request.nextUrl.pathname) && !isStyleguideEnabled(env)) {
     return new NextResponse(null, { status: 404 });
   }
 

@@ -1,4 +1,5 @@
 allowBuilds:
+  esbuild: false
   sharp: false
   unrs-resolver: false
   # next-intl extractor deps; not used at runtime, native binaries come from optional platform packages

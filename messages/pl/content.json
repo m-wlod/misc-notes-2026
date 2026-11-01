@@ -1,0 +1,55 @@
+{
+  "intuition": "Intuicja",
+  "definition": "Definicja",
+  "theorem": "Twierdzenie",
+  "proof": "Dowód",
+  "example": "Przykład",
+  "interviewTip": "Na rozmowie rekrutacyjnej",
+  "keyFormula": "Kluczowy wzór",
+  "equation": "Równanie ({number})",
+  "equationRef": "równanie {number}",
+  "figure": "Rys.",
+  "sidenote": "Przypis",
+  "headingAnchor": "Link do sekcji: {title}",
+  "guruMyth": {
+    "label": "Mit z rynku",
+    "why": "Dlaczego to nie działa",
+    "debunk": "Więcej w Laboratorium mitów"
+  },
+  "simulation": {
+    "label": "Symulacja",
+    "soon": "Interaktywna wersja pojawi się w Laboratorium."
+  },
+  "pythonCell": {
+    "label": "Python",
+    "soon": "Uruchamianie kodu w przeglądarce pojawi się wkrótce."
+  },
+  "exerciseRef": {
+    "label": "Zadanie",
+    "soon": "Zadania interaktywne pojawią się w sekcji Praktyka."
+  },
+  "walk": {
+    "describe": "Wykres błądzenia losowego przez {days} dni: start {start}, koniec {end}, zakres od {min} do {max}."
+  },
+  "lesson": {
+    "level": "Poziom {level}",
+    "minutes": "{minutes} min",
+    "sources": "Źródła",
+    "status": {
+      "draft": "Szkic",
+      "review": "Do recenzji",
+      "published": "Opublikowana"
+    },
+    "chapter": "rozdz. {chapter}",
+    "page": "s. {page}"
+  },
+  "sampleBanner": "Lekcja przykładowa. To nie jest treść kursu: pokazuje, jak wyglądają elementy podręcznika.",
+  "fallbackNotice": "Ta lekcja nie ma jeszcze wersji w tym języku. Wyświetlamy wersję polską.",
+  "preview": {
+    "title": "Podgląd treści",
+    "lead": "Narzędzie wewnętrzne: wszystkie lekcje, także szkice.",
+    "empty": "Brak lekcji w content/.",
+    "notFound": "Nie ma lekcji o identyfikatorze „{id}”.",
+    "back": "Wszystkie lekcje"
+  }
+}

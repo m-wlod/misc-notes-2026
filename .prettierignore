@@ -7,3 +7,8 @@ supabase/.temp
 src/lib/db/database.types.ts
 docs/BUILD_PLAN.md
 design/explorations/*.html
+
+# MDX lessons: Prettier does not understand remark-math and reflows code blocks inside
+# components. Content is validated by Velite (pnpm content:build) instead.
+content/**/*.mdx
+src/features/content/fixtures/

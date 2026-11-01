@@ -1,0 +1,55 @@
+{
+  "intuition": "Intuition",
+  "definition": "Definition",
+  "theorem": "Theorem",
+  "proof": "Proof",
+  "example": "Example",
+  "interviewTip": "In a job interview",
+  "keyFormula": "Key formula",
+  "equation": "Equation ({number})",
+  "equationRef": "equation {number}",
+  "figure": "Fig.",
+  "sidenote": "Note",
+  "headingAnchor": "Link to section: {title}",
+  "guruMyth": {
+    "label": "Market myth",
+    "why": "Why it doesn’t work",
+    "debunk": "More in the Debunk Lab"
+  },
+  "simulation": {
+    "label": "Simulation",
+    "soon": "The interactive version is coming to the Lab."
+  },
+  "pythonCell": {
+    "label": "Python",
+    "soon": "Running code in the browser is coming soon."
+  },
+  "exerciseRef": {
+    "label": "Exercise",
+    "soon": "Interactive exercises are coming to the Practice section."
+  },
+  "walk": {
+    "describe": "Random-walk chart over {days} days: start {start}, end {end}, range {min} to {max}."
+  },
+  "lesson": {
+    "level": "Level {level}",
+    "minutes": "{minutes} min",
+    "sources": "Sources",
+    "status": {
+      "draft": "Draft",
+      "review": "In review",
+      "published": "Published"
+    },
+    "chapter": "ch. {chapter}",
+    "page": "p. {page}"
+  },
+  "sampleBanner": "Sample lesson. This is not course content: it shows what the textbook building blocks look like.",
+  "fallbackNotice": "This lesson isn’t available in English yet. Showing the Polish version.",
+  "preview": {
+    "title": "Content preview",
+    "lead": "Internal tool: every lesson, drafts included.",
+    "empty": "No lessons in content/.",
+    "notFound": "There is no lesson with the id “{id}”.",
+    "back": "All lessons"
+  }
+}

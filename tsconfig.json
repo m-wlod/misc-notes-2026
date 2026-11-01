@@ -23,7 +23,8 @@
     "types": ["node"],
     "plugins": [{ "name": "next" }],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "#content": ["./.velite"]
     }
   },
   "include": [

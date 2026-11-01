@@ -28,6 +28,7 @@ export const routing = defineRouting({
     "/sign-in": { pl: "/logowanie", en: "/sign-in" },
     "/onboarding": { pl: "/pierwsze-kroki", en: "/onboarding" },
     "/placement": { pl: "/test-poziomujacy", en: "/placement" },
+    "/dev/content-preview": "/dev/content-preview",
     "/styleguide": "/styleguide",
   },
 });

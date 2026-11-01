@@ -145,6 +145,19 @@
   .reading :where(p) {
     margin-block: 0 1em;
   }
+
+  /* KaTeX inherits the reading size; display math scrolls inside EquationBlock. */
+  .reading .katex {
+    font-size: 1.05em;
+  }
+  .reading .katex-display {
+    margin: 0;
+  }
+
+  /* Comments in code read as asides. */
+  .shiki span[style*="--code-token-comment"] {
+    font-style: italic;
+  }
 }
 
 @utility num {

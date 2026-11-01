@@ -1,0 +1,10 @@
+# Sample term (Phases 4–6): replaced by reviewed content in Phase 7.
+id: variance
+sample: true
+name:
+  pl: wariancja
+  en: variance
+definition:
+  pl: Średni kwadrat odchylenia wyniku od wartości oczekiwanej; mierzy, jak bardzo wyniki się rozrzucają.
+  en: The average squared distance of an outcome from its expected value; a measure of how widely outcomes are spread.
+lesson: przyklad-wartosc-oczekiwana
