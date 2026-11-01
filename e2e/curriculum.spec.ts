@@ -241,6 +241,9 @@ for (const theme of ["light", "dark"] as const) {
     await page.goto("/pl/mapa");
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
     const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
-    expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+    // Name the offending nodes so a CI-only failure can be read from the log.
+    expect(
+      violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`),
+    ).toEqual([]);
   });
 }

@@ -36,13 +36,14 @@ const MIN_K = 0.25;
 const MAX_K = 2.5;
 const LEVELS = [1, 2, 3, 4, 5] as const;
 
-const nodeClass: Record<NodeState | "unknown", { circle: string; text: string }> = {
-  unknown: { circle: "fill-bg stroke-rule", text: "fill-ink-muted" },
-  locked: { circle: "fill-bg stroke-rule-strong", text: "fill-ink-muted" },
-  available: { circle: "fill-bg stroke-accent", text: "fill-accent-text" },
-  in_progress: { circle: "fill-sunken stroke-accent", text: "fill-accent-text" },
-  done: { circle: "fill-ink stroke-ink", text: "fill-bg" },
-  mastered: { circle: "fill-accent stroke-accent", text: "fill-on-accent" },
+/** Node fill and outline by state (same meaning as the path's circles). */
+const nodeClass: Record<NodeState | "unknown", string> = {
+  unknown: "fill-bg stroke-rule",
+  locked: "fill-bg stroke-rule-strong",
+  available: "fill-bg stroke-accent",
+  in_progress: "fill-sunken stroke-accent",
+  done: "fill-ink stroke-ink",
+  mastered: "fill-accent stroke-accent",
 };
 
 /**
@@ -346,7 +347,7 @@ export function CurriculumMap({ nodes, edges, width, height, tracks }: Props) {
                     cy={n.y}
                     r={R}
                     strokeWidth={2}
-                    className={cx(style.circle, "group-focus-visible:stroke-focus")}
+                    className={cx(style, "group-focus-visible:stroke-focus")}
                   />
                   <circle
                     cx={n.x}
@@ -355,15 +356,7 @@ export function CurriculumMap({ nodes, edges, width, height, tracks }: Props) {
                     className="fill-none stroke-focus opacity-0 group-focus-visible:opacity-100"
                     strokeWidth={2}
                   />
-                  <text
-                    x={n.x}
-                    y={n.y + 4}
-                    textAnchor="middle"
-                    aria-hidden="true"
-                    className={cx("num text-2xs", style.text)}
-                  >
-                    {n.number.split(".")[0]}
-                  </text>
+
                   <text
                     x={n.x}
                     y={n.y + R + 15}
