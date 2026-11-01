@@ -6,3 +6,4 @@ test-results
 supabase/.temp
 src/lib/db/database.types.ts
 docs/BUILD_PLAN.md
+design/explorations/*.html

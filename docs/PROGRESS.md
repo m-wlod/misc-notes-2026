@@ -5,7 +5,7 @@ Living log. Update at the end of every phase: what's done, decisions, open quest
 ## Phase checklist
 
 - [x] 0 — Repo bootstrap and tooling (local Supabase verified: Studio, Mailpit, auth healthy) — 2026-11-01
-- [ ] 1 — Design system and brand foundations **[you: sign-off]**
+- [x] 1 — Design system and brand foundations — signed off 2026-11-01 (direction A)
 - [ ] 2 — i18n, routing and app shell
 - [ ] 3 — Auth, profiles and database schema
 - [ ] 4 — Content engine (MDX textbook)
@@ -85,20 +85,46 @@ Review sessions due after phases 1, 4, 8, 12, 19.
 | 2026-11-01 | Env vars for later phases are optional in `src/env.schema.ts`; each phase makes its own required                                                                                       | Build must pass without secrets that don't exist yet                                                                                                                                                                                                                                                                |
 | 2026-11-01 | Playwright runs against `next start` (production build) on port 3100, desktop + Pixel 7 projects                                                                                       | Test what ships; avoid clashing with `pnpm dev` on 3000                                                                                                                                                                                                                                                             |
 | 2026-11-01 | `vercel.json` sets `framework: nextjs`; `engines.node` is `24.x` (was `>=24`)                                                                                                          | First preview deploy failed: the Vercel project had preset "Other", so after a successful `next build` it looked for a Node server entrypoint (`No entrypoint found`). Pinning the framework in the repo stops the dashboard setting from mattering. `>=24` would let Vercel move to a new Node major automatically |
+| 2026-11-01 | Design direction **A, research note** (Newsreader / IBM Plex Sans / IBM Plex Mono, warm paper + deep ink, burnt-orange accent)                                                         | Chosen by you from 3 rendered options (`design/explorations/`). My recommendation was A + B's structure; logged here in case the B details are wanted later                                                                                                                                                         |
+| 2026-11-01 | Tailwind default colours, radii and shadows removed from the theme; only token utilities exist                                                                                         | Enforces the palette and the no-shadow / max-4px-radius rules at compile time (verified: `rounded-2xl`, `shadow-lg`, `bg-purple-500` produce no CSS)                                                                                                                                                                |
+| 2026-11-01 | Theme via next-themes with `data-theme` on `<html>`                                                                                                                                    | Blocking script prevents flash; Playwright checks the first painted frame is already dark                                                                                                                                                                                                                           |
+| 2026-11-01 | `/styleguide` visible in dev and Vercel previews, 404 when `VERCEL_ENV=production`                                                                                                     | Lets you review on the PR preview; admin access added in Phase 18; moves under `[locale]` in Phase 2                                                                                                                                                                                                                |
+| 2026-11-01 | `parseLocaleNumber()` rejects ambiguous `1.234,5` / `1,234.5` instead of guessing                                                                                                      | A wrong guess on a graded answer is worse than asking the learner to retype                                                                                                                                                                                                                                         |
+| 2026-11-01 | WalkChart renders two SVGs (desktop and phone aspect ratio)                                                                                                                            | One scaled SVG shrank tick labels to ~6px at 390px in the explorations                                                                                                                                                                                                                                              |
 
 ## New dependencies
 
-| Package                                                                                                      | Why                                                        |
-| ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| next, react, react-dom, tailwindcss, @tailwindcss/turbopack                                                  | Stack (create-next-app 16.4.3 defaults)                    |
-| zod, @t3-oss/env-nextjs                                                                                      | Validated env (`src/env.ts`), Zod everywhere per CLAUDE.md |
-| typescript, eslint, eslint-config-next, typescript-eslint, eslint-plugin-jsx-a11y, eslint-config-prettier    | Strict lint + typecheck                                    |
-| prettier, prettier-plugin-tailwindcss                                                                        | Formatting, class sorting                                  |
-| husky, lint-staged                                                                                           | Pre-commit lint/format on staged files                     |
-| vitest, @vitejs/plugin-react, jsdom, @testing-library/react, @testing-library/dom, @testing-library/jest-dom | Unit and component tests                                   |
-| @playwright/test                                                                                             | E2E tests                                                  |
-| supabase                                                                                                     | Supabase CLI for local stack, migrations, type generation  |
+| Package                                                                                                      | Why                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| next, react, react-dom, tailwindcss, @tailwindcss/turbopack                                                  | Stack (create-next-app 16.4.3 defaults)                                                                                                          |
+| zod, @t3-oss/env-nextjs                                                                                      | Validated env (`src/env.ts`), Zod everywhere per CLAUDE.md                                                                                       |
+| typescript, eslint, eslint-config-next, typescript-eslint, eslint-plugin-jsx-a11y, eslint-config-prettier    | Strict lint + typecheck                                                                                                                          |
+| prettier, prettier-plugin-tailwindcss                                                                        | Formatting, class sorting                                                                                                                        |
+| husky, lint-staged                                                                                           | Pre-commit lint/format on staged files                                                                                                           |
+| vitest, @vitejs/plugin-react, jsdom, @testing-library/react, @testing-library/dom, @testing-library/jest-dom | Unit and component tests                                                                                                                         |
+| @playwright/test                                                                                             | E2E tests                                                                                                                                        |
+| supabase                                                                                                     | Supabase CLI for local stack, migrations, type generation                                                                                        |
+| radix-ui                                                                                                     | Accessible behaviour for Dialog, Popover, Tooltip, Toast, Tabs, Select, Checkbox, RadioGroup, Progress, Label (unified package; our own styling) |
+| next-themes                                                                                                  | System / light / dark without a flash of the wrong theme                                                                                         |
+| @axe-core/playwright                                                                                         | Automated WCAG 2.1 AA checks in e2e                                                                                                              |
 
 ## TODO(verify)
 
 (none yet)
+
+## Phase 1 self-review (AI-slop list)
+
+Checked 2026-11-01 against the banned list in CLAUDE.md and the checklist in docs/DESIGN.md.
+
+- Gradients, glass, blur, shadows: none in `src` (grep); shadows and default palette removed from the Tailwind theme.
+- Emoji and decorative icons: none in `src`. The only icons are functional (check, chevron, close).
+- Fonts: no Inter or Geist (create-next-app's Geist removed). All three faces load their latin-ext subset (Playwright).
+- Radius: maximum 4px; `rounded-full` only on radio dots.
+- Copy: sample text is lesson content, with no marketing phrases, no fake counts and no testimonials.
+- Found and fixed during review:
+  - Breadcrumb inherited the serif font (explorations).
+  - Mono digits in the middle of prose (explorations).
+  - Chart end label overlapped the line.
+  - Chart tick labels too small on phones (two-layout chart).
+  - Theme switch faded in on every load (transition limited to hover text colour).
+  - Font test passed vacuously (now asserts the latin-ext face loaded).
