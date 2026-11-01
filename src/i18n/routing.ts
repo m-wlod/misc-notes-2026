@@ -21,6 +21,7 @@ export const routing = defineRouting({
     },
     "/textbook": { pl: "/podrecznik", en: "/textbook" },
     "/map": { pl: "/mapa", en: "/map" },
+    "/notes": { pl: "/notatki", en: "/notes" },
     "/practice": { pl: "/praktyka", en: "/practice" },
     "/interview": { pl: "/rozmowa", en: "/interview" },
     "/debunk": "/debunk",

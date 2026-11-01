@@ -1,6 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/db/admin";
+import type { Json } from "@/lib/db/database.types";
 import { getSession } from "@/lib/db/session";
 
 import { lessonUpserts, localProgressSchema, type LessonStatus } from "./schema";
@@ -53,7 +54,8 @@ export async function mergeAnonymousProgress(input: unknown): Promise<MergeResul
       attempts.map((a) => ({
         user_id: user.id,
         exercise_id: a.exerciseId,
-        answer: a.answer,
+        // Non-null: the schema refines `answer !== null` (zod/mini keeps null in the type).
+        answer: a.answer as NonNullable<Json>,
         score: a.score,
         grader: "auto" as const,
         source: "anonymous_import" as const,

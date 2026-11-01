@@ -24,5 +24,12 @@
     "answer": "Odpowiedź: {answer}",
     "yourAnswer": "Twoja odpowiedź",
     "note": "Nic nie zapisujemy: to tylko dla Ciebie."
+  },
+  "video": {
+    "play": "Odtwórz: {title}",
+    "consent": "Po kliknięciu wczytamy odtwarzacz {platform}, który może zapisać pliki cookie.",
+    "openOn": "Otwórz w {platform}",
+    "related": "Powiązane materiały",
+    "videos": "Wideo"
   }
 }

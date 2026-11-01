@@ -1,4 +1,6 @@
-import { z } from "zod";
+// zod/mini: same validation, tree-shakable. This schema runs in the browser on every
+// page (progress state), where full zod added ~100 KB of JavaScript (Lighthouse, Phase 6b).
+import { z } from "zod/mini";
 
 /**
  * Progress kept in the browser for signed-out learners (localStorage key below), merged
@@ -10,24 +12,24 @@ export const LOCAL_PROGRESS_KEY = "qla:progress:v1";
 export const LESSON_STATUSES = ["not_started", "in_progress", "completed", "mastered"] as const;
 export type LessonStatus = (typeof LESSON_STATUSES)[number];
 
-const id = z.string().regex(/^[a-z0-9][a-z0-9._/-]{0,119}$/);
+const id = z.string().check(z.regex(/^[a-z0-9][a-z0-9._/-]{0,119}$/));
 
 export const localProgressSchema = z.object({
   version: z.literal(1),
   lessons: z
     .record(id, z.object({ status: z.enum(LESSON_STATUSES), updatedAt: z.iso.datetime() }))
-    .refine((r) => Object.keys(r).length <= 500, "too many lessons"),
+    .check(z.refine((r) => Object.keys(r).length <= 500, "too many lessons")),
   attempts: z
     .array(
       z.object({
         clientId: z.uuid(),
         exerciseId: id,
-        score: z.number().min(0).max(1),
-        answer: z.json().refine((v) => v !== null, "answer is required"),
+        score: z.number().check(z.gte(0), z.lte(1)),
+        answer: z.json().check(z.refine((v) => v !== null, "answer is required")),
         createdAt: z.iso.datetime(),
       }),
     )
-    .max(1000),
+    .check(z.maxLength(1000)),
 });
 
 export type LocalProgress = z.infer<typeof localProgressSchema>;

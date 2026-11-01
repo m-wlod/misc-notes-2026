@@ -8,6 +8,7 @@ import type errors from "../messages/pl/errors.json";
 import type glossary from "../messages/pl/glossary.json";
 import type home from "../messages/pl/home.json";
 import type nav from "../messages/pl/nav.json";
+import type notes from "../messages/pl/notes.json";
 import type onboarding from "../messages/pl/onboarding.json";
 import type placement from "../messages/pl/placement.json";
 import type reader from "../messages/pl/reader.json";
@@ -33,6 +34,7 @@ declare module "next-intl" {
       glossary: typeof glossary;
       curriculum: typeof curriculum;
       reader: typeof reader;
+      notes: typeof notes;
     };
     Formats: typeof formats;
   }

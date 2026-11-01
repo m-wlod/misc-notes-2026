@@ -1,0 +1,21 @@
+{
+  "title": "Your notes",
+  "noteLabel": "Note for this lesson",
+  "notePlaceholder": "What to remember, what is unclear…",
+  "saved": "Saved in this browser.",
+  "highlights": "Highlights",
+  "noHighlights": "Select some lesson text to keep it here.",
+  "highlight": "Highlight",
+  "removeHighlight": "Remove highlight: {text}",
+  "bookmark": "Bookmark",
+  "unbookmark": "Remove bookmark",
+  "page": {
+    "title": "My notes",
+    "lead": "Notes, highlights and bookmarks from every lesson.",
+    "privacy": "Everything is saved only in this browser. Once accounts are enabled, it will move to your account.",
+    "empty": "Nothing here yet. In a lesson, select some text, add a note or a bookmark.",
+    "bookmarked": "Bookmarked",
+    "highlightCount": "{count, plural, one {# highlight} other {# highlights}}",
+    "open": "Open lesson"
+  }
+}
