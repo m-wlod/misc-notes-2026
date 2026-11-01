@@ -81,15 +81,13 @@ test("select highlights the active option with the focus colour", async ({ page 
   await page.getByRole("combobox", { name: "Poziom" }).focus();
   await page.keyboard.press("Enter");
   await page.keyboard.press("ArrowDown");
+  // Re-resolve the highlighted option on every retry: Radix may move the highlight
+  // between finding the element and reading its style.
   const active = page.locator('[role="option"][data-highlighted]');
   await expect(active).toHaveCount(1);
-  const outline = await active.evaluate((el) => {
-    const s = getComputedStyle(el);
-    return { style: s.outlineStyle, width: parseFloat(s.outlineWidth), color: s.outlineColor };
-  });
-  expect(outline.style).toBe("solid");
-  expect(outline.width).toBeGreaterThanOrEqual(2);
-  expect(outline.color).toBe(await cssVarAsRgb(page, "--focus"));
+  await expect(active).toHaveCSS("outline-style", "solid");
+  await expect(active).toHaveCSS("outline-width", "2px");
+  await expect(active).toHaveCSS("outline-color", await cssVarAsRgb(page, "--focus"));
   await page.keyboard.press("Escape");
 });
 
