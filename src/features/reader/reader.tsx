@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import { VideoEmbed } from "@/components/content/video-embed";
 import { LessonView } from "@/features/content/lesson-view";
-import type { ResolvedLesson } from "@/features/content/lessons";
+import { showsBody, type ResolvedLesson } from "@/features/content/lessons";
 import { lessonHref, type LessonNode, type LessonPlace } from "@/features/curriculum";
 import { HighlightLayer } from "@/features/notes/highlight-layer";
 import { BookmarkButton, LessonNotes } from "@/features/notes/lesson-notes";
@@ -30,6 +30,8 @@ type ReaderProps = ResolvedLesson & {
   /** Where the lesson sits in the curriculum (absent for the sample in the preview). */
   place?: LessonPlace | undefined;
   neighbours: { prev: LessonNode | null; next: LessonNode | null };
+  /** Internal preview: show drafts' bodies for review. */
+  preview?: boolean;
   /** Titles of prerequisites, by id. */
   prerequisiteTitles: Readonly<Record<string, LessonNode | undefined>>;
 };
@@ -45,9 +47,12 @@ export async function Reader({
   place,
   neighbours,
   prerequisiteTitles,
+  preview = false,
 }: ReaderProps) {
   const t = await getTranslations("reader");
-  const toc = flattenToc(lesson.toc);
+  // Unpublished lessons read like stubs on public pages (review workflow).
+  const withBody = showsBody(lesson, preview);
+  const toc = withBody ? flattenToc(lesson.toc) : [];
   const sections = toc.map((i) => i.id);
 
   const nextCard = neighbours.next ? (
@@ -96,7 +101,7 @@ export async function Reader({
             ) : (
               <span />
             )}
-            {lesson.isStub ? null : <BookmarkButton lessonId={lesson.id} />}
+            {!withBody ? null : <BookmarkButton lessonId={lesson.id} />}
           </div>
           {toc.length > 0 ? (
             <ReaderToc items={toc} minutes={lesson.estimatedMinutes} variant="top" />
@@ -104,9 +109,13 @@ export async function Reader({
           <ResumeReading lessonId={lesson.id} items={toc} />
 
           <div id="lesson-body">
-            <LessonView lesson={lesson} fallback={fallback} />
+            <LessonView
+              lesson={lesson}
+              fallback={fallback}
+              withheld={!withBody && !lesson.isStub}
+            />
           </div>
-          {lesson.isStub ? null : <HighlightLayer lessonId={lesson.id} rootId="lesson-body" />}
+          {!withBody ? null : <HighlightLayer lessonId={lesson.id} rootId="lesson-body" />}
 
           {lesson.relatedVideos.length > 0 ? (
             <section
@@ -161,8 +170,8 @@ export async function Reader({
             )}
           </section>
 
-          {lesson.isStub ? null : <LessonNotes lessonId={lesson.id} />}
-          {lesson.isStub ? null : <CompleteLesson lessonId={lesson.id} next={nextCard} />}
+          {!withBody ? null : <LessonNotes lessonId={lesson.id} />}
+          {!withBody ? null : <CompleteLesson lessonId={lesson.id} next={nextCard} />}
 
           <nav
             aria-label={t("lessonNav")}

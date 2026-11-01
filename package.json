@@ -16,6 +16,10 @@
     "typecheck": "velite build --strict --silent && next typegen && tsc --noEmit",
     "i18n:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-i18n.ts",
     "content:build": "velite build --strict",
+    "content:verify": "tsx scripts/content-verify.ts",
+    "content:qa": "tsx scripts/content-qa.ts",
+    "content:status": "tsx scripts/content-status.ts",
+    "content:draft": "tsx scripts/content-draft.ts",
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
     "test:db": "vitest run --project db",
@@ -73,9 +77,11 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "supabase": "^2.122.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "6.0.3",
     "typescript-eslint": "^8.72.1",
-    "vitest": "^5.0.5"
+    "vitest": "^5.0.5",
+    "yaml": "^2.9.1"
   },
   "packageManager": "pnpm@12.16.1"
 }

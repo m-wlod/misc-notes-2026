@@ -41,3 +41,5 @@ export function listLessons({ includeDrafts = false }: { includeDrafts?: boolean
 export function getGlossary(): readonly GlossaryTerm[] {
   return glossary;
 }
+
+export { showsBody } from "./publish";

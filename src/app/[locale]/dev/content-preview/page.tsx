@@ -53,6 +53,7 @@ async function Gate({
         {resolved ? (
           <Reader
             {...resolved}
+            preview
             neighbours={neighbours(locale, resolved.lesson.id)}
             prerequisiteTitles={lessonNodes(locale)}
           />
