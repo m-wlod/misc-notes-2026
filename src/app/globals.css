@@ -154,6 +154,12 @@
     margin: 0;
   }
 
+  /* Lesson depth (src/config/depth.ts): both versions are rendered, one is shown. */
+  html[data-depth="formal"] .depth-easy,
+  html:not([data-depth="formal"]) .depth-formal {
+    display: none;
+  }
+
   /* Comments in code read as asides. */
   .shiki span[style*="--code-token-comment"] {
     font-style: italic;

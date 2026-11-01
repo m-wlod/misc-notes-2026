@@ -4,6 +4,7 @@ import type auth from "../messages/pl/auth.json";
 import type common from "../messages/pl/common.json";
 import type content from "../messages/pl/content.json";
 import type errors from "../messages/pl/errors.json";
+import type glossary from "../messages/pl/glossary.json";
 import type home from "../messages/pl/home.json";
 import type nav from "../messages/pl/nav.json";
 import type onboarding from "../messages/pl/onboarding.json";
@@ -27,6 +28,7 @@ declare module "next-intl" {
       placement: typeof placement;
       account: typeof account;
       content: typeof content;
+      glossary: typeof glossary;
     };
     Formats: typeof formats;
   }

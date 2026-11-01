@@ -1,6 +1,8 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { getGlossary } from "@/features/content/lessons";
+import { TermPopover } from "@/features/glossary/term-popover";
 import { Link } from "@/i18n/navigation";
 import { cx } from "@/lib/cx";
 
@@ -256,5 +258,35 @@ export async function ExerciseRef({ id, title }: { id: string; title?: string })
       </p>
       <p className="mt-1 font-sans text-xs text-ink-muted">{t("exerciseRef.soon")}</p>
     </div>
+  );
+}
+
+/**
+ * A passage for one depth: "easy" (Po ludzku) or "formal" (Podręcznik). Both are in the
+ * HTML; CSS shows the one chosen with the lesson's depth toggle (src/config/depth.ts).
+ * Content outside <Depth> shows in both modes.
+ */
+export function Depth({ level, children }: Children & { level: "easy" | "formal" }) {
+  return <div className={level === "easy" ? "depth-easy" : "depth-formal"}>{children}</div>;
+}
+
+/**
+ * A glossary term in running text: `<Term id="variance">wariancja</Term>`. Unknown ids
+ * fail the content build, so the lookup here always succeeds for built content.
+ */
+export async function Term({ id, children }: Children & { id: string }) {
+  const term = getGlossary().find((g) => g.id === id);
+  if (!term) return <>{children}</>;
+  const locale = await getLocale();
+  const t = await getTranslations("glossary");
+  return (
+    <TermPopover
+      id={id}
+      name={term.name[locale]}
+      definition={term.definition[locale]}
+      linkLabel={t("inGlossary")}
+    >
+      {children}
+    </TermPopover>
   );
 }

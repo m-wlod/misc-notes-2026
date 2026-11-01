@@ -41,3 +41,15 @@ export function RadioItem({ className, ...props }: ComponentProps<typeof RadixRa
     </RadixRadio.Item>
   );
 }
+
+/**
+ * ARIA radio groups select on arrow keys. Radix detects arrows with a document listener
+ * that runs after React's (Next mounts React on the document), so focus moved without
+ * selecting. Use as `onFocus` on a RadioGroup item: keyboard focus selects, mouse clicks
+ * are unaffected. Found in Phase 4b; also fixes the theme switch.
+ */
+export function selectOnKeyboardFocus(select: () => void) {
+  return (e: React.FocusEvent<HTMLElement>) => {
+    if (e.currentTarget.matches(":focus-visible")) select();
+  };
+}

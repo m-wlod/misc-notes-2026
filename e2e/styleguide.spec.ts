@@ -108,6 +108,18 @@ test("stored dark theme applies before first paint (no flash)", async ({ page })
   expect(first).toBe("dark");
 });
 
+test("theme switch follows the arrow keys (ARIA radio group)", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/pl/styleguide");
+  const system = page.getByRole("radio", { name: "System", exact: true }).first();
+  await expect(system).toBeChecked(); // hydrated
+  await system.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("radio", { name: "Jasny" }).first()).toBeChecked();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+});
+
 test("theme switch changes and remembers the theme", async ({ page }) => {
   // No init script here: it would re-seed the stored theme on reload.
   await page.emulateMedia({ colorScheme: "light" });

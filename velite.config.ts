@@ -62,6 +62,8 @@ const lessons = defineCollection({
       ...data,
       file: fileOf(meta.path),
       termRefs: termRefsIn(meta.content ?? ""),
+      /** Shows the depth toggle only on lessons that have <Depth> passages. */
+      hasDepth: /<Depth\b/.test(meta.content ?? ""),
     })),
 });
 

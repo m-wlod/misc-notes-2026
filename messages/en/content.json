@@ -51,5 +51,10 @@
     "empty": "No lessons in content/.",
     "notFound": "There is no lesson with the id “{id}”.",
     "back": "All lessons"
+  },
+  "depth": {
+    "group": "Explanation style",
+    "easy": "Plain words",
+    "formal": "Textbook"
   }
 }
