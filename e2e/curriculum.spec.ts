@@ -167,3 +167,77 @@ for (const theme of ["light", "dark"] as const) {
     }
   });
 }
+
+test.describe("prerequisite map", () => {
+  const map = (page: Page) => page.getByTestId("curriculum-map");
+  const transform = (page: Page) => map(page).locator("g").first().getAttribute("transform");
+
+  test("renders every lesson as a link to its place in the curriculum", async ({ page }) => {
+    await page.goto("/pl/mapa");
+    await expect(map(page).locator("a[data-lesson]")).toHaveCount(68);
+    const kelly = map(page).locator('a[data-lesson="kelly-criterion"]');
+    await expect(kelly).toHaveAttribute(
+      "href",
+      "/pl/nauka/wartosc-oczekiwana/zaklady#kelly-criterion",
+    );
+    await expect(kelly).toHaveAttribute("aria-label", /^3\.2\.3 Kryterium Kelly'ego, /);
+  });
+
+  test("filters dim the lessons outside the chosen track and levels", async ({ page }) => {
+    await page.goto("/pl/mapa");
+    await expect.poll(() => transform(page)).toMatch(/scale/); // hydrated
+    await page.getByRole("combobox", { name: "Dział" }).selectOption("expected-value");
+    await expect(page.getByRole("status").filter({ hasText: "Wyróżnione" })).toHaveText(
+      "Wyróżnione: 6 z 68",
+    );
+    await expect(map(page).locator("a[data-dimmed]")).toHaveCount(62);
+    await page.getByRole("button", { name: "Poziom 3" }).click();
+    await expect(page.getByRole("status").filter({ hasText: "Wyróżnione" })).toHaveText(
+      "Wyróżnione: 4 z 68",
+    );
+  });
+
+  test("zooms with the buttons and the keyboard, and resets", async ({ page }) => {
+    await page.goto("/pl/mapa");
+    await expect.poll(() => transform(page)).toMatch(/scale/);
+    const start = await transform(page);
+    await page.getByRole("button", { name: "Przybliż" }).click();
+    await expect.poll(() => transform(page)).not.toBe(start);
+    await page.getByRole("button", { name: "Pokaż całość" }).click();
+    await expect.poll(() => transform(page)).toBe(start);
+
+    await page.getByRole("group", { name: /^Mapa wymagań/ }).focus();
+    await page.keyboard.press("+");
+    await expect.poll(() => transform(page)).not.toBe(start);
+    await page.keyboard.press("0");
+    await expect.poll(() => transform(page)).toBe(start);
+  });
+
+  test("node state follows progress here too", async ({ page }) => {
+    await seedProgress(page, { counting: "completed" });
+    await page.goto("/en/map");
+    await expect(map(page).locator('a[data-lesson="counting"]')).toHaveAttribute(
+      "data-state",
+      "done",
+    );
+    await expect(map(page).locator('a[data-lesson="probability-basics"]')).toHaveAttribute(
+      "data-state",
+      "available",
+    );
+  });
+});
+
+for (const theme of ["light", "dark"] as const) {
+  test(`axe: map (${theme})`, async ({ page }) => {
+    await page.addInitScript(
+      ([key, value]) => {
+        window.localStorage.setItem(key, value);
+      },
+      [THEME_STORAGE_KEY, theme] as const,
+    );
+    await page.goto("/pl/mapa");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+    const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
+    expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+  });
+}

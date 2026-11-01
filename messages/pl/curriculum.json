@@ -2,7 +2,8 @@
   "views": {
     "label": "Widok programu",
     "path": "Ścieżka",
-    "textbook": "Podręcznik"
+    "textbook": "Podręcznik",
+    "map": "Mapa"
   },
   "path": {
     "title": "Ścieżka nauki",
@@ -34,5 +35,21 @@
   "module": "Moduł {number}",
   "openTrack": "Otwórz dział",
   "allTracks": "Cała ścieżka",
-  "stubNote": "Lekcje w przygotowaniu mają już ustalone miejsce w programie, poziom i wymagania. Treść pojawi się stopniowo."
+  "stubNote": "Lekcje w przygotowaniu mają już ustalone miejsce w programie, poziom i wymagania. Treść pojawi się stopniowo.",
+  "map": {
+    "title": "Mapa wymagań",
+    "lead": "Wszystkie lekcje i zależności między nimi. Strzałka prowadzi od lekcji, którą warto znać wcześniej.",
+    "textAlternative": "Ta sama treść jako lista: Podręcznik.",
+    "track": "Dział",
+    "allTracks": "Wszystkie działy",
+    "levels": "Poziomy",
+    "level": "Poziom {level}",
+    "zoomIn": "Przybliż",
+    "zoomOut": "Oddal",
+    "reset": "Pokaż całość",
+    "help": "Przeciągnij, aby przesunąć. Kółko myszy albo klawisze + i − przybliżają, strzałki przesuwają.",
+    "canvas": "Mapa wymagań: {count, plural, one {# lekcja} few {# lekcje} many {# lekcji} other {# lekcji}}",
+    "nodeLabel": "{number} {title}, {state}",
+    "showing": "Wyróżnione: {count} z {total}"
+  }
 }

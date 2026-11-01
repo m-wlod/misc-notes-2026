@@ -5,11 +5,12 @@ import { cx } from "@/lib/cx";
 
 import { formatDuration, type ModuleView, type TrackView } from "./index";
 
-/** Path / Textbook switch shown on the curriculum views (the Map joins in Phase 5b). */
-export async function CurriculumTabs({ current }: { current: "path" | "textbook" }) {
+/** Path / Map / Textbook switch shown on the curriculum views. */
+export async function CurriculumTabs({ current }: { current: "path" | "map" | "textbook" }) {
   const t = await getTranslations("curriculum.views");
   const tabs = [
     ["path", "/learn"],
+    ["map", "/map"],
     ["textbook", "/textbook"],
   ] as const;
   return (

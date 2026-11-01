@@ -22,7 +22,18 @@
   },
   "search": {
     "label": "Search",
-    "comingSoon": "Search across lessons, terms and exercises arrives in phase 5."
+    "close": "Close search",
+    "placeholder": "A lesson or term, e.g. distribution, Kelly",
+    "hint": "Type at least 2 letters.",
+    "loading": "Loading…",
+    "error": "Search could not be loaded. Please try again.",
+    "empty": "No results for “{term}”.",
+    "count": "{count, plural, one {# result} other {# results}}",
+    "results": "Search results",
+    "groups": {
+      "lesson": "Lessons",
+      "term": "Glossary"
+    }
   },
   "footer": {
     "legal": "Legal",

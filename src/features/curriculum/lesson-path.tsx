@@ -45,9 +45,10 @@ export function LessonPath({ lessons, titles }: LessonPathProps) {
         return (
           <li
             key={lesson.id}
+            id={lesson.id}
             data-lesson={lesson.id}
             data-state={state ?? "unknown"}
-            className="relative flex items-start gap-4"
+            className="relative flex scroll-mt-24 items-start gap-4"
           >
             {i < lessons.length - 1 ? (
               <span
