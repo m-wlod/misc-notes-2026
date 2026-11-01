@@ -170,3 +170,39 @@
   font-family: var(--stack-mono);
   font-variant-numeric: tabular-nums lining-nums;
 }
+
+/*
+ * Print / PDF (Phase 6): clean A4 pages. The shell, table of contents, progress and
+ * buttons carry `print:hidden`; margin notes print under their paragraph (see
+ * SidenoteToggle). Equations, figures and code stay whole across page breaks.
+ */
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm;
+  }
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .reading {
+    max-width: none;
+    font-size: 11pt;
+  }
+  .reading :where(figure, pre, .katex-display, section[role="note"]) {
+    break-inside: avoid;
+  }
+  .reading :where(h2, h3) {
+    break-after: avoid;
+  }
+  /* Show where links go: on paper they can't be clicked. */
+  .reading a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+  details > :not(summary) {
+    display: block;
+  }
+}

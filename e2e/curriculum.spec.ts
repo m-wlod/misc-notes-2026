@@ -178,7 +178,7 @@ test.describe("prerequisite map", () => {
     const kelly = map(page).locator('a[data-lesson="kelly-criterion"]');
     await expect(kelly).toHaveAttribute(
       "href",
-      "/pl/nauka/wartosc-oczekiwana/zaklady#kelly-criterion",
+      "/pl/nauka/wartosc-oczekiwana/zaklady/kryterium-kelly",
     );
     await expect(kelly).toHaveAttribute("aria-label", /^Kryterium Kelly'ego, lekcja 3\.2\.3, /);
     // A wrapped label still reads as the whole title (label in name, WCAG 2.5.3).

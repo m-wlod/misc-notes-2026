@@ -19,7 +19,7 @@ test("the preview lists lessons, drafts included", async ({ page }) => {
   await expect(page).toHaveURL(/id=przyklad-wartosc-oczekiwana/);
 });
 
-test("the sample lesson renders every building block", async ({ page }) => {
+test("the sample lesson renders every building block", async ({ page, isMobile }) => {
   await page.goto(SAMPLE);
   await expect(page.getByText("Lekcja przykładowa.")).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
@@ -42,8 +42,14 @@ test("the sample lesson renders every building block", async ({ page }) => {
   await expect(page.getByText("Dlaczego to nie działa")).toBeVisible();
   await expect(page.getByText("Rys. 1")).toBeVisible();
   await expect(page.getByRole("img", { name: /błądzenia losowego/ })).toBeVisible();
-  await expect(page.getByRole("note").filter({ hasText: "Przypis 1:" })).toBeAttached();
-  await expect(page.getByRole("note").filter({ hasText: "Przypis 2:" })).toBeAttached();
+  if (isMobile) {
+    // Phones: notes are collapsed behind their number until tapped (Phase 6).
+    await expect(page.getByRole("button", { name: "Przypis 1" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Przypis 2" })).toBeVisible();
+  } else {
+    await expect(page.getByRole("note").filter({ hasText: "Przypis 1:" })).toBeVisible();
+    await expect(page.getByRole("note").filter({ hasText: "Przypis 2:" })).toBeVisible();
+  }
 });
 
 test("equations are numbered, cross-referenced and exposed as MathML", async ({ page }) => {

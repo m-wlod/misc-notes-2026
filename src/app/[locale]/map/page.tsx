@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { alternatesFor } from "@/components/shell/section-page";
-import { getCurriculum } from "@/features/curriculum";
+import { getCurriculum, lessonHref } from "@/features/curriculum";
 import { CurriculumMap, type MapNode } from "@/features/curriculum/curriculum-map";
 import { layoutDag } from "@/features/curriculum/layout-dag";
 import { CurriculumTabs } from "@/features/curriculum/views";
@@ -28,15 +28,9 @@ export default async function MapPage({ params }: PageProps<"/[locale]/map">) {
     lessons.map(({ lesson }) => ({ id: lesson.id, prerequisites: lesson.prerequisites })),
   );
   const placed = new Map(layout.nodes.map((n) => [n.id, n]));
-  const nodes: MapNode[] = lessons.map(({ track, mod, lesson }) => {
+  const nodes: MapNode[] = lessons.map(({ track, lesson }) => {
     const at = placed.get(lesson.id);
-    const modulePath = getPathname({
-      href: {
-        pathname: "/learn/[track]/[module]",
-        params: { track: track.slug, module: mod.slug },
-      },
-      locale,
-    });
+    const url = getPathname({ href: lessonHref(lesson), locale });
     return {
       id: lesson.id,
       number: lesson.number,
@@ -44,7 +38,7 @@ export default async function MapPage({ params }: PageProps<"/[locale]/map">) {
       level: lesson.level,
       track: track.id,
       prerequisites: lesson.prerequisites,
-      url: `${modulePath}#${lesson.id}`,
+      url,
       x: at?.x ?? 0,
       y: at?.y ?? 0,
     };

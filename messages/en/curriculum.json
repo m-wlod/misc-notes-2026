@@ -51,5 +51,6 @@
     "canvas": "Prerequisite map: {count, plural, one {# lesson} other {# lessons}}",
     "nodeLabel": "{title}, lesson {number}, {state}",
     "showing": "Highlighted: {count} of {total}"
-  }
+  },
+  "openLesson": "Open lesson"
 }

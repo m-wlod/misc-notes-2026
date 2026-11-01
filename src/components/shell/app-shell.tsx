@@ -33,7 +33,7 @@ export async function AppShell({ children }: { children: ReactNode }) {
 async function TopBar() {
   const t = await getTranslations();
   return (
-    <header className="sticky top-0 z-(--z-sticky) border-b border-rule bg-bg">
+    <header className="sticky top-0 z-(--z-sticky) border-b border-rule bg-bg print:hidden">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-8 px-4 sm:px-6">
         <Link href="/" className="font-sans text-base font-semibold tracking-[0.02em] text-ink">
           {siteConfig.name}
@@ -74,7 +74,7 @@ async function Footer() {
 
   // On phones the fixed bottom bar (h-14 + safe area) would cover the last footer row.
   return (
-    <footer className="mt-24 mb-[calc(3.5rem+env(safe-area-inset-bottom))] border-t border-rule sm:mb-0">
+    <footer className="mt-24 mb-[calc(3.5rem+env(safe-area-inset-bottom))] border-t border-rule sm:mb-0 print:hidden">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
         <div className="grid content-start gap-3">
           <p className="font-sans text-sm font-semibold">{siteConfig.name}</p>

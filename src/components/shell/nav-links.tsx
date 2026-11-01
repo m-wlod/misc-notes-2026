@@ -45,7 +45,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label={t("mobile")}
-      className="fixed inset-x-0 bottom-0 z-(--z-sticky) border-t border-rule bg-bg pb-[env(safe-area-inset-bottom)] sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-(--z-sticky) border-t border-rule bg-bg pb-[env(safe-area-inset-bottom)] sm:hidden print:hidden"
     >
       <ul className="grid grid-cols-5">
         {MOBILE_NAV.map(({ key, href }) => {

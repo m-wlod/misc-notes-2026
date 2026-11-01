@@ -4,8 +4,7 @@ import type { Curriculum } from "../curriculum/schema";
  * What the search index holds, per locale: one document per lesson in the curriculum and
  * per glossary term. Built at content-build time (velite.config.ts `complete`) into
  * public/search/<locale>.json and loaded by the search dialog when it opens.
- * Lesson results link to the lesson's row on its module page until the reader exists
- * (Phase 6). Exercises join in Phase 8.
+ * Results link to lesson pages and glossary entries. Exercises join in Phase 8.
  */
 export type SearchDoc = {
   id: string;
@@ -20,6 +19,7 @@ export type SearchDoc = {
 type Locale = "pl" | "en";
 type LessonInput = {
   id: string;
+  slug: string;
   locale: string;
   title: string;
   summary: string;
@@ -56,7 +56,7 @@ export function buildSearchDocs(
           title: lesson.title,
           context: `${track.name[locale]} · ${mod.name[locale]}`,
           text: `${lesson.summary} ${lesson.text}`.trim(),
-          url: `/${locale}${paths.learn[locale]}/${track.slug[locale]}/${mod.slug[locale]}#${id}`,
+          url: `/${locale}${paths.learn[locale]}/${track.slug[locale]}/${mod.slug[locale]}/${lesson.slug}`,
         });
       }
     }

@@ -1,3 +1,4 @@
+import lessonSlugs from "../../../.velite/lesson-slugs.json";
 import { curriculum } from "../../../content/curriculum";
 
 /**
@@ -8,7 +9,8 @@ import { curriculum } from "../../../content/curriculum";
  * or call notFound(). Pure, so it is unit-tested.
  */
 const SECTION = { pl: "nauka", en: "learn" } as const;
-const PATH = /^\/(pl|en)\/(nauka|learn)\/([^/]+)(?:\/([^/]+))?\/?$/;
+const PATH = /^\/(pl|en)\/(nauka|learn)\/([^/]+)(?:\/([^/]+))?(?:\/([^/]+))?\/?$/;
+const slugsOf = lessonSlugs as Record<string, { pl?: string; en?: string } | undefined>;
 
 type Slugs = { slug: { pl: string; en: string } };
 const hasSlug = (item: Slugs, slug: string) => item.slug.pl === slug || item.slug.en === slug;
@@ -19,7 +21,7 @@ export type CurriculumRoute = { redirect: string } | "missing" | null;
 export function curriculumRoute(pathname: string): CurriculumRoute {
   const match = PATH.exec(pathname);
   if (!match) return null;
-  const [, rawLocale, section, trackSlug = "", moduleSlug] = match;
+  const [, rawLocale, section, trackSlug = "", moduleSlug, lessonSlug] = match;
   const locale = rawLocale === "en" ? "en" : "pl";
   if (section !== SECTION[locale]) return null; // next-intl handles the section slug itself
 
@@ -28,8 +30,19 @@ export function curriculumRoute(pathname: string): CurriculumRoute {
   const mod =
     moduleSlug === undefined ? undefined : track.modules.find((m) => hasSlug(m, moduleSlug));
   if (moduleSlug !== undefined && !mod) return "missing";
+  let lesson: string | undefined;
+  if (mod && lessonSlug !== undefined) {
+    const id = mod.lessons.find((l) => {
+      const slugs = slugsOf[l];
+      return slugs?.pl === lessonSlug || slugs?.en === lessonSlug;
+    });
+    lesson = id ? (slugsOf[id]?.[locale] ?? slugsOf[id]?.pl) : undefined;
+    if (!lesson) return "missing";
+  }
 
-  const target = `/${locale}/${SECTION[locale]}/${track.slug[locale]}${mod ? `/${mod.slug[locale]}` : ""}`;
-  const current = `/${locale}/${section}/${trackSlug}${moduleSlug === undefined ? "" : `/${moduleSlug}`}`;
-  return target === current ? null : { redirect: target };
+  const target = [locale, SECTION[locale], track.slug[locale], mod?.slug[locale], lesson]
+    .filter(Boolean)
+    .join("/");
+  const current = [locale, section, trackSlug, moduleSlug, lessonSlug].filter(Boolean).join("/");
+  return target === current ? null : { redirect: `/${target}` };
 }

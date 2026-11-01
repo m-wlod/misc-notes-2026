@@ -51,5 +51,6 @@
     "canvas": "Mapa wymagań: {count, plural, one {# lekcja} few {# lekcje} many {# lekcji} other {# lekcji}}",
     "nodeLabel": "{title}, lekcja {number}, {state}",
     "showing": "Wyróżnione: {count} z {total}"
-  }
+  },
+  "openLesson": "Otwórz lekcję"
 }

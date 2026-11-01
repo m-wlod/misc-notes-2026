@@ -22,8 +22,10 @@ test("finds a lesson typed without Polish letters and opens it", async ({ page }
   await expect(first).toContainText("Zmienne losowe i rozkłady");
   await expect(first).toHaveAttribute("aria-selected", "true");
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/\/pl\/nauka\/prawdopodobienstwo\/zliczanie#random-variables$/);
-  await expect(page.locator("#random-variables")).toBeInViewport();
+  await expect(page).toHaveURL(
+    /\/pl\/nauka\/prawdopodobienstwo\/zliczanie\/zmienne-losowe-i-rozklady$/,
+  );
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Zmienne losowe i rozkłady");
 });
 
 test("groups glossary terms and moves with the arrow keys", async ({ page }) => {

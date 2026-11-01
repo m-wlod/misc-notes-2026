@@ -3,6 +3,7 @@ import type { ComponentProps, ReactNode } from "react";
 import * as runtime from "react/jsx-runtime";
 
 import * as blocks from "@/components/content/blocks";
+import { CheckYourself } from "@/components/content/check-yourself";
 import { cx } from "@/lib/cx";
 
 /**
@@ -42,6 +43,7 @@ function headingWithAnchor(Tag: "h2" | "h3", className: string) {
 
 const components = {
   ...blocks,
+  CheckYourself,
   h2: headingWithAnchor("h2", "mt-12 mb-4 text-xl"),
   h3: headingWithAnchor("h3", "mt-8 mb-3 text-lg"),
   pre: ({ className, ...props }: ComponentProps<"pre">) => (
