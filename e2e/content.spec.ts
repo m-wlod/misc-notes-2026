@@ -62,6 +62,8 @@ test("equations are numbered, cross-referenced and exposed as MathML", async ({ 
 
 test("the proof opens from the keyboard", async ({ page }) => {
   await page.goto(SAMPLE);
+  // Wait for hydration: the depth radio is only checked once React is attached.
+  await expect(page.getByRole("radio", { name: "Po ludzku" })).toBeChecked();
   const summary = page.locator("summary", { hasText: "Dowód" });
   const proofText = page.getByText("Rozwijamy kwadrat");
   await expect(proofText).toBeHidden();
@@ -164,7 +166,7 @@ for (const theme of ["light", "dark"] as const) {
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
     const keyword = page.locator("pre.shiki span", { hasText: "print" }).first();
     await expect(keyword).toBeVisible();
-    const comment = page.locator("pre.shiki span:not(.line)", { hasText: "# 0.0103" });
+    const comment = page.locator('pre.shiki span[style*="--code-token-comment"]');
     await expect(comment).toHaveCSS(
       "color",
       theme === "light" ? "rgb(93, 100, 114)" : "rgb(154, 161, 174)",
