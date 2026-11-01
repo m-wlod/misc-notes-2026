@@ -1,0 +1,32 @@
+{
+  "metaTitle": "Placement quiz",
+  "lead": "8 problems, from the basics up to level 4. Answer with a number: comma or point, fractions (3/8) and percentages (25%) all work.",
+  "question": "Problem {number}",
+  "answer": "Answer",
+  "submit": "Check answers",
+  "checking": "Checking…",
+  "invalid": {
+    "ambiguous": "Ambiguous number. Write it without a thousands separator, e.g. 1000 or 1.5.",
+    "invalid": "That isn’t a number we can read. Examples: 0.25 · 12.5% · 3/8 · 1e-3.",
+    "division-by-zero": "Division by zero."
+  },
+  "questions": {
+    "drawdown-recovery": "A share price falls by 50%. By what percentage must it then rise to get back to where it was? Give the answer in percent.",
+    "die-expected-value": "You roll a fair six-sided die. What is the expected number of pips?",
+    "three-losses": "A strategy wins 55% of its trades, and trade outcomes are independent. What is the probability that three trades in a row are losers? Give the answer to 0.001.",
+    "variance-of-difference": "Random variables X and Y are independent, Var(X) = 4 and Var(Y) = 9. What is Var(X − Y)?",
+    "kelly-even-money": "A bet pays 1 to 1 (you win your stake) and the probability of winning is 60%. What fraction of capital does the Kelly criterion bet?",
+    "sharpe-t-stat": "A strategy’s measured annual Sharpe ratio is 1.0 over 4 years of data (yearly returns are independent). Roughly what is the t-statistic for the hypothesis that the true Sharpe ratio is zero?",
+    "gbm-log-return": "A share price follows geometric Brownian motion with drift μ = 10% and volatility σ = 20% per year. What is the expected annual log return, E[ln(S₁/S₀)]? Give a decimal or a percentage.",
+    "lognormal-mean": "Z has a standard normal distribution. What is E[eᶻ]? Give the answer to 0.001."
+  },
+  "result": {
+    "title": "Your result",
+    "score": "Correct answers: {correct} of {total}.",
+    "suggested": "Suggested starting level: {level}.",
+    "correct": "correct",
+    "wrong": "wrong",
+    "toProfile": "Go to my profile"
+  },
+  "error": "We couldn’t check your answers. Please try again."
+}

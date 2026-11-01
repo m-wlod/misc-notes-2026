@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import { StatTicker } from "@/components/content/data";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 
+import { AccountLink, AccountLinkFallback } from "./account-link";
 import { LocaleSwitch, SearchButton, ThemeControl } from "./controls";
 import { LEGAL_NAV, MORE_NAV } from "./nav-items";
 import { BottomNav, PrimaryNav } from "./nav-links";
@@ -52,9 +53,12 @@ async function TopBar() {
           <div className="hidden sm:block">
             <LocaleSwitch compact />
           </div>
-          <Link href="/profile" className="hidden text-sm text-ink-muted hover:text-ink sm:block">
-            {t("nav.profile")}
-          </Link>
+          {/* Mounted on phones too (only hidden), so signed-in progress still merges there. */}
+          <div className="hidden sm:block">
+            <Suspense fallback={<AccountLinkFallback />}>
+              <AccountLink />
+            </Suspense>
+          </div>
         </div>
       </div>
     </header>

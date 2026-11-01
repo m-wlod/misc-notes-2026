@@ -53,6 +53,16 @@ export const clientSchema = {
 
   NEXT_PUBLIC_SUPABASE_URL: optionalUrl,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: optionalString,
+  /** Comma-separated OAuth providers enabled in Supabase, e.g. "google,github". Buttons show only for these. */
+  NEXT_PUBLIC_AUTH_PROVIDERS: z
+    .string()
+    .optional()
+    .transform((v) =>
+      (v ?? "")
+        .split(",")
+        .map((p) => p.trim())
+        .filter((p): p is "google" | "github" => p === "google" || p === "github"),
+    ),
 
   NEXT_PUBLIC_POSTHOG_KEY: optionalString,
   NEXT_PUBLIC_POSTHOG_HOST: z.url().default("https://eu.i.posthog.com"),

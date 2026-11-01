@@ -7,7 +7,7 @@ Living log. Update at the end of every phase: what's done, decisions, open quest
 - [x] 0 — Repo bootstrap and tooling (local Supabase verified: Studio, Mailpit, auth healthy) — 2026-11-01
 - [x] 1 — Design system and brand foundations — signed off 2026-11-01 (direction A)
 - [x] 2 — i18n, routing and app shell — 2026-11-01
-- [ ] 3 — Auth, profiles and database schema — split: **3a database ✓ 2026-11-01** (schema, RLS, tests); 3b auth and user pages next
+- [ ] 3 — Auth, profiles and database schema — **3a database ✓ 2026-11-01**; **3b auth and user pages ✓ code 2026-11-01**, verified without a database. Still open: signed-in e2e flows, which wait for a Supabase project **[you]** (see below)
 - [ ] 4 — Content engine (MDX textbook)
 - [ ] 5 — Curriculum map and learning path
 - [ ] 6 — Lesson reader UX
@@ -57,6 +57,21 @@ Review sessions due after phases 1, 4, 8, 12, 19. **Phases 0–1 reviewed 2026-1
 | Sentry                                                               | Phase 22                             | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN`                                             |
 | Turnstile or Vercel BotID                                            | Phase 21                             | `TURNSTILE_SECRET_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (if Turnstile)                   |
 | Domain + Discord server                                              | Phase 23                             | none                                                                                      |
+
+## Phase 3: what waits for a Supabase project
+
+Accounts ship switched off: with no Supabase env vars, sign-in shows "accounts aren't enabled", profile explains the same, settings and onboarding redirect to sign-in, and `/api/me/export` returns 401. Everything else (content, the placement quiz) works signed out. This is the state of Vercel previews today.
+
+Blocked: the account's two free Supabase projects are in use by other apps and must not be touched, and the local Docker stack is unstable on this machine (the engine hung and returned HTTP 500).
+
+When a project exists (a second Supabase account, or a paid plan), these are the steps:
+
+1. **[you]** Create project `quant-learning-dev` in eu-central-1 (Frankfurt). Put in `.env.local` (never commit it): `NEXT_PUBLIC_SUPABASE_URL` (Settings → API), `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `SUPABASE_SECRET_KEY` (Settings → API Keys), `SUPABASE_DB_PASSWORD`, `SUPABASE_ACCESS_TOKEN` (Account → Access Tokens).
+2. `supabase link` + `supabase db push`: migrations stay the single source of truth.
+3. Point `test:db` at the dev project with test users the tests create and delete.
+4. Write the signed-in e2e flows using `auth.admin.generateLink` instead of a mail catcher: magic link → onboarding → quiz → profile, anonymous merge, export, delete and re-sign-up, API isolation, axe on onboarding and settings.
+5. **[you]** Auth → URL configuration: add `http://localhost:3000/api/auth/callback` and the Vercel URLs. Google and GitHub OAuth apps use the redirect URL `https://<project-ref>.supabase.co/auth/v1/callback`; then set `NEXT_PUBLIC_AUTH_PROVIDERS=google,github`.
+6. **[you]** Vercel env (Preview + Production): the three Supabase vars above. Later, Resend as custom SMTP once the domain is verified.
 
 ## Open questions (answer before the phase that needs them)
 
@@ -115,6 +130,9 @@ Review sessions due after phases 1, 4, 8, 12, 19. **Phases 0–1 reviewed 2026-1
 | 2026-11-01 | `pnpm test` = unit project, `pnpm test:db` = database project (needs `pnpm db:start`); CI runs both, plus a generated-types drift check                                                              | Unit tests stay fast and need no Docker                                                                                                                                                                                                                                                                             |
 | 2026-11-01 | Theme switch items have no colour transition; the Select e2e reads styles via retrying `toHaveCSS`                                                                                                   | Two intermittent e2e failures found while running the full suite: axe caught the theme switch mid-fade at 2.85:1 contrast after mount; the Select test read a stale highlighted option. Verified 65/65 over 5 repeats                                                                                               |
 | 2026-11-01 | Run e2e with the Supabase stack stopped on this machine (or `--workers=1`)                                                                                                                           | With ~6 GB RAM, Docker + `next start` + 4 browser workers ran the Next server out of memory                                                                                                                                                                                                                         |
+| 2026-11-01 | Local Docker stack dropped from the everyday workflow: unstable on this dev machine                                                                                                                  | The Docker engine hung (HTTP 500) after an out-of-memory build. CI still runs the RLS suite in Docker on GitHub's runners, so database tests keep running on every PR                                                                                                                                               |
+| 2026-11-01 | No Supabase project for now; Phase 3b ships with accounts switched off and is verified in that state                                                                                                 | The two free-plan project slots belong to other apps and must not be touched. Your call: carry on building without a database                                                                                                                                                                                       |
+| 2026-11-01 | Signed-out e2e covers sign-in, redirects, 401 on export, the callback's open-redirect guard, a server-graded placement quiz, and a check that expected answers never reach the browser               | Everything that can be proven without a database is proven now; signed-in flows are listed above                                                                                                                                                                                                                    |
 
 ## New dependencies
 

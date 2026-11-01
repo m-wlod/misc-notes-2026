@@ -36,6 +36,8 @@ describe("profileUpdateSchema", () => {
     [{ locale: "de" }],
     [{ goal: "get-rich" }],
     [{ display_name: "x".repeat(61) }],
+    [{ timezone: "Mars/Olympus_Mons" }],
+    [{ timezone: "Europe/Warsaw; drop table" }],
   ])("rejects %j", (input) => {
     expect(profileUpdateSchema.safeParse(input).success).toBe(false);
   });

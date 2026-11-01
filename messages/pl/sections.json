@@ -29,16 +29,6 @@
     "description": "Interaktywne symulacje i notatnik Pythona w przeglądarce.",
     "body": "Tu będą symulacje (błądzenie losowe, kryterium Kelly’ego, przeuczenie backtestu) i notatnik Pythona działający bez instalacji."
   },
-  "profile": {
-    "title": "Profil",
-    "description": "Twoje postępy, seria i osiągnięcia.",
-    "body": "Tu będą postępy w nauce, seria dni, liga i odznaki. Wymaga konta, które pojawi się w etapie 3."
-  },
-  "settings": {
-    "title": "Ustawienia",
-    "description": "Język, motyw, dzienny cel i prywatność.",
-    "body": "Tu będą ustawienia konta, eksport danych i usunięcie konta."
-  },
   "about": {
     "title": "O projekcie",
     "description": "Kto to robi i dlaczego za darmo.",

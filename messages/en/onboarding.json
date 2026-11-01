@@ -1,0 +1,44 @@
+{
+  "metaTitle": "Getting started",
+  "step": "Step {current} of {total}",
+  "goal": {
+    "title": "Why are you here?",
+    "trading": "I want to understand the maths of trading",
+    "interviews": "I’m preparing for quant interviews",
+    "university": "I’m studying for university courses",
+    "curiosity": "Curiosity"
+  },
+  "level": {
+    "title": "How would you rate your level?",
+    "hint": "You can change this later. The placement quiz can help you choose."
+  },
+  "levels": {
+    "1": {
+      "name": "Basics",
+      "who": "After secondary school: percentages, fractions, simple probability"
+    },
+    "2": {
+      "name": "Intermediate",
+      "who": "First year at university: variance, distributions, tests"
+    },
+    "3": { "name": "Hard", "who": "A strong STEM or econometrics student" },
+    "4": { "name": "Extreme", "who": "Graduate level: stochastic calculus" },
+    "5": { "name": "Quant Trader", "who": "Ready for interviews" }
+  },
+  "daily": {
+    "title": "How much time per day?",
+    "minutes": "{minutes} min a day",
+    "hint": "Short but daily works better than long but rare."
+  },
+  "next": "Next",
+  "back": "Back",
+  "finish": "Save",
+  "saving": "Saving…",
+  "done": {
+    "title": "Done",
+    "body": "Want to solve 8 short problems to pick your starting level? It takes about 5 minutes.",
+    "quiz": "Take the quiz",
+    "skip": "Skip and go to my profile"
+  },
+  "error": "We couldn’t save that. Please try again."
+}

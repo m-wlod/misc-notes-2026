@@ -29,16 +29,6 @@
     "description": "Interactive simulations and an in-browser Python notebook.",
     "body": "This will hold simulations (random walks, the Kelly criterion, backtest overfitting) and a Python notebook that runs without installing anything."
   },
-  "profile": {
-    "title": "Profile",
-    "description": "Your progress, streak and achievements.",
-    "body": "This will show learning progress, your streak, league and badges. It needs an account, which arrives in phase 3."
-  },
-  "settings": {
-    "title": "Settings",
-    "description": "Language, theme, daily goal and privacy.",
-    "body": "This will hold account settings, data export and account deletion."
-  },
   "about": {
     "title": "About",
     "description": "Who makes this and why it’s free.",

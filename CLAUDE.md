@@ -80,6 +80,7 @@ Exercise types: numeric (with tolerance), multiple choice, multi-select, symboli
 - No user-facing string hardcoded in components: everything through next-intl messages (`messages/<locale>/<namespace>.json`, typed from Polish; `pnpm i18n:check` keeps locales in sync). The one documented exception is the internal `/styleguide`, whose Polish samples are design specimens. Numbers, dates and percentages use locale formatting; **numeric answer inputs accept both `0,25` and `0.25`.**
 - Row Level Security on every table, no exceptions; service-role key only in server code.
 - **Grading is server-side for every graded exercise**, signed-in or not (signed-out users: IP rate limit, attempts stored in the browser). Answers never reach the client before submission. Only the ungraded inline "check yourself" questions in lessons may grade client-side.
+- Supabase env vars are optional: without them accounts are off (sign-in shows a note) and the app must still build and work. Don't assume a local Docker stack, which is unstable on the dev machine; CI runs the database tests.
 - Next.js 16 `proxy.ts` (not `middleware.ts`) does locale handling and redirects only; authorization is always enforced in RLS and server code.
 - Every feature ships with tests: unit for logic (graders, scoring, streaks), Playwright for user flows.
 - Validate all env vars at startup with Zod (`src/env.ts`).

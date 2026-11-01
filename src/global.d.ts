@@ -1,8 +1,12 @@
 import type { routing } from "./i18n/routing";
+import type account from "../messages/pl/account.json";
+import type auth from "../messages/pl/auth.json";
 import type common from "../messages/pl/common.json";
 import type errors from "../messages/pl/errors.json";
 import type home from "../messages/pl/home.json";
 import type nav from "../messages/pl/nav.json";
+import type onboarding from "../messages/pl/onboarding.json";
+import type placement from "../messages/pl/placement.json";
 import type sections from "../messages/pl/sections.json";
 import type { formats } from "./lib/i18n/format";
 
@@ -17,6 +21,10 @@ declare module "next-intl" {
       home: typeof home;
       sections: typeof sections;
       errors: typeof errors;
+      auth: typeof auth;
+      onboarding: typeof onboarding;
+      placement: typeof placement;
+      account: typeof account;
     };
     Formats: typeof formats;
   }

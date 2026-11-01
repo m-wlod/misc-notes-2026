@@ -10,7 +10,7 @@ A free web app that teaches the mathematics, probability, statistics and quantit
 
 - Node 24 (`.nvmrc`)
 - pnpm 12 via corepack. On Windows, `corepack enable pnpm` needs admin rights to write into `C:\Program Files\nodejs`. Without admin rights, use `corepack enable pnpm --install-directory "$(npm config get prefix)"`.
-- Docker Desktop, running, for the local Supabase stack.
+- No database is needed to run the app: without Supabase env vars, accounts are switched off and everything else works.
 - Python 3.12, for content answer verification (from Phase 7).
 
 ## Getting started
@@ -18,7 +18,6 @@ A free web app that teaches the mathematics, probability, statistics and quantit
 ```sh
 pnpm install
 cp .env.example .env.local      # fill in what you have; everything is optional in Phase 0
-pnpm db:start                   # local Supabase; Studio on :54323, mail catcher on :54324
 pnpm dev                        # http://localhost:3000
 ```
 
@@ -26,7 +25,7 @@ pnpm dev                        # http://localhost:3000
 
 - Schema lives in `supabase/migrations/` (one file per area). RLS is on for every table; scores, XP and entitlements are written only by server code.
 - After changing a migration: `pnpm db:reset` (re-applies everything + `supabase/seed.sql`), then `pnpm db:types` and commit `src/lib/db/database.types.ts` (CI fails if it is stale).
-- `pnpm test:db` runs the RLS and account tests against the local stack. A new table must be added to `supabase/tests/rls.test.ts` or the suite fails.
+- `pnpm test:db` runs the RLS and account tests against a Supabase database. CI runs it in Docker on every PR. The local Docker stack is optional and unstable on low-memory machines; a cloud dev project is planned (see docs/PROGRESS.md). A new table must be added to `supabase/tests/rls.test.ts` or the suite fails.
 - Server code uses `src/lib/db/server.ts` (acts as the signed-in user). `src/lib/db/admin.ts` uses the secret key and bypasses RLS: only for server-owned writes, after checking the user.
 
 ## Routing and translations
@@ -38,16 +37,16 @@ pnpm dev                        # http://localhost:3000
 
 ## Scripts
 
-| Script                                                | What it does                                                                   |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `pnpm dev` / `build` / `start`                        | Next.js dev server, production build, production server                        |
-| `pnpm lint` / `lint:fix`                              | ESLint (zero warnings allowed)                                                 |
-| `pnpm format` / `format:check`                        | Prettier                                                                       |
-| `pnpm typecheck`                                      | Route type generation + `tsc --noEmit`                                         |
-| `pnpm i18n:check`                                     | Key, placeholder and file parity between `messages/pl` and `messages/en`       |
-| `pnpm test` / `test:watch`                            | Vitest unit tests                                                              |
-| `pnpm test:db`                                        | RLS and account tests against the local Supabase stack (`pnpm db:start` first) |
-| `pnpm test:e2e`                                       | Playwright against the production build (run `pnpm build` first)               |
-| `pnpm db:start` / `db:stop` / `db:reset` / `db:types` | Local Supabase stack, reset with seed, generate TS types                       |
+| Script                         | What it does                                                               |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| `pnpm dev` / `build` / `start` | Next.js dev server, production build, production server                    |
+| `pnpm lint` / `lint:fix`       | ESLint (zero warnings allowed)                                             |
+| `pnpm format` / `format:check` | Prettier                                                                   |
+| `pnpm typecheck`               | Route type generation + `tsc --noEmit`                                     |
+| `pnpm i18n:check`              | Key, placeholder and file parity between `messages/pl` and `messages/en`   |
+| `pnpm test` / `test:watch`     | Vitest unit tests                                                          |
+| `pnpm test:db`                 | RLS and account tests against a Supabase database (CI runs them in Docker) |
+| `pnpm test:e2e`                | Playwright against the production build (run `pnpm build` first)           |
+| `pnpm db:types`                | Regenerate TS types from the migrations (CI fails if they are stale)       |
 
 A pre-commit hook runs ESLint and Prettier on staged files.
