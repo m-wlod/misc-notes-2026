@@ -45,7 +45,20 @@ const nodeClass: Record<NodeState | "unknown", { circle: string; text: string }>
   mastered: { circle: "fill-accent stroke-accent", text: "fill-on-accent" },
 };
 
-const short = (title: string) => (title.length > 22 ? `${title.slice(0, 21).trimEnd()}…` : title);
+/**
+ * Wrap a title onto at most 3 short lines. The whole title stays visible, so the link's
+ * accessible name can start with exactly what is on screen (WCAG 2.5.3 label in name).
+ */
+export function wrapTitle(title: string, max = 22): string[] {
+  const lines: string[] = [];
+  for (const word of title.split(" ")) {
+    const last = lines.at(-1);
+    if (last !== undefined && `${last} ${word}`.length <= max)
+      lines[lines.length - 1] = `${last} ${word}`;
+    else lines.push(word);
+  }
+  return lines;
+}
 
 /**
  * The prerequisite graph as SVG (layout computed on the server). Pan by dragging or with
@@ -346,6 +359,7 @@ export function CurriculumMap({ nodes, edges, width, height, tracks }: Props) {
                     x={n.x}
                     y={n.y + 4}
                     textAnchor="middle"
+                    aria-hidden="true"
                     className={cx("num text-2xs", style.text)}
                   >
                     {n.number.split(".")[0]}
@@ -356,7 +370,11 @@ export function CurriculumMap({ nodes, edges, width, height, tracks }: Props) {
                     textAnchor="middle"
                     className="fill-ink font-sans text-2xs group-hover:underline"
                   >
-                    {short(n.title)}
+                    {wrapTitle(n.title).map((line, i) => (
+                      <tspan key={line} x={n.x} dy={i === 0 ? 0 : 12}>
+                        {line}
+                      </tspan>
+                    ))}
                   </text>
                 </a>
               );

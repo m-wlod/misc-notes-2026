@@ -49,7 +49,7 @@
     "reset": "Pokaż całość",
     "help": "Przeciągnij, aby przesunąć. Kółko myszy albo klawisze + i − przybliżają, strzałki przesuwają.",
     "canvas": "Mapa wymagań: {count, plural, one {# lekcja} few {# lekcje} many {# lekcji} other {# lekcji}}",
-    "nodeLabel": "{number} {title}, {state}",
+    "nodeLabel": "{title}, lekcja {number}, {state}",
     "showing": "Wyróżnione: {count} z {total}"
   }
 }

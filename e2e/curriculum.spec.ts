@@ -180,7 +180,7 @@ test.describe("prerequisite map", () => {
       "href",
       "/pl/nauka/wartosc-oczekiwana/zaklady#kelly-criterion",
     );
-    await expect(kelly).toHaveAttribute("aria-label", /^3\.2\.3 Kryterium Kelly'ego, /);
+    await expect(kelly).toHaveAttribute("aria-label", /^Kryterium Kelly'ego, lekcja 3\.2\.3, /);
   });
 
   test("filters dim the lessons outside the chosen track and levels", async ({ page }) => {

@@ -47,3 +47,14 @@ describe("layoutDag", () => {
     expect(layout.edges).toEqual([]);
   });
 });
+
+describe("wrapTitle (map labels)", () => {
+  it("wraps at word boundaries and keeps every word", async () => {
+    const { wrapTitle } = await import("./curriculum-map");
+    const title = "Dlaczego cykle rynkowe to zwykle szum";
+    const lines = wrapTitle(title);
+    expect(lines.join(" ")).toBe(title);
+    expect(lines.every((l) => l.length <= 22)).toBe(true);
+    expect(wrapTitle("Ruch Browna")).toEqual(["Ruch Browna"]);
+  });
+});
