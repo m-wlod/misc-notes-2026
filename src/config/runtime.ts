@@ -22,6 +22,13 @@ export function isStyleguideEnabled(env: DeployEnv): boolean {
   );
 }
 
+/** Internal tools hidden by the same gate: the style guide and everything under /dev. */
+const INTERNAL_PATH = /^\/(?:(?:pl|en)\/)?(?:styleguide|dev)(?:\/|$)/;
+
+export function isInternalPath(pathname: string): boolean {
+  return INTERNAL_PATH.test(pathname);
+}
+
 type UrlEnv = {
   NEXT_PUBLIC_SITE_URL?: string | undefined;
   VERCEL_ENV?: "development" | "preview" | "production" | undefined;

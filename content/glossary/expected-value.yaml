@@ -1,0 +1,10 @@
+# Sample term (Phases 4–6): replaced by reviewed content in Phase 7.
+id: expected-value
+sample: true
+name:
+  pl: wartość oczekiwana
+  en: expected value
+definition:
+  pl: Średni wynik, jakiego można się spodziewać przy wielokrotnym powtarzaniu losowego doświadczenia. Każdy wynik ważymy jego prawdopodobieństwem.
+  en: The average outcome you would expect if a random experiment were repeated many times, weighting each outcome by its probability.
+lesson: przyklad-wartosc-oczekiwana

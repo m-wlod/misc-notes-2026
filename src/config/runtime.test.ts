@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isStyleguideEnabled, resolveSiteUrl } from "./runtime";
+import { isInternalPath, isStyleguideEnabled, resolveSiteUrl } from "./runtime";
 
 describe("isStyleguideEnabled", () => {
   it.each([
@@ -45,4 +45,24 @@ describe("resolveSiteUrl", () => {
   it("falls back to localhost only when nothing is known", () => {
     expect(resolveSiteUrl({}).href).toBe("http://localhost:3000/");
   });
+});
+
+describe("isInternalPath", () => {
+  it.each([
+    "/pl/styleguide",
+    "/en/styleguide/",
+    "/styleguide",
+    "/pl/dev/content-preview",
+    "/en/dev",
+    "/dev/anything",
+  ])("hides %s", (path) => {
+    expect(isInternalPath(path)).toBe(true);
+  });
+
+  it.each(["/pl", "/pl/nauka", "/en/developers", "/pl/styleguides", "/pl/debunk", "/pl/x/dev"])(
+    "leaves %s public",
+    (path) => {
+      expect(isInternalPath(path)).toBe(false);
+    },
+  );
 });

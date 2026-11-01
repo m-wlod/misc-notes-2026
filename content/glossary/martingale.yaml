@@ -1,0 +1,10 @@
+# Sample term (Phases 4–6): replaced by reviewed content in Phase 7.
+id: martingale
+sample: true
+name:
+  pl: martyngał (podwajanie stawki)
+  en: martingale (doubling strategy)
+definition:
+  pl: System obstawiania, w którym po każdej przegranej podwaja się stawkę. Nie zmienia wartości oczekiwanej, a przy grze z ujemnym oczekiwaniem zamienia częste małe zyski w rzadkie, duże straty.
+  en: A betting system that doubles the stake after every loss. It does not change the expected value; in a game with negative expectation it trades frequent small wins for rare, large losses.
+lesson: przyklad-wartosc-oczekiwana
