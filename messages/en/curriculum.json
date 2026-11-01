@@ -1,0 +1,38 @@
+{
+  "views": {
+    "label": "Curriculum view",
+    "path": "Path",
+    "textbook": "Textbook"
+  },
+  "path": {
+    "title": "Learning path",
+    "lead": "Thirteen tracks, from percentages to option pricing. You can open any lesson right away; “recommended later” only suggests what is worth knowing first.",
+    "progressNote": "Progress is saved in this browser. Once accounts are enabled, it will move to your account."
+  },
+  "textbook": {
+    "title": "Textbook",
+    "lead": "The whole curriculum as a table of contents, to read in order."
+  },
+  "state": {
+    "locked": "recommended later",
+    "available": "available",
+    "in_progress": "in progress",
+    "done": "done",
+    "mastered": "mastered"
+  },
+  "stub": "in preparation",
+  "recommendedAfter": "Recommended after: {lessons}",
+  "noPrerequisites": "No prerequisites.",
+  "lesson": "Lesson {number}",
+  "level": "Level {level}",
+  "levels": "Levels {min}–{max}",
+  "minutes": "{minutes} min",
+  "duration": "{hours, plural, =0 {} other {# h }}{minutes} min",
+  "lessonCount": "{count, plural, one {# lesson} other {# lessons}}",
+  "progress": "Done: {done} of {total}",
+  "track": "Track {number}",
+  "module": "Module {number}",
+  "openTrack": "Open track",
+  "allTracks": "Whole path",
+  "stubNote": "Lessons in preparation already have their place in the curriculum, level and prerequisites. Content will arrive gradually."
+}
