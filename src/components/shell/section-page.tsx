@@ -15,8 +15,6 @@ export const SECTIONS = {
   debunk: { href: "/debunk", phase: 16 },
   glossary: { href: "/glossary", phase: 4 },
   lab: { href: "/lab", phase: 12 },
-  profile: { href: "/profile", phase: 3 },
-  settings: { href: "/settings", phase: 3 },
   about: { href: "/about", phase: 19 },
   privacy: { href: "/privacy", phase: 21 },
   terms: { href: "/terms", phase: 21 },

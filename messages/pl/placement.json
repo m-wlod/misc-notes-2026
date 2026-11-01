@@ -1,0 +1,32 @@
+{
+  "metaTitle": "Test poziomujący",
+  "lead": "8 zadań, od podstaw do poziomu 4. Odpowiadaj liczbą: działa przecinek i kropka, ułamki (3/8) i procenty (25%).",
+  "question": "Zadanie {number}",
+  "answer": "Odpowiedź",
+  "submit": "Sprawdź odpowiedzi",
+  "checking": "Sprawdzanie…",
+  "invalid": {
+    "ambiguous": "Niejednoznaczny zapis. Wpisz liczbę bez separatora tysięcy, np. 1000 albo 1,5.",
+    "invalid": "Nie rozpoznaję tej liczby. Przykłady: 0,25 · 12,5% · 3/8 · 1e-3.",
+    "division-by-zero": "Dzielenie przez zero."
+  },
+  "questions": {
+    "drawdown-recovery": "Kurs akcji spada o 50%. O ile procent musi potem wzrosnąć, żeby wrócić do poziomu sprzed spadku? Podaj wynik w procentach.",
+    "die-expected-value": "Rzucasz uczciwą kostką sześcienną. Ile wynosi wartość oczekiwana liczby oczek?",
+    "three-losses": "Strategia wygrywa 55% transakcji, a wyniki kolejnych transakcji są niezależne. Jakie jest prawdopodobieństwo, że trzy kolejne transakcje skończą się stratą? Podaj wynik z dokładnością do 0,001.",
+    "variance-of-difference": "Zmienne losowe X i Y są niezależne, Var(X) = 4 i Var(Y) = 9. Ile wynosi Var(X − Y)?",
+    "kelly-even-money": "Zakład wypłaca 1 do 1 (wygrana równa się stawce), a prawdopodobieństwo wygranej wynosi 60%. Jaką część kapitału stawia kryterium Kelly’ego?",
+    "sharpe-t-stat": "Zmierzony roczny wskaźnik Sharpe’a strategii wynosi 1,0 na podstawie 4 lat danych (zwroty roczne są niezależne). Ile w przybliżeniu wynosi statystyka t dla hipotezy, że prawdziwy wskaźnik Sharpe’a równa się zero?",
+    "gbm-log-return": "Cena akcji porusza się zgodnie z geometrycznym ruchem Browna z dryfem μ = 10% i zmiennością σ = 20% rocznie. Ile wynosi oczekiwana roczna stopa logarytmiczna, E[ln(S₁/S₀)]? Podaj ułamek dziesiętny albo procent.",
+    "lognormal-mean": "Zmienna Z ma standardowy rozkład normalny. Ile wynosi E[eᶻ]? Podaj wynik z dokładnością do 0,001."
+  },
+  "result": {
+    "title": "Twój wynik",
+    "score": "Poprawne odpowiedzi: {correct} z {total}.",
+    "suggested": "Proponowany poziom startowy: {level}.",
+    "correct": "dobrze",
+    "wrong": "źle",
+    "toProfile": "Przejdź do profilu"
+  },
+  "error": "Nie udało się sprawdzić odpowiedzi. Spróbuj ponownie."
+}

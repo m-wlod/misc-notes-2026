@@ -12,8 +12,6 @@ const ROUTES = [
   ["/pl/debunk", "/en/debunk"],
   ["/pl/slowniczek", "/en/glossary"],
   ["/pl/laboratorium", "/en/lab"],
-  ["/pl/profil", "/en/profile"],
-  ["/pl/ustawienia", "/en/settings"],
   ["/pl/o-projekcie", "/en/about"],
   ["/pl/prywatnosc", "/en/privacy"],
   ["/pl/regulamin", "/en/terms"],

@@ -1,0 +1,38 @@
+{
+  "metaTitle": "Pierwsze kroki",
+  "step": "Krok {current} z {total}",
+  "goal": {
+    "title": "Po co tu jesteś?",
+    "trading": "Chcę rozumieć matematykę tradingu",
+    "interviews": "Przygotowuję się do rozmów na stanowisko quanta",
+    "university": "Uczę się do zajęć na studiach",
+    "curiosity": "Z ciekawości"
+  },
+  "level": {
+    "title": "Jak oceniasz swój poziom?",
+    "hint": "Możesz to zmienić później. Test poziomujący pomoże wybrać."
+  },
+  "levels": {
+    "1": { "name": "Podstawy", "who": "Po liceum: procenty, ułamki, proste prawdopodobieństwo" },
+    "2": { "name": "Średnio", "who": "Pierwszy rok studiów: wariancja, rozkłady, testy" },
+    "3": { "name": "Trudno", "who": "Mocny student kierunku ścisłego lub ekonometrii" },
+    "4": { "name": "Ekstremalnie", "who": "Poziom magisterski: rachunek stochastyczny" },
+    "5": { "name": "Quant Trader", "who": "Gotowość do rozmów rekrutacyjnych" }
+  },
+  "daily": {
+    "title": "Ile czasu dziennie?",
+    "minutes": "{minutes} min dziennie",
+    "hint": "Krótko, ale codziennie, działa lepiej niż rzadko i długo."
+  },
+  "next": "Dalej",
+  "back": "Wstecz",
+  "finish": "Zapisz",
+  "saving": "Zapisywanie…",
+  "done": {
+    "title": "Gotowe",
+    "body": "Chcesz rozwiązać 8 krótkich zadań, żeby dobrać poziom startowy? Zajmie to około 5 minut.",
+    "quiz": "Rozwiąż test",
+    "skip": "Pomiń i przejdź do profilu"
+  },
+  "error": "Nie udało się zapisać. Spróbuj ponownie."
+}

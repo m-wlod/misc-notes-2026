@@ -4,7 +4,17 @@ import type { Locale } from "./routing";
  * Message files are split by feature (messages/<locale>/<namespace>.json) and merged
  * here. Polish is the source of truth for types; `pnpm i18n:check` keeps English in sync.
  */
-export const NAMESPACES = ["common", "nav", "home", "sections", "errors"] as const;
+export const NAMESPACES = [
+  "common",
+  "nav",
+  "home",
+  "sections",
+  "errors",
+  "auth",
+  "onboarding",
+  "placement",
+  "account",
+] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 
 export async function loadMessages(locale: Locale) {
