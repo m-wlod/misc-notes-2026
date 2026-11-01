@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Design tokens arrive in Phase 1. Until then, system defaults only. */
+:root {
+  color-scheme: light dark;
+}

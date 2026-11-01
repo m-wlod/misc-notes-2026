@@ -2,6 +2,8 @@
 
 Project constitution. Full phased plan: docs/BUILD_PLAN.md. Progress and decisions: docs/PROGRESS.md.
 
+Next.js 16.4 differs from older training data: before writing Next.js code, read the relevant guide in `node_modules/next/dist/docs/` (see AGENTS.md). Toolchain pins (TypeScript 6.0, ESLint 9) and why are in PROGRESS.md.
+
 ## Product
 
 Working name: `APP_NAME` (placeholder in `src/config/site.ts`, change in one place). A free web app that teaches the real mathematics, probability, statistics and quantitative finance behind trading, and shows with proofs and simulations why most retail trading "systems" and guru courses fail. It is the product side of a TikTok/YouTube brand (tone inspired by Roman Paolucci / Quant Guild): rigorous, calm, slightly ironic, never hype.
@@ -14,7 +16,7 @@ Working name: `APP_NAME` (placeholder in `src/config/site.ts`, change in one pla
 ## Non-negotiable principles
 
 1. **Correctness over volume.** Every formula, number and claim must be verifiable. Numeric answers are checked by a script, not by eye.
-2. **Layered explanations.** Every concept exists at two depths: *Po ludzku* (plain-language intuition) and *Podręcznik* (formal textbook). The reader toggles between them.
+2. **Layered explanations.** Every concept exists at two depths: _Po ludzku_ (plain-language intuition) and _Podręcznik_ (formal textbook). The reader toggles between them.
 3. **Intuition → formalism → simulation → code → exercise.** This is the order of every lesson.
 4. **Anti-guru tone, not anti-person.** Debunk claims with math. Never insult, never name private individuals, never make factual allegations about a person.
 5. **No AI slop** in design, copy or code (rules below).
@@ -22,24 +24,24 @@ Working name: `APP_NAME` (placeholder in `src/config/site.ts`, change in one pla
 
 ## Tech stack (use latest stable versions at build time)
 
-| Concern | Choice | Notes |
-| --- | --- | --- |
-| Framework | Next.js (App Router), React, TypeScript strict | Server components by default |
-| Styling | Tailwind CSS + CSS variables for tokens | Radix primitives for a11y behaviour; no stock shadcn look |
-| Database / auth / storage | Supabase (Postgres, Auth, Storage, RLS), EU region | Migrations via Supabase CLI, types generated |
-| Validation | Zod everywhere (env, forms, content schemas, API I/O) |  |
-| Content | MDX in git, compiled by a typed content layer (Velite or Content Collections) | Content-as-code: versioned, reviewable |
-| Math | remark-math + rehype-katex; Compute Engine (CortexJS) for symbolic answer checking | Server-side KaTeX render |
-| Charts / simulations | D3 (scales, shapes) + React, Canvas for heavy paths | No chart-lib default styling |
-| In-browser Python | Pyodide in a Web Worker; CodeMirror 6 editor | numpy, pandas, scipy, statsmodels |
-| AI grading | Anthropic API (model from env `AI_GRADER_MODEL`), server-only | Structured JSON output |
-| Rate limiting / cache | Upstash Redis | Per-user and per-IP |
-| i18n | next-intl, routes `/pl/...`, `/en/...` | Polish is default |
-| Email | Resend + React Email |  |
-| Analytics / errors | PostHog (EU cloud), Sentry | Consent-gated |
-| Tests | Vitest, Testing Library, Playwright |  |
-| Tooling | pnpm, ESLint, Prettier, Husky + lint-staged, GitHub Actions |  |
-| Hosting | Vercel | Preview deploys per PR |
+| Concern                   | Choice                                                                             | Notes                                                     |
+| ------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Framework                 | Next.js (App Router), React, TypeScript strict                                     | Server components by default                              |
+| Styling                   | Tailwind CSS + CSS variables for tokens                                            | Radix primitives for a11y behaviour; no stock shadcn look |
+| Database / auth / storage | Supabase (Postgres, Auth, Storage, RLS), EU region                                 | Migrations via Supabase CLI, types generated              |
+| Validation                | Zod everywhere (env, forms, content schemas, API I/O)                              |                                                           |
+| Content                   | MDX in git, compiled by a typed content layer (Velite or Content Collections)      | Content-as-code: versioned, reviewable                    |
+| Math                      | remark-math + rehype-katex; Compute Engine (CortexJS) for symbolic answer checking | Server-side KaTeX render                                  |
+| Charts / simulations      | D3 (scales, shapes) + React, Canvas for heavy paths                                | No chart-lib default styling                              |
+| In-browser Python         | Pyodide in a Web Worker; CodeMirror 6 editor                                       | numpy, pandas, scipy, statsmodels                         |
+| AI grading                | Anthropic API (model from env `AI_GRADER_MODEL`), server-only                      | Structured JSON output                                    |
+| Rate limiting / cache     | Upstash Redis                                                                      | Per-user and per-IP                                       |
+| i18n                      | next-intl, routes `/pl/...`, `/en/...`                                             | Polish is default                                         |
+| Email                     | Resend + React Email                                                               |                                                           |
+| Analytics / errors        | PostHog (EU cloud), Sentry                                                         | Consent-gated                                             |
+| Tests                     | Vitest, Testing Library, Playwright                                                |                                                           |
+| Tooling                   | pnpm, ESLint, Prettier, Husky + lint-staged, GitHub Actions                        |                                                           |
+| Hosting                   | Vercel                                                                             | Preview deploys per PR                                    |
 
 ## Design system: "research notebook meets trading desk"
 
@@ -62,13 +64,13 @@ The app should feel like a well-typeset quant research note and a terminal, not 
 
 ## The 5 levels
 
-| Level | Polish label | Who it's for | Example task |
-| --- | --- | --- | --- |
-| 1 | Podstawy | Anyone after high school | Expected value of a die roll; percentage loss needed to recover from a 50% drawdown |
-| 2 | Średnio | First-year university | Variance of a sum; probability a strategy with 55% win rate has 6 losses in a row in 100 trades |
-| 3 | Trudno | Strong STEM/econometrics student | Derive Kelly fraction; test whether a backtest Sharpe is significant |
-| 4 | Ekstremalnie | Graduate level | Itô's lemma on GBM; Fourier transform of a price series; bias of overlapping returns |
-| 5 | Quant Trader | Interview-ready | Market-making games, brainteasers, expected-value puzzles under time pressure, open "how would you model X" questions |
+| Level | Polish label | Who it's for                     | Example task                                                                                                          |
+| ----- | ------------ | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| 1     | Podstawy     | Anyone after high school         | Expected value of a die roll; percentage loss needed to recover from a 50% drawdown                                   |
+| 2     | Średnio      | First-year university            | Variance of a sum; probability a strategy with 55% win rate has 6 losses in a row in 100 trades                       |
+| 3     | Trudno       | Strong STEM/econometrics student | Derive Kelly fraction; test whether a backtest Sharpe is significant                                                  |
+| 4     | Ekstremalnie | Graduate level                   | Itô's lemma on GBM; Fourier transform of a price series; bias of overlapping returns                                  |
+| 5     | Quant Trader | Interview-ready                  | Market-making games, brainteasers, expected-value puzzles under time pressure, open "how would you model X" questions |
 
 Exercise types: numeric (with tolerance), multiple choice, multi-select, symbolic expression, estimation/Fermi (log-error scoring), ordering, interactive (move a slider to a target), Python code (hidden tests), open-ended (AI-graded with rubric), interview brainteaser (open + hints + follow-up).
 
