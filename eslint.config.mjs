@@ -86,6 +86,18 @@ export default defineConfig([
     files: ["*.config.{js,mjs,ts,mts}", "eslint.config.mjs"],
     ...tseslint.configs.disableTypeChecked,
   },
+  {
+    // RLS tests address tables dynamically by name, so the typed client can't follow;
+    // relax only the "unsafe any" family there. Still type-checked.
+    files: ["supabase/tests/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+    },
+  },
   prettier,
   globalIgnores([
     ".next/**",
@@ -94,7 +106,8 @@ export default defineConfig([
     "coverage/**",
     "playwright-report/**",
     "test-results/**",
-    "supabase/**",
+    "supabase/functions/**",
+    "supabase/.temp/**",
     "next-env.d.ts",
     "src/lib/db/database.types.ts",
   ]),

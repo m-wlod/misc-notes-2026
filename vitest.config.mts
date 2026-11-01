@@ -14,7 +14,26 @@ export default defineConfig({
     // Coverage is configured in Phase 20, when coverage targets are set.
     environment: "node",
     globals: false,
-    setupFiles: ["./vitest.setup.ts"],
-    include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          setupFiles: ["./vitest.setup.ts"],
+          include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
+        },
+      },
+      {
+        // Needs the local Supabase stack: `pnpm db:start && pnpm test:db`.
+        extends: true,
+        test: {
+          name: "db",
+          include: ["supabase/tests/**/*.test.ts"],
+          testTimeout: 30_000,
+          hookTimeout: 60_000,
+          fileParallelism: false,
+        },
+      },
+    ],
   },
 });

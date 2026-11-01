@@ -16,6 +16,8 @@ const THEMES = ["system", "light", "dark"] as const;
 export function ThemeSwitch({ labels }: ThemeSwitchProps) {
   const { theme, setTheme } = useTheme();
   // The stored theme is only known on the client; render with nothing selected until mounted.
+  // No colour transition on the items: the selection appears right after mount, and an
+  // animated change briefly drops below AA contrast (caught by axe in e2e).
   const mounted = useSyncExternalStore(
     subscribe,
     () => true,
@@ -34,7 +36,7 @@ export function ThemeSwitch({ labels }: ThemeSwitchProps) {
         <RadioGroup.Item
           key={value}
           value={value}
-          className="px-3 py-1.5 text-sm text-ink-muted transition-[color] hover:text-ink data-[state=checked]:bg-ink data-[state=checked]:text-bg"
+          className="px-3 py-1.5 text-sm text-ink-muted hover:text-ink data-[state=checked]:bg-ink data-[state=checked]:text-bg"
         >
           {labels[value]}
         </RadioGroup.Item>

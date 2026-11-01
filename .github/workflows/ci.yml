@@ -71,3 +71,42 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  db:
+    # Migrations, RLS and account tests against a real local Supabase stack.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm (corepack)
+        run: corepack enable pnpm
+
+      - name: Get pnpm store path
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Start Supabase (Postgres, auth, REST, gateway; migrations + seed applied)
+        run: pnpm exec supabase start -x realtime,storage-api,imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor
+
+      - name: Generated database types are up to date
+        run: |
+          pnpm db:types
+          git diff --exit-code -- src/lib/db/database.types.ts || {
+            echo "::error::src/lib/db/database.types.ts is stale. Run 'pnpm db:types' and commit it."
+            exit 1
+          }
+
+      - run: pnpm test:db
