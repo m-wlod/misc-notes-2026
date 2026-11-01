@@ -7,6 +7,7 @@ import { DataRule, StatTicker } from "@/components/content/data";
 import { EquationBlock } from "@/components/content/equation-block";
 import { FigureFrame } from "@/components/content/figure-frame";
 import { MarginNote, ReadingColumn } from "@/components/content/margin-note";
+import { VideoEmbed } from "@/components/content/video-embed";
 import { WalkChart } from "@/components/content/walk-chart";
 import { ThemeControl } from "@/components/shell/controls";
 import { Button } from "@/components/ui/button";
@@ -250,6 +251,13 @@ function Styleguide() {
             </p>
           </Callout>
         </ReadingColumn>
+        <div className="mt-8 max-w-(--measure)">
+          {/* Click-to-load video facade (Phase 6b). Placeholder id: nothing loads until play. */}
+          <VideoEmbed
+            url="https://www.youtube.com/watch?v=aaaaaaaaaaa"
+            title="Przykładowe wideo (demonstracja komponentu)"
+          />
+        </div>
         <div className="mt-10 flex flex-wrap items-center gap-6">
           <StatTicker label="Seria" value="12" unit="dni" />
           <StatTicker label="XP" value="1 240" />

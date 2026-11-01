@@ -160,6 +160,12 @@
     display: none;
   }
 
+  /* Personal highlights (CSS Custom Highlight API, src/features/notes/highlight-layer.tsx). */
+  ::highlight(qla-highlight) {
+    background-color: color-mix(in srgb, var(--accent) 28%, transparent);
+    color: inherit;
+  }
+
   /* Comments in code read as asides. */
   .shiki span[style*="--code-token-comment"] {
     font-style: italic;

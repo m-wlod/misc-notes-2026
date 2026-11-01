@@ -20,6 +20,7 @@ export const LEGAL_NAV = [
 
 export const MORE_NAV = [
   { key: "textbook", href: "/textbook" },
+  { key: "notes", href: "/notes" },
   { key: "glossary", href: "/glossary" },
   { key: "lab", href: "/lab" },
   { key: "about", href: "/about" },

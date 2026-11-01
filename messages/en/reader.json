@@ -24,5 +24,12 @@
     "answer": "Answer: {answer}",
     "yourAnswer": "Your answer",
     "note": "Nothing is recorded: this is just for you."
+  },
+  "video": {
+    "play": "Play: {title}",
+    "consent": "Clicking loads the {platform} player, which may set cookies.",
+    "openOn": "Open on {platform}",
+    "related": "Related material",
+    "videos": "Videos"
   }
 }

@@ -1,8 +1,11 @@
 import { getTranslations } from "next-intl/server";
 
+import { VideoEmbed } from "@/components/content/video-embed";
 import { LessonView } from "@/features/content/lesson-view";
 import type { ResolvedLesson } from "@/features/content/lessons";
 import { lessonHref, type LessonNode, type LessonPlace } from "@/features/curriculum";
+import { HighlightLayer } from "@/features/notes/highlight-layer";
+import { BookmarkButton, LessonNotes } from "@/features/notes/lesson-notes";
 import { Link } from "@/i18n/navigation";
 
 import {
@@ -70,26 +73,31 @@ export async function Reader({
           ) : null}
         </div>
         <div className="min-w-0">
-          {place ? (
-            <p className="mb-6 font-sans text-sm text-ink-muted print:hidden">
-              <Link
-                href={{ pathname: "/learn/[track]", params: { track: place.track.slug } }}
-                className="underline-offset-2 hover:underline"
-              >
-                {place.track.name}
-              </Link>
-              {" › "}
-              <Link
-                href={{
-                  pathname: "/learn/[track]/[module]",
-                  params: { track: place.track.slug, module: place.module.slug },
-                }}
-                className="underline-offset-2 hover:underline"
-              >
-                {place.module.name}
-              </Link>
-            </p>
-          ) : null}
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            {place ? (
+              <p className="font-sans text-sm text-ink-muted print:hidden">
+                <Link
+                  href={{ pathname: "/learn/[track]", params: { track: place.track.slug } }}
+                  className="underline-offset-2 hover:underline"
+                >
+                  {place.track.name}
+                </Link>
+                {" › "}
+                <Link
+                  href={{
+                    pathname: "/learn/[track]/[module]",
+                    params: { track: place.track.slug, module: place.module.slug },
+                  }}
+                  className="underline-offset-2 hover:underline"
+                >
+                  {place.module.name}
+                </Link>
+              </p>
+            ) : (
+              <span />
+            )}
+            {lesson.isStub ? null : <BookmarkButton lessonId={lesson.id} />}
+          </div>
           {toc.length > 0 ? (
             <ReaderToc items={toc} minutes={lesson.estimatedMinutes} variant="top" />
           ) : null}
@@ -98,6 +106,25 @@ export async function Reader({
           <div id="lesson-body">
             <LessonView lesson={lesson} fallback={fallback} />
           </div>
+          {lesson.isStub ? null : <HighlightLayer lessonId={lesson.id} rootId="lesson-body" />}
+
+          {lesson.relatedVideos.length > 0 ? (
+            <section
+              aria-labelledby="related-title"
+              className="mt-12 max-w-(--measure) border-t border-rule pt-6 print:hidden"
+            >
+              <h2 id="related-title" className="mb-2 font-sans text-lg font-semibold text-ink">
+                {t("video.related")}
+              </h2>
+              {/* Exercises (Phase 8) and Debunk entries (Phase 16) join this panel. */}
+              <h3 className="font-sans text-sm font-semibold text-ink-muted">
+                {t("video.videos")}
+              </h3>
+              {lesson.relatedVideos.map((v) => (
+                <VideoEmbed key={v.url} url={v.url} title={v.title} />
+              ))}
+            </section>
+          ) : null}
 
           <section
             aria-labelledby="prereq-title"
@@ -134,6 +161,7 @@ export async function Reader({
             )}
           </section>
 
+          {lesson.isStub ? null : <LessonNotes lessonId={lesson.id} />}
           {lesson.isStub ? null : <CompleteLesson lessonId={lesson.id} next={nextCard} />}
 
           <nav

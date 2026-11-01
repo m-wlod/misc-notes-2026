@@ -1,0 +1,21 @@
+{
+  "title": "Twoje notatki",
+  "noteLabel": "Notatka do tej lekcji",
+  "notePlaceholder": "Co warto zapamiętać, co jest niejasne…",
+  "saved": "Zapisane w tej przeglądarce.",
+  "highlights": "Zaznaczenia",
+  "noHighlights": "Zaznacz fragment tekstu lekcji, aby go tu zapamiętać.",
+  "highlight": "Zaznacz",
+  "removeHighlight": "Usuń zaznaczenie: {text}",
+  "bookmark": "Dodaj zakładkę",
+  "unbookmark": "Usuń zakładkę",
+  "page": {
+    "title": "Moje notatki",
+    "lead": "Notatki, zaznaczenia i zakładki ze wszystkich lekcji.",
+    "privacy": "Wszystko jest zapisane tylko w tej przeglądarce. Po włączeniu kont przeniesiemy to na Twoje konto.",
+    "empty": "Nic tu jeszcze nie ma. W lekcji zaznacz fragment tekstu, dodaj notatkę albo zakładkę.",
+    "bookmarked": "Zakładka",
+    "highlightCount": "{count, plural, one {# zaznaczenie} few {# zaznaczenia} many {# zaznaczeń} other {# zaznaczenia}}",
+    "open": "Otwórz lekcję"
+  }
+}

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/mini";
 
 import {
   emptyLocalProgress,
@@ -43,8 +43,8 @@ export const READING_KEY = "qla:reading:v1";
 export const readingSchema = z.object({
   version: z.literal(1),
   lessons: z.record(
-    z.string().max(120),
-    z.object({ section: z.string().max(200), updatedAt: z.iso.datetime() }),
+    z.string().check(z.maxLength(120)),
+    z.object({ section: z.string().check(z.maxLength(200)), updatedAt: z.iso.datetime() }),
   ),
 });
 export type ReadingState = z.infer<typeof readingSchema>;
