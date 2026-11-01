@@ -8,6 +8,7 @@ import { EquationBlock } from "@/components/content/equation-block";
 import { FigureFrame } from "@/components/content/figure-frame";
 import { MarginNote, ReadingColumn } from "@/components/content/margin-note";
 import { WalkChart } from "@/components/content/walk-chart";
+import { ThemeControl } from "@/components/shell/controls";
 import { Button } from "@/components/ui/button";
 import { Badge, Callout, Kbd, Progress, Skeleton, Table, Td, Th } from "@/components/ui/display";
 import { Link } from "@/components/ui/link";
@@ -16,10 +17,10 @@ import { env } from "@/env";
 import { randomWalk } from "@/lib/math/rng";
 
 import { FieldDemos, OverlayDemos, TabDemos } from "./demos";
-import { ThemeControl } from "./theme-control";
 
-// TODO(phase-2): move to /[locale]/styleguide. TODO(phase-18): also allow admins in production.
-// Internal tool: chrome is English, samples are Polish (what users will see).
+// Internal tool at /[locale]/styleguide. TODO(phase-18): also allow admins in production.
+// Documented i18n exception (CLAUDE.md): chrome is English and the samples are Polish
+// design specimens (diacritics, number formats), so they are not translated.
 
 export const metadata: Metadata = {
   title: "Style guide",
@@ -89,7 +90,7 @@ const pl0 = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
 
 function Styleguide() {
   return (
-    <main className="mx-auto max-w-6xl px-4 pt-10 pb-24 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 pt-10 pb-24 sm:px-6">
       <header className="mb-12 flex flex-wrap items-end justify-between gap-6 border-b border-rule pb-6">
         <div>
           <p className="mb-2 num text-xs text-ink-muted">
@@ -270,8 +271,8 @@ function Styleguide() {
           <Button disabled>Wyłączony</Button>
         </div>
         <p className="mt-6 font-serif text-reading">
-          Więcej w lekcji <Link href="/styleguide#lesson">Kryterium Kelly’ego</Link> i w{" "}
-          <Link href="/styleguide#lesson" quiet>
+          Więcej w lekcji <Link href="#lesson">Kryterium Kelly’ego</Link> i w{" "}
+          <Link href="#lesson" quiet>
             spisie treści
           </Link>
           . Skróty: <Kbd>Enter</Kbd> sprawdza, <Kbd>H</Kbd> podpowiedź, <Kbd>N</Kbd> następne.
@@ -342,7 +343,7 @@ function Styleguide() {
           </tbody>
         </Table>
       </Section>
-    </main>
+    </div>
   );
 }
 

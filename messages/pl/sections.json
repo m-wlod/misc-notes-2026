@@ -1,0 +1,67 @@
+{
+  "learn": {
+    "title": "Nauka",
+    "description": "Podręcznik i ścieżka nauki: od procentów i logarytmów po rachunek stochastyczny.",
+    "body": "Tu będzie ścieżka przez 13 działów, mapa zależności między lekcjami i klasyczny spis treści. Każda lekcja ma dwie głębokości: po ludzku i podręcznikową."
+  },
+  "practice": {
+    "title": "Praktyka",
+    "description": "Zadania na pięciu poziomach, od podstaw po pytania z rozmów rekrutacyjnych.",
+    "body": "Tu będą zadania liczbowe, symboliczne, szacunkowe i otwarte, sprawdzane automatycznie, z podpowiedziami i pełnymi rozwiązaniami."
+  },
+  "interview": {
+    "title": "Rozmowa rekrutacyjna",
+    "description": "Symulator rozmowy na stanowisko quanta: łamigłówki, sprinty i gra w market making.",
+    "body": "Tu będą sesje na czas: łamigłówki, sprint z prawdopodobieństwa, liczenie w pamięci, market making i otwarte pytania o modelowanie."
+  },
+  "debunk": {
+    "title": "Debunk Lab",
+    "description": "Popularne obietnice tradingowe sprawdzone matematyką i symulacją.",
+    "body": "Tu będą twierdzenia z kursów i reklam, sprawdzone liczbami, oraz kalkulatory: wartość oczekiwana strategii, szczęście czy umiejętność, ekonomia kursów."
+  },
+  "glossary": {
+    "title": "Słowniczek",
+    "description": "Pojęcia z prawdopodobieństwa, statystyki i finansów, po polsku i po angielsku.",
+    "body": "Tu będą definicje pojęć z odnośnikami do lekcji, w których są wyjaśnione."
+  },
+  "lab": {
+    "title": "Laboratorium",
+    "description": "Interaktywne symulacje i notatnik Pythona w przeglądarce.",
+    "body": "Tu będą symulacje (błądzenie losowe, kryterium Kelly’ego, przeuczenie backtestu) i notatnik Pythona działający bez instalacji."
+  },
+  "profile": {
+    "title": "Profil",
+    "description": "Twoje postępy, seria i osiągnięcia.",
+    "body": "Tu będą postępy w nauce, seria dni, liga i odznaki. Wymaga konta, które pojawi się w etapie 3."
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "description": "Język, motyw, dzienny cel i prywatność.",
+    "body": "Tu będą ustawienia konta, eksport danych i usunięcie konta."
+  },
+  "about": {
+    "title": "O projekcie",
+    "description": "Kto to robi i dlaczego za darmo.",
+    "body": "Tu będzie opis projektu: darmowa nauka matematyki rynków, bez sprzedawania kursów i sygnałów."
+  },
+  "privacy": {
+    "title": "Polityka prywatności",
+    "description": "Jakie dane zbieramy i po co.",
+    "body": "Polityka prywatności powstanie przed uruchomieniem kont użytkowników. Na razie aplikacja nie zbiera danych osobowych."
+  },
+  "terms": {
+    "title": "Regulamin",
+    "description": "Zasady korzystania z serwisu.",
+    "body": "Regulamin powstanie przed uruchomieniem kont użytkowników."
+  },
+  "cookies": {
+    "title": "Pliki cookies",
+    "description": "Jakich plików cookies używamy.",
+    "body": "Obecnie używamy jednego niezbędnego pliku cookie, który zapamiętuje wybrany język. Pełna polityka powstanie razem z analityką."
+  },
+  "disclaimer": {
+    "title": "Zastrzeżenia",
+    "description": "Treści mają charakter edukacyjny.",
+    "body": "Wszystkie treści służą nauce. Nie są poradą inwestycyjną ani rekomendacją kupna lub sprzedaży instrumentów finansowych."
+  }
+}

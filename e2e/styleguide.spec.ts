@@ -13,7 +13,7 @@ async function openWithTheme(page: Page, theme: "light" | "dark") {
     },
     [THEME_STORAGE_KEY, theme] as const,
   );
-  await page.goto("/styleguide");
+  await page.goto("/pl/styleguide");
   await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
   await page.evaluate(() => document.fonts.ready);
 }
@@ -102,7 +102,7 @@ test("stored dark theme applies before first paint (no flash)", async ({ page })
         document.documentElement.getAttribute("data-theme");
     });
   }, THEME_STORAGE_KEY);
-  await page.goto("/styleguide");
+  await page.goto("/pl/styleguide");
   await page.waitForFunction(() => "firstFrameTheme" in window);
   const first = await page.evaluate(
     () => (window as unknown as { firstFrameTheme: string | null }).firstFrameTheme,
@@ -113,9 +113,9 @@ test("stored dark theme applies before first paint (no flash)", async ({ page })
 test("theme switch changes and remembers the theme", async ({ page }) => {
   // No init script here: it would re-seed the stored theme on reload.
   await page.emulateMedia({ colorScheme: "light" });
-  await page.goto("/styleguide");
+  await page.goto("/pl/styleguide");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-  await page.getByRole("radio", { name: "Ciemny" }).click();
+  await page.getByRole("radio", { name: "Ciemny" }).first().click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");

@@ -1,0 +1,14 @@
+{
+  "notFound": {
+    "title": "No such page",
+    "body": "This address doesn’t lead to any lesson or section.",
+    "odds": "Chance of landing here by typing at random: 1 in {odds}.",
+    "assumption": "Assuming {alphabet} equally likely characters and {length} keystrokes.",
+    "home": "Back to the start"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "body": "This is an error on our side, not yours. Please try again in a moment.",
+    "retry": "Try again"
+  }
+}

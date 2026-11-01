@@ -1,0 +1,37 @@
+{
+  "skipToContent": "Przejdź do treści",
+  "siteDescription": "Matematyka, prawdopodobieństwo i statystyka stojące za tradingiem. Za darmo, z dowodami i symulacjami.",
+  "disclaimer": "Materiały edukacyjne. Nie stanowią porady inwestycyjnej ani rekomendacji w rozumieniu przepisów.",
+  "comingSoon": "Ta sekcja powstaje. Planowany etap budowy: {phase}.",
+  "theme": {
+    "group": "Motyw",
+    "system": "System",
+    "light": "Jasny",
+    "dark": "Ciemny"
+  },
+  "language": {
+    "label": "Język",
+    "pl": "Polski",
+    "en": "English"
+  },
+  "stats": {
+    "label": "Twoje postępy",
+    "streak": "Seria",
+    "xp": "XP",
+    "signedOut": "po zalogowaniu"
+  },
+  "search": {
+    "label": "Szukaj",
+    "comingSoon": "Wyszukiwarka lekcji, pojęć i zadań pojawi się w etapie 5."
+  },
+  "footer": {
+    "legal": "Informacje prawne",
+    "channels": "Kanały",
+    "channelSoon": "wkrótce"
+  },
+  "social": {
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "discord": "Discord"
+  }
+}

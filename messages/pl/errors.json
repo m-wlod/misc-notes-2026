@@ -1,0 +1,14 @@
+{
+  "notFound": {
+    "title": "Nie ma takiej strony",
+    "body": "Ten adres nie prowadzi do żadnej lekcji ani sekcji.",
+    "odds": "Szansa, że trafisz tu, pisząc losowo: 1 na {odds}.",
+    "assumption": "Zakładamy {alphabet} równie prawdopodobnych znaków i {length} naciśnięć klawiszy.",
+    "home": "Wróć na start"
+  },
+  "error": {
+    "title": "Coś poszło nie tak",
+    "body": "To błąd po naszej stronie, nie twojej. Spróbuj jeszcze raz za chwilę.",
+    "retry": "Spróbuj ponownie"
+  }
+}
