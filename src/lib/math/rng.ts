@@ -17,15 +17,18 @@ export function normal(rand: () => number): () => number {
   return () => Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
 }
 
-/** Geometric random walk: P_t = P_{t-1} · exp(μ + σ·Z). */
+/**
+ * Geometric random walk: P_t = P_{t-1} · exp(μ + σ·Z).
+ * Returns `points` prices, i.e. `points - 1` steps (days) after the start.
+ */
 export function randomWalk({
-  steps,
+  points,
   sigma,
   mu = 0,
   start = 100,
   seed,
 }: {
-  steps: number;
+  points: number;
   sigma: number;
   mu?: number;
   start?: number;
@@ -33,7 +36,7 @@ export function randomWalk({
 }): number[] {
   const z = normal(mulberry32(seed));
   const path = [start];
-  for (let i = 1; i < steps; i++) {
+  for (let i = 1; i < points; i++) {
     path.push((path[i - 1] ?? start) * Math.exp(mu + sigma * z()));
   }
   return path;

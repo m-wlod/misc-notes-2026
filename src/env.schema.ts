@@ -15,6 +15,11 @@ export const serverSchema = {
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   /** Set by Vercel. Gates dev-only pages such as /styleguide (hidden in production). */
   VERCEL_ENV: z.enum(["development", "preview", "production"]).optional(),
+  /** Set by Vercel: deployment host and production domain (no scheme). Used by resolveSiteUrl(). */
+  VERCEL_URL: optionalString,
+  VERCEL_PROJECT_PRODUCTION_URL: optionalString,
+  /** "1" shows /styleguide on a non-Vercel production build (e2e). Ignored on Vercel production. */
+  ENABLE_STYLEGUIDE: z.literal("1").optional(),
 
   // Supabase (Phase 3)
   SUPABASE_SECRET_KEY: optionalString,
@@ -43,7 +48,8 @@ export const serverSchema = {
 };
 
 export const clientSchema = {
-  NEXT_PUBLIC_SITE_URL: z.url().default("http://localhost:3000"),
+  /** Optional: resolveSiteUrl() falls back to Vercel URLs, then localhost. */
+  NEXT_PUBLIC_SITE_URL: optionalUrl,
 
   NEXT_PUBLIC_SUPABASE_URL: optionalUrl,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: optionalString,

@@ -18,7 +18,7 @@ export function FigureFrame({ number, prefix, meta, caption, children }: FigureF
         <span className="text-xs font-semibold tracking-[0.04em] text-ink uppercase">
           {prefix} {number}
         </span>
-        {meta ? <span className="num text-[0.6875rem] text-ink-muted">{meta}</span> : null}
+        {meta ? <span className="num text-2xs text-ink-muted">{meta}</span> : null}
       </div>
       {children}
       <figcaption className="mt-2.5 font-sans text-sm text-ink-muted">{caption}</figcaption>

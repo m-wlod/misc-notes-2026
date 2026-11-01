@@ -32,7 +32,7 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof Radix
   return (
     <RadixTabs.Trigger
       className={cx(
-        "text-sm text-ink-muted transition-colors hover:text-ink",
+        "text-sm text-ink-muted transition-[color,background-color,border-color] hover:text-ink",
         // underline variant
         "group-data-[variant=underline]/tabs:-mb-px group-data-[variant=underline]/tabs:border-b-2 group-data-[variant=underline]/tabs:border-transparent group-data-[variant=underline]/tabs:py-2",
         "group-data-[variant=underline]/tabs:data-[state=active]:border-accent group-data-[variant=underline]/tabs:data-[state=active]:text-ink",

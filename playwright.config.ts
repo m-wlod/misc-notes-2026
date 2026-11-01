@@ -20,6 +20,8 @@ export default defineConfig({
   webServer: {
     // Tests run against the production build, never the dev server.
     command: `pnpm start --port ${String(PORT)}`,
+    // /styleguide is gated at request time; e2e runs a production build, so opt in.
+    env: { ENABLE_STYLEGUIDE: "1" },
     url: `http://localhost:${String(PORT)}`,
     reuseExistingServer: !isCI,
     timeout: 120_000,

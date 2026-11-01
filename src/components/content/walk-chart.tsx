@@ -1,76 +1,78 @@
 import { randomWalk } from "@/lib/math/rng";
+import { extent, linearScale, niceTicks } from "@/lib/math/scale";
+
+export type WalkSummary = { start: number; end: number; min: number; max: number; days: number };
 
 type WalkChartProps = {
   seed: number;
-  steps?: number;
+  /** Number of trading days; the path has `days + 1` prices. */
+  days?: number;
   sigma?: number;
-  /** Accessible description, localised by the caller. */
-  label: string;
-  /** Formats the end value (locale-aware), e.g. 98,0 in Polish. */
-  formatValue: (v: number) => string;
+  /** Accessible description, localised by the caller and computed from the real data. */
+  describe: (summary: WalkSummary) => string;
+  /** Locale-aware number formatter for tick and end labels. */
+  format: (v: number) => string;
 };
 
 /**
  * Static, server-rendered random-walk chart (no JS). Drawn twice, at a desktop and a
- * phone aspect ratio, so 11px tick labels stay 11px on a 390px screen instead of
+ * phone aspect ratio, so the 11px labels stay 11px on a 390px screen instead of
  * shrinking with the viewBox. Phase 12 replaces this with the interactive framework.
  */
-export function WalkChart({ seed, steps = 250, sigma = 0.01, label, formatValue }: WalkChartProps) {
-  const path = randomWalk({ steps, sigma, seed });
+export function WalkChart({ seed, days = 250, sigma = 0.01, describe, format }: WalkChartProps) {
+  const path = randomWalk({ points: days + 1, sigma, seed });
+  const [min, max] = extent(path);
+  const summary: WalkSummary = { start: path[0] ?? 0, end: path.at(-1) ?? 0, min, max, days };
+
   return (
-    <div role="img" aria-label={label}>
+    <div role="img" aria-label={describe(summary)}>
       <Plot
         path={path}
         width={640}
         height={220}
-        xTicks={[0, 50, 100, 150, 200, 250]}
-        formatValue={formatValue}
+        xTarget={5}
+        yTarget={5}
+        format={format}
         className="hidden sm:block"
       />
       <Plot
         path={path}
         width={360}
         height={200}
-        xTicks={[0, 125, 250]}
-        formatValue={formatValue}
+        xTarget={2}
+        yTarget={4}
+        format={format}
         className="sm:hidden"
       />
     </div>
   );
 }
 
-function Plot({
-  path,
-  width: W,
-  height: H,
-  xTicks,
-  formatValue,
-  className,
-}: {
+type PlotProps = {
   path: number[];
   width: number;
   height: number;
-  xTicks: number[];
-  formatValue: (v: number) => string;
+  xTarget: number;
+  yTarget: number;
+  format: (v: number) => string;
   className: string;
-}) {
-  const n = path.length;
-  const [L, R, T, B] = [36, 10, 12, 24];
-  const lo = Math.min(...path);
-  const hi = Math.max(...path);
-  const pad = (hi - lo) * 0.12 || 1;
-  const y0 = lo - pad;
-  const y1 = hi + pad;
-  const x = (i: number) => L + (i / (n - 1)) * (W - L - R);
-  const y = (v: number) => T + (1 - (v - y0) / (y1 - y0)) * (H - T - B);
+};
 
-  const step = hi - lo > 12 ? 5 : 2;
-  const yTicks: number[] = [];
-  for (let v = Math.ceil(y0 / step) * step; v <= y1; v += step) yTicks.push(v);
+function Plot({ path, width: W, height: H, xTarget, yTarget, format, className }: PlotProps) {
+  const [L, R, T, B] = [40, 10, 12, 24];
+  const days = path.length - 1;
+  const [lo, hi] = extent(path);
+  const pad = (hi - lo) * 0.12 || 1;
+
+  const x = linearScale([0, days], [L, W - R]);
+  const y = linearScale([lo - pad, hi + pad], [H - B, T]);
+  const xTicks = niceTicks(0, days, xTarget);
+  const yTicks = niceTicks(lo - pad, hi + pad, yTarget);
 
   const d = path.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join("");
+  const start = path[0] ?? 0;
   const end = path.at(-1) ?? 0;
-  const tick = "fill-ink-muted font-mono text-[11px]";
+  const tick = "fill-ink-muted font-mono text-2xs";
 
   return (
     <svg
@@ -82,35 +84,35 @@ function Plot({
         <g key={v}>
           <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} className="stroke-grid" />
           <text x={L - 6} y={y(v) + 4} textAnchor="end" className={tick}>
-            {v}
+            {format(v)}
           </text>
         </g>
       ))}
       {xTicks.map((t) => (
-        <text key={t} x={x(Math.min(t, n - 1))} y={H - 6} textAnchor="middle" className={tick}>
-          {t}
+        <text key={t} x={x(t)} y={H - 6} textAnchor="middle" className={tick}>
+          {format(t)}
         </text>
       ))}
       <line
         x1={L}
         x2={W - R}
-        y1={y(path[0] ?? 0)}
-        y2={y(path[0] ?? 0)}
+        y1={y(start)}
+        y2={y(start)}
         className="stroke-ink-muted"
         strokeDasharray="3 3"
       />
       <path d={d} fill="none" className="stroke-ink" strokeWidth={1.5} strokeLinejoin="round" />
-      <circle cx={x(n - 1)} cy={y(end)} r={3} className="fill-accent" />
+      <circle cx={x(days)} cy={y(end)} r={3} className="fill-accent" />
       <text
-        x={x(n - 1) - 6}
+        x={x(days) - 6}
         y={y(end) + 18}
         textAnchor="end"
-        className="fill-ink stroke-bg font-mono text-[11px]"
+        className="fill-ink stroke-bg font-mono text-2xs"
         strokeWidth={4}
         paintOrder="stroke"
         strokeLinejoin="round"
       >
-        {formatValue(end)}
+        {format(end)}
       </text>
     </svg>
   );

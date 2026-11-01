@@ -33,8 +33,42 @@ export default defineConfig([
     },
   },
   {
+    // Design rules (docs/DESIGN.md) at lint time: no arbitrary shadows, radii, colours
+    // or font sizes. Tokens only. Applies to every string, including className.
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: String.raw`Literal[value=/(^|\s|:)(shadow|drop-shadow|inset-shadow|rounded|rounded-[a-z]+)-\x5b/]`,
+          message:
+            "Arbitrary shadow/radius values are banned. Use the radius tokens (docs/DESIGN.md).",
+        },
+        {
+          selector: String.raw`Literal[value=/-\x5b#/]`,
+          message:
+            "Arbitrary hex colours are banned. Use a colour token (bg-surface, text-ink, …).",
+        },
+        {
+          selector: String.raw`Literal[value=/(^|\s|:)text-\x5b\d/]`,
+          message: "Off-scale font sizes are banned. Use the type scale (text-2xs … text-3xl).",
+        },
+        {
+          selector: String.raw`TemplateElement[value.raw=/(shadow|rounded)-\x5b|-\x5b#|text-\x5b\d/]`,
+          message: "Arbitrary shadow/radius/colour/font-size values are banned. Use tokens.",
+        },
+      ],
+    },
+  },
+  {
     rules: {
       ...jsxA11y.flatConfigs.strict.rules,
+      // Scroll containers (wide tables, long equations) must be keyboard-focusable
+      // (WCAG 2.1.1); they are named regions/groups, so allow tabIndex there.
+      "jsx-a11y/no-noninteractive-tabindex": [
+        "error",
+        { tags: [], roles: ["tabpanel", "region", "group"], allowExpressionValues: true },
+      ],
       "import/order": [
         "error",
         {

@@ -9,10 +9,12 @@ export default defineConfig({
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },
   test: {
-    environment: "jsdom",
-    globals: true,
+    // Pure logic runs in node (fast). Component tests opt into the DOM per file with
+    // a `// @vitest-environment jsdom` docblock. Tests import describe/it/expect from vitest.
+    // Coverage is configured in Phase 20, when coverage targets are set.
+    environment: "node",
+    globals: false,
     setupFiles: ["./vitest.setup.ts"],
     include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
-    coverage: { provider: "v8", include: ["src/**"] },
   },
 });

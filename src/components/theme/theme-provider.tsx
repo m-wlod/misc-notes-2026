@@ -3,7 +3,7 @@
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type { ReactNode } from "react";
 
-export const THEME_STORAGE_KEY = "theme";
+import { THEME_STORAGE_KEY } from "@/config/theme";
 
 /**
  * System / light / dark. next-themes injects a blocking script that sets

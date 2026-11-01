@@ -25,9 +25,15 @@ import { parseLocaleNumber, type ParseNumberResult } from "@/lib/math/parse-numb
 // Style guide sample copy is Polish on purpose: it is what users will see.
 // Phase 2 moves real UI strings into next-intl messages.
 
+const INVALID_NUMBER = {
+  ambiguous: "Niejednoznaczny zapis. Wpisz liczbę bez separatora tysięcy, np. 1000 albo 1,5.",
+  invalid: "Nie rozpoznaję tej liczby. Przykłady: 0,25 · 12,5% · 3/8 · 1e-3.",
+  "division-by-zero": "Dzielenie przez zero.",
+} as const;
+
 const fmt = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 6 });
 
-function describe(parsed: ParseNumberResult | null): string {
+function describeParse(parsed: ParseNumberResult | null): string {
   if (!parsed) return "—";
   if (!parsed.ok) return `błąd: ${parsed.reason}`;
   return `${fmt.format(parsed.value)} (${parsed.kind})`;
@@ -43,13 +49,14 @@ export function FieldDemos() {
           id="sg-number"
           defaultValue="0,25"
           aria-describedby="sg-number-hint"
+          invalidMessage={(reason) => INVALID_NUMBER[reason]}
           onValueChange={(_raw, p) => {
             setParsed(p);
           }}
         />
         <FieldHint id="sg-number-hint">
           Przyjmuje 0,25 · 0.25 · 12,5% · 3/8 · 1e-3. Odczyt:{" "}
-          <span className="num">{describe(parsed)}</span>
+          <span className="num">{describeParse(parsed)}</span>
         </FieldHint>
       </div>
       <div className="grid gap-1.5">
@@ -82,7 +89,7 @@ export function FieldDemos() {
       </div>
       <fieldset className="grid gap-2">
         <legend className="mb-2 text-sm font-medium">Dzienny cel</legend>
-        <RadioGroup defaultValue="10" aria-label="Dzienny cel">
+        <RadioGroup defaultValue="10">
           {["5", "10", "20"].map((m) => (
             <div key={m} className="flex items-center gap-2.5">
               <RadioItem value={m} id={`sg-goal-${m}`} />
@@ -165,7 +172,7 @@ export function OverlayDemos() {
             <PopoverTrigger asChild>
               <Button variant="secondary">Martyngał</Button>
             </PopoverTrigger>
-            <PopoverContent>
+            <PopoverContent label="Martyngał: definicja">
               <p className="mb-1 font-medium">Martyngał</p>
               <p className="text-ink-muted">
                 Proces, którego oczekiwana przyszła wartość równa się obecnej. Gra uczciwa: bez
