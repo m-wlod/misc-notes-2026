@@ -1,0 +1,18 @@
+# TEST FIXTURE for the content pipeline (Phase 7). Not course content.
+id: pick
+type: choice
+level: 1
+topics: [fixture]
+lessonIds: [fixture-lesson]
+prompt:
+  pl: "Zadanie testowe."
+options:
+  - { id: a, pl: "A" }
+  - { id: b, pl: "B" }
+answer: b
+hints:
+  - pl: "Podpowiedź testowa."
+solution:
+  pl: "Rozwiązanie testowe."
+estimatedMinutes: 1
+status: draft

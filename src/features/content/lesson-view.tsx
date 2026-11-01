@@ -2,6 +2,7 @@ import "katex/dist/katex.min.css";
 
 import { getTranslations } from "next-intl/server";
 
+import { Stub } from "@/components/content/blocks";
 import { ReadingColumn } from "@/components/content/margin-note";
 import { Badge } from "@/components/ui/display";
 
@@ -13,7 +14,13 @@ import { MdxContent } from "./mdx-content";
  * A full lesson: header (level, minutes, status), sample banner, translation-fallback
  * notice, body and sources. Used by the content preview now and the reader in Phase 6.
  */
-export async function LessonView({ lesson, fallback }: ResolvedLesson) {
+export async function LessonView({
+  lesson,
+  fallback,
+  withheld = false,
+}: ResolvedLesson & {
+  /** Not published yet: show "in preparation" instead of the body. */ withheld?: boolean;
+}) {
   const t = await getTranslations("content");
   return (
     <>
@@ -52,9 +59,7 @@ export async function LessonView({ lesson, fallback }: ResolvedLesson) {
           ) : null}
         </header>
 
-        <ReadingColumn>
-          <MdxContent code={lesson.body} />
-        </ReadingColumn>
+        <ReadingColumn>{withheld ? <Stub /> : <MdxContent code={lesson.body} />}</ReadingColumn>
 
         {lesson.sources.length > 0 ? (
           <footer className="mt-12 max-w-(--measure) border-t border-rule pt-4 font-sans text-sm text-ink-muted">

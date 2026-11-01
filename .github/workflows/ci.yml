@@ -41,10 +41,17 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Exercise answers are verified with real Python (pnpm content:verify, unit tests).
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - run: pnpm lint
       - run: pnpm format:check
       - run: pnpm typecheck
       - run: pnpm i18n:check
+      - run: pnpm content:verify
+      - run: pnpm content:qa
       - run: pnpm test
       - run: pnpm build
 

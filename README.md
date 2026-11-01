@@ -31,7 +31,7 @@ pnpm dev                        # http://localhost:3000
 ## Content
 
 - The curriculum outline (tracks → modules → lesson order) is `content/curriculum.ts`. Lessons are MDX in `content/<locale>/tracks/<track>/<module>/<id>.mdx`; unwritten ones have the body `<Stub />`. Glossary terms are YAML in `content/glossary/`. `pnpm content:build` (also run by `build`, `lint` and `typecheck`) validates them and compiles them into `.velite/`, imported as `#content`.
-- Invalid content fails the build with `file: field: reason`. Components and authoring rules: `src/components/content/README.md`.
+- Invalid content fails the build with `file: field: reason`. How to write content: `docs/CONTENT_GUIDE.md`. Components and authoring rules: `src/components/content/README.md`.
 - `pnpm content:build` also writes the search indexes (`public/search/<locale>.json`, generated, not committed).
 - Preview any lesson, drafts included, at `/pl/dev/content-preview` (dev and previews only).
 
@@ -44,17 +44,19 @@ pnpm dev                        # http://localhost:3000
 
 ## Scripts
 
-| Script                         | What it does                                                               |
-| ------------------------------ | -------------------------------------------------------------------------- |
-| `pnpm dev` / `build` / `start` | Next.js dev server, production build, production server                    |
-| `pnpm lint` / `lint:fix`       | ESLint (zero warnings allowed)                                             |
-| `pnpm format` / `format:check` | Prettier                                                                   |
-| `pnpm typecheck`               | Route type generation + `tsc --noEmit`                                     |
-| `pnpm content:build`           | Validate and compile content (MDX lessons, glossary) into `.velite/`       |
-| `pnpm i18n:check`              | Key, placeholder and file parity between `messages/pl` and `messages/en`   |
-| `pnpm test` / `test:watch`     | Vitest unit tests                                                          |
-| `pnpm test:db`                 | RLS and account tests against a Supabase database (CI runs them in Docker) |
-| `pnpm test:e2e`                | Playwright against the production build (run `pnpm build` first)           |
-| `pnpm db:types`                | Regenerate TS types from the migrations (CI fails if they are stale)       |
+| Script                                         | What it does                                                               |
+| ---------------------------------------------- | -------------------------------------------------------------------------- |
+| `pnpm dev` / `build` / `start`                 | Next.js dev server, production build, production server                    |
+| `pnpm lint` / `lint:fix`                       | ESLint (zero warnings allowed)                                             |
+| `pnpm format` / `format:check`                 | Prettier                                                                   |
+| `pnpm typecheck`                               | Route type generation + `tsc --noEmit`                                     |
+| `pnpm content:verify` / `content:qa`           | Check exercise answers with Python; content QA (sources, hints, links)     |
+| `pnpm content:draft <note>` / `content:status` | Inbox note → writing brief; review state of all content                    |
+| `pnpm content:build`                           | Validate and compile content (MDX lessons, glossary) into `.velite/`       |
+| `pnpm i18n:check`                              | Key, placeholder and file parity between `messages/pl` and `messages/en`   |
+| `pnpm test` / `test:watch`                     | Vitest unit tests                                                          |
+| `pnpm test:db`                                 | RLS and account tests against a Supabase database (CI runs them in Docker) |
+| `pnpm test:e2e`                                | Playwright against the production build (run `pnpm build` first)           |
+| `pnpm db:types`                                | Regenerate TS types from the migrations (CI fails if they are stale)       |
 
 A pre-commit hook runs ESLint and Prettier on staged files.

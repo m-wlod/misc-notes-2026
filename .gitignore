@@ -52,3 +52,6 @@ supabase/.temp/
 supabase/.branches/
 .velite/
 public/search/
+
+# content:draft output (working files, regenerated on demand)
+*.brief.md

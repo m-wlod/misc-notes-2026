@@ -1,0 +1,20 @@
+# TEST FIXTURE for the content pipeline (Phase 7). Not course content.
+id: sim
+type: numeric
+level: 1
+topics: [fixture]
+lessonIds: [fixture-lesson]
+prompt:
+  pl: "Zadanie testowe."
+params: {n: 10}
+hints:
+  - pl: "Podpowiedź testowa."
+solution:
+  pl: "Rozwiązanie testowe."
+estimatedMinutes: 2
+status: draft
+answer: 0.5
+tolerance: 0.5
+verify: |
+  import random
+  result = random.random()

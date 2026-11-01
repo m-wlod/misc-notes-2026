@@ -11,6 +11,7 @@ import { defineCollection, defineConfig, s } from "velite";
 import { curriculum } from "./content/curriculum";
 import { rehypeNumbering } from "./src/features/content/rehype-numbering";
 import { termRefsIn, validateContent, validateCurriculum } from "./src/features/content/validate";
+import { validateExercises } from "./src/features/exercises/validate";
 import { buildSearchDocs } from "./src/features/search/docs";
 import { routing } from "./src/i18n/routing";
 
@@ -105,6 +106,21 @@ const glossary = defineCollection({
     .transform((data, { meta }) => ({ ...data, file: fileOf(meta.path) })),
 });
 
+/**
+ * Exercises (Phase 7 format, Phase 8 renderers). Velite only collects the YAML; the
+ * shape and rules come from src/features/exercises/schema.ts (Zod 4), applied in
+ * `prepare` so the build and `pnpm content:verify` share one definition.
+ * Server-only data: answers are graded on the server and never shipped to the browser.
+ */
+const exercises = defineCollection({
+  name: "ExerciseFile",
+  pattern: "exercises/**/*.yaml",
+  schema: s
+    .object({})
+    .passthrough()
+    .transform((data, { meta }) => ({ data: data as unknown, file: fileOf(meta.path) })),
+});
+
 export default defineConfig({
   root: process.env.CONTENT_ROOT ?? "content",
   strict: true,
@@ -114,7 +130,7 @@ export default defineConfig({
     base: "/static/",
     clean: true,
   },
-  collections: { lessons, glossary },
+  collections: { lessons, glossary, exercises },
   mdx: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [
@@ -142,7 +158,7 @@ export default defineConfig({
       writeFileSync(`public/search/${locale}.json`, JSON.stringify(docs));
     }
   },
-  prepare: ({ lessons, glossary }) => {
+  prepare: ({ lessons, glossary, exercises: exerciseFiles }) => {
     const errors = lessons.flatMap((l) => {
       const folder = /(?:^|\/)(pl|en)\/tracks\//.exec(l.file)?.[1];
       return folder && folder !== l.locale
@@ -150,6 +166,7 @@ export default defineConfig({
         : [];
     });
     errors.push(...validateContent(lessons, glossary));
+    errors.push(...validateExercises(exerciseFiles, lessons));
     const outline = curriculumOutline();
     if (outline !== null) errors.push(...validateCurriculum(outline, lessons));
     if (errors.length > 0) {

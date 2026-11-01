@@ -1,0 +1,19 @@
+# TEST FIXTURE for the content pipeline (Phase 7). Not course content.
+id: sum
+type: numeric
+level: 1
+topics: [fixture]
+lessonIds: [fixture-lesson]
+prompt:
+  pl: "Zadanie testowe."
+params: {a: 2, b: 3}
+hints:
+  - pl: "Podpowiedź testowa."
+solution:
+  pl: "Rozwiązanie testowe."
+estimatedMinutes: 2
+status: draft
+answer: 6
+tolerance: 0
+verify: |
+  result = a + b
