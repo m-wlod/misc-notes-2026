@@ -1,0 +1,67 @@
+{
+  "learn": {
+    "title": "Learn",
+    "description": "A textbook and learning path: from percentages and logarithms to stochastic calculus.",
+    "body": "This will hold a path through 13 tracks, a map of how lessons depend on each other and a classic table of contents. Every lesson has two depths: plain language and textbook."
+  },
+  "practice": {
+    "title": "Practice",
+    "description": "Exercises at five levels, from the basics to quant interview questions.",
+    "body": "This will hold numeric, symbolic, estimation and open exercises, graded automatically, with hints and full solutions."
+  },
+  "interview": {
+    "title": "Interview",
+    "description": "A quant interview simulator: brainteasers, sprints and a market-making game.",
+    "body": "This will hold timed sessions: brainteasers, a probability sprint, mental maths, market making and open modelling questions."
+  },
+  "debunk": {
+    "title": "Debunk Lab",
+    "description": "Popular trading promises tested with maths and simulation.",
+    "body": "This will hold claims from courses and ads, checked with numbers, plus calculators: a strategy’s expected value, luck versus skill, the economics of courses."
+  },
+  "glossary": {
+    "title": "Glossary",
+    "description": "Terms from probability, statistics and finance, in Polish and English.",
+    "body": "This will hold definitions with links to the lessons that explain them."
+  },
+  "lab": {
+    "title": "Lab",
+    "description": "Interactive simulations and an in-browser Python notebook.",
+    "body": "This will hold simulations (random walks, the Kelly criterion, backtest overfitting) and a Python notebook that runs without installing anything."
+  },
+  "profile": {
+    "title": "Profile",
+    "description": "Your progress, streak and achievements.",
+    "body": "This will show learning progress, your streak, league and badges. It needs an account, which arrives in phase 3."
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Language, theme, daily goal and privacy.",
+    "body": "This will hold account settings, data export and account deletion."
+  },
+  "about": {
+    "title": "About",
+    "description": "Who makes this and why it’s free.",
+    "body": "This will describe the project: free learning about the maths of markets, without selling courses or signals."
+  },
+  "privacy": {
+    "title": "Privacy policy",
+    "description": "What data we collect and why.",
+    "body": "The privacy policy will be published before user accounts launch. For now the app collects no personal data."
+  },
+  "terms": {
+    "title": "Terms of use",
+    "description": "Rules for using the site.",
+    "body": "The terms of use will be published before user accounts launch."
+  },
+  "cookies": {
+    "title": "Cookies",
+    "description": "Which cookies we use.",
+    "body": "We currently use one essential cookie that remembers your language. A full policy will come with analytics."
+  },
+  "disclaimer": {
+    "title": "Disclaimer",
+    "description": "All content is educational.",
+    "body": "All content is for learning. It is not investment advice or a recommendation to buy or sell financial instruments."
+  }
+}

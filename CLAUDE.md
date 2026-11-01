@@ -77,7 +77,7 @@ Exercise types: numeric (with tolerance), multiple choice, multi-select, symboli
 ## Global engineering rules
 
 - TypeScript strict; no `any`, no `@ts-ignore` without a comment explaining why.
-- No user-facing string hardcoded in components: everything through next-intl messages. Numbers, dates and percentages use locale formatting; **numeric answer inputs accept both `0,25` and `0.25`.**
+- No user-facing string hardcoded in components: everything through next-intl messages (`messages/<locale>/<namespace>.json`, typed from Polish; `pnpm i18n:check` keeps locales in sync). The one documented exception is the internal `/styleguide`, whose Polish samples are design specimens. Numbers, dates and percentages use locale formatting; **numeric answer inputs accept both `0,25` and `0.25`.**
 - Row Level Security on every table, no exceptions; service-role key only in server code.
 - **Grading is server-side for every graded exercise**, signed-in or not (signed-out users: IP rate limit, attempts stored in the browser). Answers never reach the client before submission. Only the ungraded inline "check yourself" questions in lessons may grade client-side.
 - Next.js 16 `proxy.ts` (not `middleware.ts`) does locale handling and redirects only; authorization is always enforced in RLS and server code.
@@ -92,7 +92,9 @@ Exercise types: numeric (with tolerance), multiple choice, multi-select, symboli
 ## Repo layout (target)
 
 ```text
-src/app/[locale]/...        routes
+src/app/[locale]/...        routes (public URLs are localised: /pl/nauka ↔ /en/learn, see src/i18n/routing.ts)
+src/i18n/                   routing (pathnames), navigation, request config, message loading
+messages/<locale>/          UI messages split by feature
 src/components/ui/          design-system primitives
 src/components/content/     MDX components
 src/components/sims/        simulations

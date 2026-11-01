@@ -127,7 +127,7 @@ Exercise types: numeric (with tolerance), multiple choice, multi-select, symboli
 ### Global engineering rules
 
 - TypeScript strict; no `any`, no `@ts-ignore` without a comment explaining why.
-- No user-facing string hardcoded in components: everything through next-intl messages. Numbers, dates and percentages use locale formatting; **numeric answer inputs accept both `0,25` and `0.25`.**
+- No user-facing string hardcoded in components: everything through next-intl messages (`messages/<locale>/<namespace>.json`, typed from Polish; `pnpm i18n:check` keeps locales in sync). The one documented exception is the internal `/styleguide`, whose Polish samples are design specimens. Numbers, dates and percentages use locale formatting; **numeric answer inputs accept both `0,25` and `0.25`.**
 - Row Level Security on every table, no exceptions; service-role key only in server code.
 - **Grading is server-side for every graded exercise**, signed-in or not (signed-out users: IP rate limit, attempts stored in the browser). Answers never reach the client before submission. Only the ungraded inline "check yourself" questions in lessons may grade client-side.
 - Next.js 16 `proxy.ts` (not `middleware.ts`) does locale handling and redirects only; authorization is always enforced in RLS and server code.

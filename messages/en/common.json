@@ -1,0 +1,37 @@
+{
+  "skipToContent": "Skip to content",
+  "siteDescription": "The mathematics, probability and statistics behind trading. Free, with proofs and simulations.",
+  "disclaimer": "Educational material only. Not investment advice or a recommendation.",
+  "comingSoon": "This section is being built. Planned build phase: {phase}.",
+  "theme": {
+    "group": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "label": "Language",
+    "pl": "Polski",
+    "en": "English"
+  },
+  "stats": {
+    "label": "Your progress",
+    "streak": "Streak",
+    "xp": "XP",
+    "signedOut": "after sign-in"
+  },
+  "search": {
+    "label": "Search",
+    "comingSoon": "Search across lessons, terms and exercises arrives in phase 5."
+  },
+  "footer": {
+    "legal": "Legal",
+    "channels": "Channels",
+    "channelSoon": "soon"
+  },
+  "social": {
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "discord": "Discord"
+  }
+}

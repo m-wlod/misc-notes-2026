@@ -22,16 +22,24 @@ pnpm db:start                   # local Supabase; Studio on :54323, mail catcher
 pnpm dev                        # http://localhost:3000
 ```
 
+## Routing and translations
+
+- Every page lives under `src/app/[locale]/` and is served at a locale prefix: `/pl/...` (default) or `/en/...`.
+- Polish pages use Polish slugs (`/pl/nauka` ↔ `/en/learn`). The mapping is in `src/i18n/routing.ts`; link with the typed `Link` from `src/i18n/navigation.ts`, never a raw path.
+- UI copy lives in `messages/<locale>/<namespace>.json`. Polish is the source of truth for types; `pnpm i18n:check` (also in CI) fails on missing keys, extra keys, mismatched `{placeholders}` or empty strings.
+- `src/proxy.ts` redirects prefix-less URLs (cookie → Accept-Language → Polish) and hides `/styleguide` in production.
+
 ## Scripts
 
-| Script                                                | What it does                                                     |
-| ----------------------------------------------------- | ---------------------------------------------------------------- |
-| `pnpm dev` / `build` / `start`                        | Next.js dev server, production build, production server          |
-| `pnpm lint` / `lint:fix`                              | ESLint (zero warnings allowed)                                   |
-| `pnpm format` / `format:check`                        | Prettier                                                         |
-| `pnpm typecheck`                                      | Route type generation + `tsc --noEmit`                           |
-| `pnpm test` / `test:watch`                            | Vitest unit tests                                                |
-| `pnpm test:e2e`                                       | Playwright against the production build (run `pnpm build` first) |
-| `pnpm db:start` / `db:stop` / `db:reset` / `db:types` | Local Supabase stack, reset with seed, generate TS types         |
+| Script                                                | What it does                                                             |
+| ----------------------------------------------------- | ------------------------------------------------------------------------ |
+| `pnpm dev` / `build` / `start`                        | Next.js dev server, production build, production server                  |
+| `pnpm lint` / `lint:fix`                              | ESLint (zero warnings allowed)                                           |
+| `pnpm format` / `format:check`                        | Prettier                                                                 |
+| `pnpm typecheck`                                      | Route type generation + `tsc --noEmit`                                   |
+| `pnpm i18n:check`                                     | Key, placeholder and file parity between `messages/pl` and `messages/en` |
+| `pnpm test` / `test:watch`                            | Vitest unit tests                                                        |
+| `pnpm test:e2e`                                       | Playwright against the production build (run `pnpm build` first)         |
+| `pnpm db:start` / `db:stop` / `db:reset` / `db:types` | Local Supabase stack, reset with seed, generate TS types                 |
 
 A pre-commit hook runs ESLint and Prettier on staged files.
