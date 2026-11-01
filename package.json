@@ -9,8 +9,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --max-warnings=0",
-    "lint:fix": "eslint --fix",
+    "lint": "next typegen && eslint --max-warnings=0",
+    "lint:fix": "next typegen && eslint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "next typegen && tsc --noEmit",
@@ -22,7 +22,7 @@
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local > src/lib/db/database.types.ts",
-    "prepare": "husky"
+    "prepare": "husky && next typegen"
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.13.11",
