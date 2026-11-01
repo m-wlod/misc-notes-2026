@@ -1,0 +1,28 @@
+{
+  "toc": "Spis treści",
+  "progress": "Postęp czytania",
+  "timeLeft": "Zostało ok. {minutes} min",
+  "timeDone": "Przeczytane do końca",
+  "resume": "Wróć do miejsca, w którym skończyłeś: {section}",
+  "complete": "Oznacz jako zrozumiane",
+  "completed": "Lekcja ukończona",
+  "completedNote": "Zapisaliśmy to w tej przeglądarce.",
+  "nextUp": "Następna lekcja",
+  "prev": "Poprzednia",
+  "next": "Następna",
+  "lessonNav": "Nawigacja między lekcjami",
+  "inPreparation": "Ta lekcja jest w przygotowaniu.",
+  "prerequisites": "Warto znać wcześniej",
+  "noPrerequisites": "Bez wymagań wstępnych.",
+  "sidenote": "Przypis {n}",
+  "check": {
+    "label": "Sprawdź się",
+    "submit": "Sprawdź",
+    "correct": "Dobrze.",
+    "wrong": "Jeszcze nie. Spróbuj ponownie albo zobacz odpowiedź.",
+    "reveal": "Pokaż odpowiedź",
+    "answer": "Odpowiedź: {answer}",
+    "yourAnswer": "Twoja odpowiedź",
+    "note": "Nic nie zapisujemy: to tylko dla Ciebie."
+  }
+}

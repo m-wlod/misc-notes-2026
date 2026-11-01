@@ -16,6 +16,9 @@ export type LessonNode = {
   id: string;
   number: string;
   slug: string;
+  /** Slugs of the track and module this lesson sits in (this locale), for its URL. */
+  trackSlug: string;
+  moduleSlug: string;
   title: string;
   summary: string;
   level: number;
@@ -68,6 +71,8 @@ export function getCurriculum(locale: Locale): TrackView[] {
           id,
           number: `${String(ti + 1)}.${String(mi + 1)}.${String(li + 1)}`,
           slug: l.slug,
+          trackSlug: track.slug[locale],
+          moduleSlug: mod.slug[locale],
           title: l.title,
           summary: l.summary,
           level: l.level,
@@ -154,4 +159,47 @@ export function titlesFor(locale: Locale, nodes: readonly LessonNode[]): Record<
 
 export function formatDuration(totalMinutes: number): { hours: number; minutes: number } {
   return { hours: Math.floor(totalMinutes / 60), minutes: totalMinutes % 60 };
+}
+
+/** Every lesson in textbook order, with its track and module. */
+export function lessonsInOrder(locale: Locale) {
+  return getCurriculum(locale).flatMap((track) =>
+    track.modules.flatMap((mod) => mod.lessons.map((lesson) => ({ track, module: mod, lesson }))),
+  );
+}
+
+export type LessonPlace = ReturnType<typeof lessonsInOrder>[number];
+
+/** The lesson at /learn/<track>/<module>/<lesson> in this locale. */
+export function findLesson(
+  locale: Locale,
+  trackSlug: string,
+  moduleSlug: string,
+  lessonSlug: string,
+): LessonPlace | undefined {
+  return lessonsInOrder(locale).find(
+    (p) =>
+      p.track.slug === trackSlug && p.module.slug === moduleSlug && p.lesson.slug === lessonSlug,
+  );
+}
+
+/**
+ * Previous and next lessons in textbook order. A lesson outside the curriculum (the
+ * Phase 4 sample) gets the first lesson as "next", so its reader flow still continues.
+ */
+export function neighbours(
+  locale: Locale,
+  id: string,
+): { prev: LessonNode | null; next: LessonNode | null } {
+  const all = lessonsInOrder(locale).map((p) => p.lesson);
+  const i = all.findIndex((l) => l.id === id);
+  if (i === -1) return { prev: null, next: all[0] ?? null };
+  return { prev: all[i - 1] ?? null, next: all[i + 1] ?? null };
+}
+
+export { lessonHref } from "./href";
+
+/** id → lesson node in this locale (for prerequisite links that cross tracks). */
+export function lessonNodes(locale: Locale): Record<string, LessonNode> {
+  return Object.fromEntries(lessonsInOrder(locale).map((p) => [p.lesson.id, p.lesson]));
 }

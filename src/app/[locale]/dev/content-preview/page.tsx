@@ -6,8 +6,9 @@ import { Suspense } from "react";
 
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
-import { LessonView } from "@/features/content/lesson-view";
 import { getLesson, listLessons } from "@/features/content/lessons";
+import { lessonNodes, neighbours } from "@/features/curriculum";
+import { Reader } from "@/features/reader/reader";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 
@@ -22,7 +23,7 @@ export default function ContentPreviewPage({
   searchParams,
 }: PageProps<"/[locale]/dev/content-preview">) {
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-10 pb-16 sm:px-6">
+    <div className="mx-auto max-w-7xl px-4 pt-10 pb-16 sm:px-6">
       <Suspense fallback={null}>
         <Gate params={params} searchParams={searchParams} />
       </Suspense>
@@ -49,7 +50,15 @@ async function Gate({
             ← {t("back")}
           </Link>
         </p>
-        {resolved ? <LessonView {...resolved} /> : <p>{t("notFound", { id })}</p>}
+        {resolved ? (
+          <Reader
+            {...resolved}
+            neighbours={neighbours(locale, resolved.lesson.id)}
+            prerequisiteTitles={lessonNodes(locale)}
+          />
+        ) : (
+          <p>{t("notFound", { id })}</p>
+        )}
       </>
     );
   }

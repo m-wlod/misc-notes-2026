@@ -290,6 +290,8 @@ Phases 4–6 use **one sample lesson only**, visibly labelled as a sample (banne
 
 ### Phase 7 — Content pipeline and first real content **\[you\]**
 
+> **Changed 2026-11-01 (your decision):** no real lessons or maths/statistics content until the site is finished. This phase builds the pipeline and tooling only (`content:draft`, verification), tested on fixtures. Drafting Fundamenty and Wartość oczekiwana moves to the separate content task.
+
 **Goal:** a repeatable way to turn your books and NotebookLM notes into verified lessons and exercises.
 
 - `docs/CONTENT_GUIDE.md`: voice (mentor, precise, short sentences, Polish first), lesson template, exercise template per type, level definitions with examples, how to write a `GuruMyth`, citation format, and the review checklist.

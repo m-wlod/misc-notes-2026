@@ -1,0 +1,28 @@
+{
+  "toc": "Contents",
+  "progress": "Reading progress",
+  "timeLeft": "About {minutes} min left",
+  "timeDone": "Read to the end",
+  "resume": "Back to where you left off: {section}",
+  "complete": "Mark as understood",
+  "completed": "Lesson complete",
+  "completedNote": "Saved in this browser.",
+  "nextUp": "Next lesson",
+  "prev": "Previous",
+  "next": "Next",
+  "lessonNav": "Lesson navigation",
+  "inPreparation": "This lesson is in preparation.",
+  "prerequisites": "Worth knowing first",
+  "noPrerequisites": "No prerequisites.",
+  "sidenote": "Note {n}",
+  "check": {
+    "label": "Check yourself",
+    "submit": "Check",
+    "correct": "Correct.",
+    "wrong": "Not yet. Try again or see the answer.",
+    "reveal": "Show answer",
+    "answer": "Answer: {answer}",
+    "yourAnswer": "Your answer",
+    "note": "Nothing is recorded: this is just for you."
+  }
+}

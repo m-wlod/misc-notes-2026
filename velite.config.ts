@@ -71,6 +71,8 @@ const lessons = defineCollection({
       relatedVideos: s.array(s.object({ title: s.string(), url: s.string().url() })).default([]),
       glossaryTerms: s.array(id).default([]),
       body: s.mdx(),
+      /** h2/h3 headings with their anchor ids, for the reader's table of contents. */
+      toc: s.toc({ maxDepth: 3 }),
     })
     .strict()
     .transform((data, { meta }) => ({
@@ -130,6 +132,10 @@ export default defineConfig({
       learn: routing.pathnames["/learn"],
       glossary: routing.pathnames["/glossary"],
     };
+    // id → slug per locale, for proxy.ts (lesson-level slug redirects) without the bodies.
+    const slugs: Record<string, Partial<Record<string, string>>> = {};
+    for (const l of lessons) slugs[l.id] = { ...slugs[l.id], [l.locale]: l.slug };
+    writeFileSync(".velite/lesson-slugs.json", JSON.stringify(slugs));
     mkdirSync("public/search", { recursive: true });
     for (const locale of routing.locales) {
       const docs = buildSearchDocs(locale, curriculum, lessons, glossary, paths);

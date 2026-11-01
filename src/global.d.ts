@@ -10,6 +10,7 @@ import type home from "../messages/pl/home.json";
 import type nav from "../messages/pl/nav.json";
 import type onboarding from "../messages/pl/onboarding.json";
 import type placement from "../messages/pl/placement.json";
+import type reader from "../messages/pl/reader.json";
 import type sections from "../messages/pl/sections.json";
 import type { formats } from "./lib/i18n/format";
 
@@ -31,6 +32,7 @@ declare module "next-intl" {
       content: typeof content;
       glossary: typeof glossary;
       curriculum: typeof curriculum;
+      reader: typeof reader;
     };
     Formats: typeof formats;
   }

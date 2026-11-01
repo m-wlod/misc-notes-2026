@@ -5,8 +5,10 @@ import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/display";
 import { CheckIcon } from "@/components/ui/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/overlays";
+import { Link } from "@/i18n/navigation";
 import { cx } from "@/lib/cx";
 
+import { lessonHref } from "./href";
 import type { LessonNode } from "./index";
 import { missingPrerequisites, nodeState, type NodeState } from "./node-state";
 import { useLocalProgress } from "./use-local-progress";
@@ -99,6 +101,14 @@ export function LessonPath({ lessons, titles }: LessonPathProps) {
                       {t("stubNote")}
                     </p>
                   ) : null}
+                  <p className="mt-3">
+                    <Link
+                      href={lessonHref(lesson)}
+                      className="text-sm font-semibold text-accent-text underline underline-offset-2"
+                    >
+                      {t("openLesson")}
+                    </Link>
+                  </p>
                 </PopoverContent>
               </Popover>
               <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-xs text-ink-muted">

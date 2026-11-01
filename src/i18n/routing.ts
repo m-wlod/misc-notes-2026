@@ -15,6 +15,10 @@ export const routing = defineRouting({
     "/learn": { pl: "/nauka", en: "/learn" },
     "/learn/[track]": { pl: "/nauka/[track]", en: "/learn/[track]" },
     "/learn/[track]/[module]": { pl: "/nauka/[track]/[module]", en: "/learn/[track]/[module]" },
+    "/learn/[track]/[module]/[lesson]": {
+      pl: "/nauka/[track]/[module]/[lesson]",
+      en: "/learn/[track]/[module]/[lesson]",
+    },
     "/textbook": { pl: "/podrecznik", en: "/textbook" },
     "/map": { pl: "/mapa", en: "/map" },
     "/practice": { pl: "/praktyka", en: "/practice" },
