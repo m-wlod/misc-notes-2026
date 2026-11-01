@@ -4,7 +4,7 @@ Living log. Update at the end of every phase: what's done, decisions, open quest
 
 ## Phase checklist
 
-- [x] 0 — Repo bootstrap and tooling (pending: `supabase start` once Docker runs) — 2026-11-01
+- [x] 0 — Repo bootstrap and tooling (local Supabase verified: Studio, Mailpit, auth healthy) — 2026-11-01
 - [ ] 1 — Design system and brand foundations **[you: sign-off]**
 - [ ] 2 — i18n, routing and app shell
 - [ ] 3 — Auth, profiles and database schema
@@ -33,11 +33,11 @@ Review sessions due after phases 1, 4, 8, 12, 19.
 
 ## Environment (checked 2026-11-01)
 
-| Tool                                                                                | Status                                                                                                         |
-| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| git 2.53, Node 24.19, npm 11.17, Python 3.12, Docker 29.4, gh 2.91, Vercel CLI 54.6 | present                                                                                                        |
-| pnpm 12.16.1                                                                        | installed via corepack (user-level shims)                                                                      |
-| Supabase CLI 2.122                                                                  | dev dependency (`pnpm exec supabase`); local stack needs Docker Desktop **running** (it was not on 2026-11-01) |
+| Tool                                                                                | Status                                                                                                          |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| git 2.53, Node 24.19, npm 11.17, Python 3.12, Docker 29.4, gh 2.91, Vercel CLI 54.6 | present                                                                                                         |
+| pnpm 12.16.1                                                                        | installed via corepack (user-level shims)                                                                       |
+| Supabase CLI 2.122                                                                  | dev dependency (`pnpm exec supabase`); local stack verified 2026-11-01 (first `db:start` pulls ~7 GB of images) |
 
 ## External accounts and secrets
 
