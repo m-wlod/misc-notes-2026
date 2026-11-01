@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { ReadingColumn } from "@/components/content/margin-note";
 import { Badge } from "@/components/ui/display";
 
+import { DepthToggle } from "./depth-toggle";
 import type { ResolvedLesson } from "./lessons";
 import { MdxContent } from "./mdx-content";
 
@@ -44,6 +45,11 @@ export async function LessonView({ lesson, fallback }: ResolvedLesson) {
           </div>
           <h1 className="mb-3 text-3xl">{lesson.title}</h1>
           <p className="text-base text-ink-muted">{lesson.summary}</p>
+          {lesson.hasDepth ? (
+            <div className="mt-5">
+              <DepthToggle />
+            </div>
+          ) : null}
         </header>
 
         <ReadingColumn>

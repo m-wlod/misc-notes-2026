@@ -17,13 +17,19 @@ Lesson building blocks used in `content/<locale>/tracks/**/*.mdx`. They're imple
 | `<ExerciseRef id="…" title="…" />`                 | Link to a practice exercise                                  | Ids validated from Phase 8                                   |
 | `<InterviewTip>`                                   | How this comes up in quant interviews                        |                                                              |
 | `<KeyFormula>` with `$$…$$` inside                 | The one formula to remember                                  | The equation is numbered like the others                     |
-| `<Depth level="easy\|formal">`, `<Term id="…">`    | Depth toggle, glossary hover card                            | Phase 4b                                                     |
+| `<Depth level="easy                                | formal">`, `<Term id="…">`                                   | Depth toggle, glossary hover card                            | See below | \|formal">`, `<Term id="…">` | Depth toggle, glossary hover card | Phase 4b |
 
 ## Math and numbering
 
 - Inline: `$p_i$`. Display: `$$ … $$` on their own lines. Polish decimals inside math: `0{,}52`.
 - Display equations are numbered (1), (2), … per lesson. Name one with `\label{name}` inside the TeX, then refer to it in text with `<EqRef to="name" />`. An unknown or duplicate label fails the build.
 - Don't put `{…}` in plain text: MDX reads braces as code. Inside `$…$` they're fine.
+- Keep display equations out of `<Depth>`: both versions are in the page, so an equation inside one would take a number in both modes. Use inline math there, or put the equation outside.
+
+## Depth and glossary
+
+- `<Depth level="easy">` (Po ludzku) and `<Depth level="formal">` (Podręcznik) wrap passages that differ; everything else shows in both. The toggle appears on lessons that use `<Depth>` and is remembered in the browser (`qla:depth`).
+- `<Term id="variance">wariancja</Term>` marks a term from `content/glossary/<id>.yaml`. It opens a popover with the definition (click, tap, Enter or hover). Unknown ids fail the build.
 
 ## Rules the build enforces (`pnpm content:build`)
 

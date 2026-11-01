@@ -4,12 +4,15 @@ import { useTheme } from "next-themes";
 import { RadioGroup } from "radix-ui";
 import { useSyncExternalStore } from "react";
 
+import { selectOnKeyboardFocus } from "@/components/ui/choice";
+
 type ThemeSwitchProps = {
   /** Localised labels (next-intl arrives in Phase 2). */
   labels: { group: string; system: string; light: string; dark: string };
 };
 
 const subscribe = () => () => undefined;
+
 const THEMES = ["system", "light", "dark"] as const;
 
 /** System / light / dark as a segmented radio group (arrow keys move between options). */
@@ -36,6 +39,9 @@ export function ThemeSwitch({ labels }: ThemeSwitchProps) {
         <RadioGroup.Item
           key={value}
           value={value}
+          onFocus={selectOnKeyboardFocus(() => {
+            setTheme(value);
+          })}
           className="px-3 py-1.5 text-sm text-ink-muted hover:text-ink data-[state=checked]:bg-ink data-[state=checked]:text-bg"
         >
           {labels[value]}

@@ -1,11 +1,12 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+import { DEPTH_STORAGE_KEY } from "../src/config/depth";
 import { THEME_STORAGE_KEY } from "../src/config/theme";
 
 /**
  * The content engine, through the internal preview (Phase 4 Done-when: the sample lesson
- * uses every component and renders in both themes). Depth modes arrive in Phase 4b.
+ * uses every component and renders in both themes and both depth modes).
  */
 
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"];
@@ -75,6 +76,82 @@ test("heading anchors link to their section", async ({ page }) => {
   await expect(anchor).toHaveAttribute("href", "#rozrzut-wyników");
 });
 
+const EASY = "Wyobraź sobie dwa zakłady";
+const FORMAL = "drugi moment centralny";
+
+test("the depth toggle swaps passages and remembers the choice", async ({ page }) => {
+  await page.goto(SAMPLE);
+  const group = page.getByRole("radiogroup", { name: "Sposób wyjaśniania" });
+  await expect(group.getByRole("radio", { name: "Po ludzku" })).toBeChecked();
+  await expect(page.getByText(EASY)).toBeVisible();
+  await expect(page.getByText(FORMAL)).toBeHidden();
+  // Shared content shows in both modes.
+  await expect(page.getByText("Sama średnia nie mówi")).toBeVisible();
+
+  await group.getByRole("radio", { name: "Podręcznik" }).click();
+  await expect(page.getByText(FORMAL)).toBeVisible();
+  await expect(page.getByText(EASY)).toBeHidden();
+  await expect(page.getByText("Sama średnia nie mówi")).toBeVisible();
+
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-depth", "formal");
+  await expect(page.getByRole("radio", { name: "Podręcznik" })).toBeChecked();
+  await expect(page.getByText(FORMAL)).toBeVisible();
+});
+
+test("the toggle works from the keyboard", async ({ page }) => {
+  await page.goto(SAMPLE);
+  // Checked only after hydration (the server can't know the stored depth).
+  await expect(page.getByRole("radio", { name: "Po ludzku" })).toBeChecked();
+  await page.getByRole("radio", { name: "Po ludzku" }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("radio", { name: "Podręcznik" })).toBeChecked();
+  await expect(page.getByText(FORMAL)).toBeVisible();
+});
+
+test("stored depth applies before first paint (no flash)", async ({ page }) => {
+  await page.addInitScript((key) => {
+    window.localStorage.setItem(key, "formal");
+    requestAnimationFrame(() => {
+      (window as unknown as { firstFrameDepth: string | null }).firstFrameDepth =
+        document.documentElement.getAttribute("data-depth");
+    });
+  }, DEPTH_STORAGE_KEY);
+  await page.goto(SAMPLE);
+  await page.waitForFunction(() => "firstFrameDepth" in window);
+  const first = await page.evaluate(
+    () => (window as unknown as { firstFrameDepth: string | null }).firstFrameDepth,
+  );
+  expect(first).toBe("formal");
+});
+
+test("a glossary term opens its definition by keyboard and links to the glossary", async ({
+  page,
+}) => {
+  await page.goto(SAMPLE);
+  // Wait for hydration: the depth radio is only checked once React is attached.
+  await expect(page.getByRole("radio", { name: "Po ludzku" })).toBeChecked();
+  const term = page.getByRole("button", { name: "wariancja", exact: true });
+  await term.focus();
+  await page.keyboard.press("Enter");
+  const card = page.getByRole("dialog", { name: "wariancja" });
+  await expect(card).toContainText("Średni kwadrat odchylenia");
+  await page.keyboard.press("Escape");
+  await expect(card).toBeHidden();
+  await expect(term).toBeFocused();
+
+  await term.click();
+  await card.getByRole("link", { name: "Zobacz w słowniczku" }).click();
+  await expect(page).toHaveURL(/\/pl\/slowniczek#variance$/);
+});
+
+test("a glossary term opens on tap", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "touch only");
+  await page.goto(SAMPLE);
+  await page.getByRole("button", { name: "martyngał" }).tap();
+  await expect(page.getByRole("dialog", { name: /martyngał/ })).toBeVisible();
+});
+
 for (const theme of ["light", "dark"] as const) {
   test(`code is highlighted with theme colours, and axe passes (${theme})`, async ({ page }) => {
     await page.addInitScript(
@@ -94,8 +171,11 @@ for (const theme of ["light", "dark"] as const) {
     );
 
     await page.locator("summary", { hasText: "Dowód" }).click();
-    const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
-    expect(violations.map((v) => `${v.id}: ${v.help} (${String(v.nodes.length)})`)).toEqual([]);
+    for (const depth of ["Po ludzku", "Podręcznik"]) {
+      await page.getByRole("radio", { name: depth }).click();
+      const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
+      expect(violations.map((v) => `${depth} ${v.id}: ${v.help}`)).toEqual([]);
+    }
   });
 }
 

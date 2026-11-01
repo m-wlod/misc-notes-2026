@@ -22,7 +22,7 @@ Jeśli ten sam zakład powtarzasz setki razy, pojedyncze wyniki przestają mieć
 
 ## Średni wynik zakładu
 
-Rzut uczciwą kostką daje od 1 do 6 oczek, każde z prawdopodobieństwem $\tfrac{1}{6}$. Średnio wypada $3{,}5$ oczka, choć tej liczby nie da się wyrzucić.<Sidenote>Wartość oczekiwana nie musi być wynikiem, który może się zdarzyć.</Sidenote>
+Rzut uczciwą kostką daje od 1 do 6 oczek, każde z prawdopodobieństwem $\tfrac{1}{6}$. Średnio wypada $3{,}5$ oczka, choć tej liczby nie da się wyrzucić. To jest <Term id="expected-value">wartość oczekiwana</Term> rzutu.<Sidenote>Wartość oczekiwana nie musi być wynikiem, który może się zdarzyć.</Sidenote>
 
 <Definition title="Wartość oczekiwana">
 Zmienna losowa $X$ przyjmuje wartości $x_1, \dots, x_n$ z prawdopodobieństwami $p_1, \dots, p_n$. Jej wartość oczekiwana to
@@ -44,7 +44,15 @@ Na każdej złotówce stawki tracisz średnio 4 grosze.
 
 ## Rozrzut wyników
 
-Sama średnia nie mówi, jak bardzo wyniki się wahają. Do tego służy wariancja.<Sidenote>Odchylenie standardowe to pierwiastek z wariancji, w tych samych jednostkach co wynik.</Sidenote>
+Sama średnia nie mówi, jak bardzo wyniki się wahają. Do tego służy <Term id="variance">wariancja</Term>.<Sidenote>Odchylenie standardowe to pierwiastek z wariancji, w tych samych jednostkach co wynik.</Sidenote>
+
+<Depth level="easy">
+Wyobraź sobie dwa zakłady o tej samej średniej. W pierwszym zawsze tracisz 4 grosze. W drugim raz wygrywasz złotówkę, a raz ją tracisz. Średnio wychodzi to samo, ale drugi zakład dużo mocniej huśta Twoim kontem. Wariancja mierzy właśnie to huśtanie: im większa, tym dalej od średniej lądują pojedyncze wyniki.
+</Depth>
+
+<Depth level="formal">
+Niech $\mu = \mathbb{E}[X]$. Wariancją nazywamy $\operatorname{Var}(X) = \mathbb{E}\big[(X - \mu)^2\big]$, o ile ta wartość oczekiwana jest skończona. Jest to drugi moment centralny rozkładu $X$; jej pierwiastek $\sigma = \sqrt{\operatorname{Var}(X)}$ to odchylenie standardowe.
+</Depth>
 
 <Theorem title="Wariancja przez momenty">
 Dla każdej zmiennej losowej o skończonej wariancji
@@ -68,6 +76,8 @@ $$
 </KeyFormula>
 
 ## Strategia podwajania stawki
+
+Na pierwszy rzut oka ratunkiem wydaje się <Term id="martingale">martyngał</Term>, czyli podwajanie stawki po każdej przegranej.
 
 <GuruMyth claim="Po każdej przegranej podwój stawkę. Pierwsza wygrana odrobi wszystkie straty i da zysk, więc system zawsze wygrywa." debunk="martingale-doubling">
 Ograniczmy się do 7 kolejnych podwojeń (stawki 1, 2, 4, …, 64 zł; łącznie 127 zł). Wszystkie przegrywamy z prawdopodobieństwem $0{,}52^7 \approx 0{,}0103$. Wartość oczekiwana jednej serii to

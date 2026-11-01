@@ -7,6 +7,7 @@ import "../globals.css";
 
 import { AppShell } from "@/components/shell/app-shell";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { DEPTH_SCRIPT } from "@/config/depth";
 import { resolveSiteUrl } from "@/config/runtime";
 import { siteConfig } from "@/config/site";
 import { env } from "@/env";
@@ -46,6 +47,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       suppressHydrationWarning
     >
       <body>
+        {/* Lesson depth before first paint (no flash); see src/config/depth.ts. */}
+        <script dangerouslySetInnerHTML={{ __html: DEPTH_SCRIPT }} />
         <NextIntlClientProvider>
           <ThemeProvider>
             <AppShell>{children}</AppShell>

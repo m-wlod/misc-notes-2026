@@ -1,0 +1,11 @@
+{
+  "lead": "Pojęcia z prawdopodobieństwa, statystyki i finansów, z nazwą po polsku i po angielsku.",
+  "searchLabel": "Szukaj w słowniczku",
+  "searchPlaceholder": "np. wariancja albo variance",
+  "count": "{count, plural, one {# pojęcie} few {# pojęcia} many {# pojęć} other {# pojęcia}}",
+  "empty": "Brak pojęć pasujących do „{query}”.",
+  "sample": "przykład",
+  "sampleNote": "Pojęcia oznaczone jako „przykład” są tymczasowe i zostaną zastąpione sprawdzoną treścią.",
+  "inGlossary": "Zobacz w słowniczku",
+  "letters": "Litery"
+}

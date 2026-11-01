@@ -1,0 +1,11 @@
+{
+  "lead": "Terms from probability, statistics and finance, with their Polish and English names.",
+  "searchLabel": "Search the glossary",
+  "searchPlaceholder": "e.g. variance or wariancja",
+  "count": "{count, plural, one {# term} other {# terms}}",
+  "empty": "No terms match “{query}”.",
+  "sample": "sample",
+  "sampleNote": "Terms marked “sample” are placeholders and will be replaced with reviewed content.",
+  "inGlossary": "See in the glossary",
+  "letters": "Letters"
+}
