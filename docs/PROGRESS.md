@@ -5,7 +5,7 @@ Living log. Update at the end of every phase: what's done, decisions, open quest
 ## Phase checklist
 
 - [x] 0 — Repo bootstrap and tooling (local Supabase verified: Studio, Mailpit, auth healthy) — 2026-11-01
-- [ ] 1 — Design system and brand foundations **[you: sign-off]** — built 2026-11-01 on `phase-1`, awaiting sign-off (review `/styleguide` on the PR preview)
+- [x] 1 — Design system and brand foundations — signed off 2026-11-01 (direction A)
 - [ ] 2 — i18n, routing and app shell
 - [ ] 3 — Auth, profiles and database schema
 - [ ] 4 — Content engine (MDX textbook)
