@@ -3,6 +3,7 @@ import type account from "../messages/pl/account.json";
 import type auth from "../messages/pl/auth.json";
 import type common from "../messages/pl/common.json";
 import type content from "../messages/pl/content.json";
+import type curriculum from "../messages/pl/curriculum.json";
 import type errors from "../messages/pl/errors.json";
 import type glossary from "../messages/pl/glossary.json";
 import type home from "../messages/pl/home.json";
@@ -29,6 +30,7 @@ declare module "next-intl" {
       account: typeof account;
       content: typeof content;
       glossary: typeof glossary;
+      curriculum: typeof curriculum;
     };
     Formats: typeof formats;
   }

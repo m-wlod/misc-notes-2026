@@ -1,3 +1,5 @@
+import { curriculumSchema } from "../curriculum/schema";
+
 /**
  * Cross-file content checks that a per-file schema can't do. Run by Velite's `prepare`
  * hook, so any problem fails `pnpm build` with one readable line per error:
@@ -7,6 +9,8 @@
 export type LessonRef = {
   /** Path relative to the repo root, e.g. "content/pl/tracks/x/y.mdx". */
   file: string;
+  /** Placeholder lessons (Phases 4–6) live outside the curriculum. */
+  sample?: boolean;
   id: string;
   locale: "pl" | "en";
   prerequisites: readonly string[];
@@ -106,4 +110,98 @@ export function termRefsIn(source: string): string[] {
   return [...source.matchAll(/<Term\b[^>]*?\bid=["']([^"']+)["']/g)].flatMap((m) =>
     m[1] ? [m[1]] : [],
   );
+}
+
+const CURRICULUM_FILE = "content/curriculum.ts";
+
+/**
+ * content/curriculum.ts against the lesson files: shape, unique ids and slugs, every
+ * listed lesson exists in Polish and sits in its track/module folder, every Polish lesson
+ * (except samples) is listed exactly once, and prerequisites come earlier in the order.
+ */
+export function validateCurriculum(input: unknown, lessons: readonly LessonRef[]): string[] {
+  const parsed = curriculumSchema.safeParse(input);
+  if (!parsed.success) {
+    return parsed.error.issues.map(
+      (issue) => `${CURRICULUM_FILE}: ${issue.path.join(".") || "(root)"}: ${issue.message}`,
+    );
+  }
+  const curriculum = parsed.data;
+  const errors: string[] = [];
+  const polish = new Map(lessons.filter((l) => l.locale === "pl").map((l) => [l.id, l]));
+  const position = new Map<string, number>();
+  const where = new Map<string, string>(); // lesson id → "track/module"
+
+  const unique = (values: string[], what: string) => {
+    const seen = new Set<string>();
+    for (const v of values) {
+      if (seen.has(v)) errors.push(`${CURRICULUM_FILE}: ${what}: "${v}" is used twice`);
+      seen.add(v);
+    }
+  };
+  unique(
+    curriculum.map((t) => t.id),
+    "track id",
+  );
+  unique(
+    curriculum.flatMap((t) => t.modules.map((m) => m.id)),
+    "module id",
+  );
+  for (const locale of ["pl", "en"] as const) {
+    unique(
+      curriculum.map((t) => t.slug[locale]),
+      `track slug (${locale})`,
+    );
+    for (const t of curriculum) {
+      unique(
+        t.modules.map((m) => m.slug[locale]),
+        `module slug in "${t.id}" (${locale})`,
+      );
+    }
+  }
+
+  curriculum.forEach((track, ti) => {
+    track.modules.forEach((mod, mi) => {
+      mod.lessons.forEach((id, li) => {
+        const at = `tracks[${String(ti)}].modules[${String(mi)}].lessons[${String(li)}]`;
+        if (position.has(id)) {
+          errors.push(
+            `${CURRICULUM_FILE}: ${at}: "${id}" is already listed in ${where.get(id) ?? "?"}`,
+          );
+          return;
+        }
+        position.set(id, position.size);
+        where.set(id, `${track.id}/${mod.id}`);
+        const lesson = polish.get(id);
+        if (!lesson) {
+          errors.push(`${CURRICULUM_FILE}: ${at}: no Polish lesson file for "${id}"`);
+        }
+      });
+    });
+  });
+
+  for (const lesson of lessons) {
+    if (lesson.sample) continue;
+    const folder = where.get(lesson.id);
+    if (!folder) {
+      if (lesson.locale === "pl") {
+        errors.push(`${lesson.file}: id: "${lesson.id}" is not listed in ${CURRICULUM_FILE}`);
+      }
+      continue;
+    }
+    if (!lesson.file.includes(`/tracks/${folder}/`)) {
+      errors.push(`${lesson.file}: file: belongs in content/${lesson.locale}/tracks/${folder}/`);
+    }
+    if (lesson.locale !== "pl") continue;
+    const self = position.get(lesson.id) ?? 0;
+    lesson.prerequisites.forEach((p, i) => {
+      const at = position.get(p);
+      if (at !== undefined && at > self) {
+        errors.push(
+          `${lesson.file}: prerequisites[${String(i)}]: "${p}" comes later in ${CURRICULUM_FILE}; reorder or drop it`,
+        );
+      }
+    });
+  }
+  return errors;
 }

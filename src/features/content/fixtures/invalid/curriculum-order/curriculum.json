@@ -1,0 +1,9 @@
+[
+  {
+    "id": "t",
+    "slug": { "pl": "t", "en": "t" },
+    "name": { "pl": "T", "en": "T" },
+    "description": { "pl": "Opis", "en": "Description" },
+    "modules": [{ "id": "m", "slug": { "pl": "m", "en": "m" }, "name": { "pl": "M", "en": "M" }, "lessons": ["a", "b"] }]
+  }
+]

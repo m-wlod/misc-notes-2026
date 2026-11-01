@@ -13,6 +13,9 @@ export const routing = defineRouting({
   pathnames: {
     "/": "/",
     "/learn": { pl: "/nauka", en: "/learn" },
+    "/learn/[track]": { pl: "/nauka/[track]", en: "/learn/[track]" },
+    "/learn/[track]/[module]": { pl: "/nauka/[track]/[module]", en: "/learn/[track]/[module]" },
+    "/textbook": { pl: "/podrecznik", en: "/textbook" },
     "/practice": { pl: "/praktyka", en: "/practice" },
     "/interview": { pl: "/rozmowa", en: "/interview" },
     "/debunk": "/debunk",
@@ -35,3 +38,5 @@ export const routing = defineRouting({
 
 export type Locale = (typeof routing.locales)[number];
 export type AppPathname = keyof typeof routing.pathnames;
+/** Routes without dynamic segments: usable as a plain href (nav, sitemap, metadata). */
+export type StaticPathname = Exclude<AppPathname, `${string}[${string}`>;

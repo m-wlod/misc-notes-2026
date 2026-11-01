@@ -290,3 +290,13 @@ export async function Term({ id, children }: Children & { id: string }) {
     </TermPopover>
   );
 }
+
+/** The whole body of a lesson that is listed in the curriculum but not written yet. */
+export async function Stub() {
+  const t = await getTranslations("content");
+  return (
+    <p role="note" className="my-6 border-l-2 border-rule-strong py-1 pl-5 font-sans text-base">
+      {t("stub")}
+    </p>
+  );
+}

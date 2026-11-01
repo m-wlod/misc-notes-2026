@@ -49,6 +49,10 @@ describe("invalid content fails the build", { timeout: 60_000 }, () => {
     ],
     ["unknown-term", [`${file("unknown-term")}: <Term id="nieznany">: unknown glossary term`]],
     ["unknown-eqref", [file("unknown-eqref"), `<EqRef to="y" />: no equation is labelled "y"`]],
+    [
+      "curriculum-order",
+      [`${FIXTURES}/curriculum-order/pl/tracks/t/m/a.mdx: prerequisites[0]: "b" comes later`],
+    ],
   ])("%s", (fixture, expected) => {
     const { status, output } = build(fixture);
     expect(status, output).not.toBe(0);

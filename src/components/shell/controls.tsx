@@ -1,6 +1,8 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import type { ComponentProps } from "react";
 
 import { ThemeSwitch } from "@/components/theme/theme-switch";
 import { SearchIcon } from "@/components/ui/icons";
@@ -25,9 +27,18 @@ export function ThemeControl() {
 export function LocaleSwitch({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("common.language");
   const locale = useLocale();
-  // Unknown paths (404) fall back to the home page in the other language.
+  // Unknown paths (404) fall back to the home page in the other language. Dynamic routes
+  // (e.g. /learn/[track]) keep their params; the page then redirects a slug from the
+  // other language to its own (src/app/[locale]/learn/[track]/page.tsx).
   const pathname = usePathname();
-  const href: AppPathname = pathname in routing.pathnames ? pathname : "/";
+  const params = useParams();
+  const known: AppPathname = pathname in routing.pathnames ? pathname : "/";
+  const dynamicParams = Object.fromEntries(
+    Object.entries(params).filter(([key, value]) => key !== "locale" && typeof value === "string"),
+  );
+  const href = (
+    known.includes("[") ? { pathname: known, params: dynamicParams } : known
+  ) as ComponentProps<typeof Link>["href"];
 
   return (
     <ul aria-label={t("label")} className="flex items-center gap-3 text-sm">

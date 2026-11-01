@@ -1,0 +1,38 @@
+{
+  "views": {
+    "label": "Widok programu",
+    "path": "Ścieżka",
+    "textbook": "Podręcznik"
+  },
+  "path": {
+    "title": "Ścieżka nauki",
+    "lead": "Trzynaście działów: od procentów po wycenę opcji. Każdą lekcję możesz otworzyć od razu. Oznaczenie „zalecane później” podpowiada tylko, co warto znać wcześniej.",
+    "progressNote": "Postęp zapisujemy w tej przeglądarce. Po włączeniu kont przeniesiemy go na Twoje konto."
+  },
+  "textbook": {
+    "title": "Podręcznik",
+    "lead": "Cały program jako spis treści, do czytania po kolei."
+  },
+  "state": {
+    "locked": "zalecane później",
+    "available": "dostępna",
+    "in_progress": "w toku",
+    "done": "ukończona",
+    "mastered": "opanowana"
+  },
+  "stub": "w przygotowaniu",
+  "recommendedAfter": "Zalecane po: {lessons}",
+  "noPrerequisites": "Bez wymagań wstępnych.",
+  "lesson": "Lekcja {number}",
+  "level": "Poziom {level}",
+  "levels": "Poziomy {min}–{max}",
+  "minutes": "{minutes} min",
+  "duration": "{hours, plural, =0 {} other {# godz. }}{minutes} min",
+  "lessonCount": "{count, plural, one {# lekcja} few {# lekcje} many {# lekcji} other {# lekcji}}",
+  "progress": "Ukończone: {done} z {total}",
+  "track": "Dział {number}",
+  "module": "Moduł {number}",
+  "openTrack": "Otwórz dział",
+  "allTracks": "Cała ścieżka",
+  "stubNote": "Lekcje w przygotowaniu mają już ustalone miejsce w programie, poziom i wymagania. Treść pojawi się stopniowo."
+}

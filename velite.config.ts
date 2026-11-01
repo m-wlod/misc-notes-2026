@@ -1,4 +1,5 @@
-import { relative } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { join, relative } from "node:path";
 
 import rehypeShiki from "@shikijs/rehype";
 import rehypeKatex from "rehype-katex";
@@ -7,8 +8,9 @@ import remarkMath from "remark-math";
 import { createCssVariablesTheme } from "shiki";
 import { defineCollection, defineConfig, s } from "velite";
 
+import { curriculum } from "./content/curriculum";
 import { rehypeNumbering } from "./src/features/content/rehype-numbering";
-import { termRefsIn, validateContent } from "./src/features/content/validate";
+import { termRefsIn, validateContent, validateCurriculum } from "./src/features/content/validate";
 
 /**
  * Content layer (Phase 4). `pnpm content:build` compiles content/ into typed data in
@@ -20,6 +22,17 @@ import { termRefsIn, validateContent } from "./src/features/content/validate";
  */
 
 const fileOf = (absolute: string) => relative(process.cwd(), absolute).replaceAll("\\", "/");
+
+/**
+ * The outline to validate: content/curriculum.ts normally. A test fixture root may bring
+ * its own curriculum.json; without one, fixtures skip the curriculum checks.
+ */
+function curriculumOutline(): unknown {
+  const root = process.env.CONTENT_ROOT;
+  if (!root) return curriculum;
+  const file = join(root, "curriculum.json");
+  return existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as unknown) : null;
+}
 
 /** Shiki colours come from CSS variables in src/styles/tokens.css, so they follow the theme. */
 const codeTheme = createCssVariablesTheme({ name: "qla", variablePrefix: "--code-" });
@@ -64,6 +77,8 @@ const lessons = defineCollection({
       termRefs: termRefsIn(meta.content ?? ""),
       /** Shows the depth toggle only on lessons that have <Depth> passages. */
       hasDepth: /<Depth\b/.test(meta.content ?? ""),
+      /** Body is just <Stub />: listed in the curriculum, shown as "in preparation". */
+      isStub: /^\s*<Stub\s*\/>\s*$/.test(meta.content ?? ""),
     })),
 });
 
@@ -112,6 +127,8 @@ export default defineConfig({
         : [];
     });
     errors.push(...validateContent(lessons, glossary));
+    const outline = curriculumOutline();
+    if (outline !== null) errors.push(...validateCurriculum(outline, lessons));
     if (errors.length > 0) {
       throw new Error(
         `Invalid content (${String(errors.length)}):\n${errors.map((e) => `  - ${e}`).join("\n")}`,

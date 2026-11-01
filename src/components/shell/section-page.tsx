@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { resolveSiteUrl } from "@/config/runtime";
 import { env } from "@/env";
 import { getPathname } from "@/i18n/navigation";
-import { routing, type AppPathname, type Locale } from "@/i18n/routing";
+import { routing, type StaticPathname, type Locale } from "@/i18n/routing";
 import { localeAlternates } from "@/lib/i18n/seo";
 
 /** Placeholder sections and the build phase each one arrives in (docs/BUILD_PLAN.md). */
@@ -20,12 +20,23 @@ export const SECTIONS = {
   terms: { href: "/terms", phase: 21 },
   cookies: { href: "/cookies", phase: 21 },
   disclaimer: { href: "/disclaimer", phase: 21 },
-} as const satisfies Record<string, { href: AppPathname; phase: number }>;
+} as const satisfies Record<string, { href: StaticPathname; phase: number }>;
 
 export type SectionKey = keyof typeof SECTIONS;
 
 /** canonical + hreflang for any route, from the routing table. */
-export function alternatesFor(href: AppPathname, locale: Locale) {
+/** Alternates for pages whose path differs per locale beyond the prefix (e.g. track slugs). */
+export function alternatesForPaths(locale: Locale, pathFor: (locale: Locale) => string) {
+  return localeAlternates({
+    locale,
+    locales: routing.locales,
+    defaultLocale: routing.defaultLocale,
+    pathFor,
+    base: resolveSiteUrl(env),
+  });
+}
+
+export function alternatesFor(href: StaticPathname, locale: Locale) {
   return localeAlternates({
     locale,
     locales: routing.locales,
