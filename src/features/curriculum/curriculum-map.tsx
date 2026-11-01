@@ -370,9 +370,11 @@ export function CurriculumMap({ nodes, edges, width, height, tracks }: Props) {
                     textAnchor="middle"
                     className="fill-ink font-sans text-2xs group-hover:underline"
                   >
-                    {wrapTitle(n.title).map((line, i) => (
-                      <tspan key={line} x={n.x} dy={i === 0 ? 0 : 12}>
-                        {line}
+                    {wrapTitle(n.title).map((line, i, lines) => (
+                      // Keep the space between lines, or the visible text reads
+                      // "rynkoweto" and no longer matches the link's name (WCAG 2.5.3).
+                      <tspan key={`${String(i)}-${line}`} x={n.x} dy={i === 0 ? 0 : 12}>
+                        {i < lines.length - 1 ? `${line} ` : line}
                       </tspan>
                     ))}
                   </text>

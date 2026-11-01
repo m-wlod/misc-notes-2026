@@ -166,7 +166,8 @@ for (const theme of ["light", "dark"] as const) {
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
     const keyword = page.locator("pre.shiki span", { hasText: "print" }).first();
     await expect(keyword).toBeVisible();
-    const comment = page.locator('pre.shiki span[style*="--code-token-comment"]');
+    const comment = // Shiki splits a comment into "#" and the text; take the text token.
+      page.locator('pre.shiki span[style*="--code-token-comment"]', { hasText: "0.0103" });
     await expect(comment).toHaveCSS(
       "color",
       theme === "light" ? "rgb(93, 100, 114)" : "rgb(154, 161, 174)",

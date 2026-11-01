@@ -168,17 +168,23 @@ test("Polish diacritics render in the self-hosted fonts", async ({ page }) => {
   for (const family of ["Newsreader", "IBM Plex Sans", "IBM Plex Mono"]) {
     // document.fonts.check() is vacuously true for unknown families, so assert the
     // latin-ext face (U+0100–02BA covers ą ć ę ł ń ś ź ż) was actually loaded.
-    const loaded = await page.evaluate(
-      (f) =>
-        [...document.fonts].some(
-          (face) =>
-            face.family.replace(/"/g, "") === f &&
-            face.status === "loaded" &&
-            face.unicodeRange.toUpperCase().includes("U+100-2BA"),
-        ),
-      family,
-    );
-    expect(loaded, `${family} latin-ext face loaded`).toBe(true);
+    // Faces load lazily, when text needing them is laid out: wait rather than check once
+    // (flaked on a slow CI runner).
+    await expect
+      .poll(
+        () =>
+          page.evaluate(async (f) => {
+            await document.fonts.ready;
+            return [...document.fonts].some(
+              (face) =>
+                face.family.replace(/"/g, "") === f &&
+                face.status === "loaded" &&
+                face.unicodeRange.toUpperCase().includes("U+100-2BA"),
+            );
+          }, family),
+        { message: `${family} latin-ext face loaded`, timeout: 10_000 },
+      )
+      .toBe(true);
   }
 });
 
