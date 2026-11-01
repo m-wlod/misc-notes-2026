@@ -5,11 +5,13 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cx } from "@/lib/cx";
 
+import { CloseIcon } from "./icons";
+
 export function ToastProvider({ children, label }: { children: ReactNode; label: string }) {
   return (
     <RadixToast.Provider duration={5000} label={label}>
       {children}
-      <RadixToast.Viewport className="fixed right-0 bottom-0 z-(--z-toast) m-0 flex w-full max-w-sm list-none flex-col gap-2 p-4 outline-none" />
+      <RadixToast.Viewport className="fixed right-0 bottom-0 z-(--z-toast) m-0 flex w-full max-w-sm list-none flex-col gap-2 p-4" />
     </RadixToast.Provider>
   );
 }
@@ -50,9 +52,7 @@ export function Toast({
         aria-label={closeLabel}
         className="rounded-sm text-ink-muted hover:text-ink"
       >
-        <svg viewBox="0 0 12 12" className="size-3" aria-hidden="true">
-          <path d="m2.5 2.5 7 7m0-7-7 7" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
+        <CloseIcon />
       </RadixToast.Close>
       {description ? (
         <RadixToast.Description className="col-span-2 text-sm text-ink-muted">

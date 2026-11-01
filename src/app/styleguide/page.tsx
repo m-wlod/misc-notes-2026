@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import type { ReactNode } from "react";
+import { connection } from "next/server";
+import { Suspense, type ReactNode } from "react";
 
 import { DataRule, StatTicker } from "@/components/content/data";
 import { EquationBlock } from "@/components/content/equation-block";
@@ -10,6 +11,7 @@ import { WalkChart } from "@/components/content/walk-chart";
 import { Button } from "@/components/ui/button";
 import { Badge, Callout, Kbd, Progress, Skeleton, Table, Td, Th } from "@/components/ui/display";
 import { Link } from "@/components/ui/link";
+import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import { randomWalk } from "@/lib/math/rng";
 
@@ -24,6 +26,24 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+export default function StyleguidePage() {
+  return (
+    <Suspense fallback={null}>
+      <Gate />
+    </Suspense>
+  );
+}
+
+/**
+ * Request-time check (review M11). proxy.ts already returns 404; this is the server-side
+ * backstop so the page can never be prerendered into a production build.
+ */
+async function Gate() {
+  await connection();
+  if (!isStyleguideEnabled(env)) notFound();
+  return <Styleguide />;
+}
+
 const COLOURS = [
   ["bg", "Page background"],
   ["surface", "Inputs, raised panels"],
@@ -33,20 +53,43 @@ const COLOURS = [
   ["rule", "Hairlines"],
   ["rule-strong", "Control borders (3:1)"],
   ["grid", "Chart grid"],
-  ["accent", "Actions, focus (fills)"],
+  ["accent", "Action fills"],
   ["accent-text", "Links, accent text"],
-  ["correct", "Correct answer, data up"],
-  ["wrong", "Wrong answer, data down"],
+  ["on-accent", "Text on accent fills"],
+  ["focus", "Focus ring"],
+  ["correct", "Correct answer"],
+  ["wrong", "Wrong answer"],
+  ["data-up", "Rising number"],
+  ["data-down", "Falling number"],
+] as const;
+
+const RADII = [
+  ["--r-sm", "rounded-sm", "2px · badges, checkboxes, kbd"],
+  ["--r", "rounded", "3px · buttons, inputs, panels"],
+  ["--r-md", "rounded-md", "4px · maximum"],
+] as const;
+
+const MOTION = [
+  ["--duration-fast", "100ms", "hover colour"],
+  ["--duration", "150ms", "the maximum for any transition"],
+  ["--ease", "cubic-bezier(0.2, 0, 0, 1)", "standard easing"],
+] as const;
+
+const LAYERS = [
+  ["--z-sticky", "10"],
+  ["--z-dropdown", "20"],
+  ["--z-overlay", "40"],
+  ["--z-modal", "50"],
+  ["--z-toast", "60"],
 ] as const;
 
 const DIACRITICS = "Zażółć gęślą jaźń — 0,25 → 25%";
-const pl = new Intl.NumberFormat("pl-PL", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const pl1 = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 1 });
+const pl0 = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
 
-export default function StyleguidePage() {
-  if (env.VERCEL_ENV === "production") notFound();
-
+function Styleguide() {
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-10 pb-24 sm:px-6">
+    <main className="mx-auto max-w-6xl px-4 pt-10 pb-24 sm:px-6">
       <header className="mb-12 flex flex-wrap items-end justify-between gap-6 border-b border-rule pb-6">
         <div>
           <p className="mb-2 num text-xs text-ink-muted">
@@ -75,7 +118,7 @@ export default function StyleguidePage() {
         </ul>
         <p className="mt-6 max-w-prose text-sm text-ink-muted">
           Neutrals carry the interface. Orange appears only on actions, focus and the current
-          position. Red and green only mean correct/wrong or a rising/falling number; contrast for
+          position. Red and green only mean correct/wrong or a rising/falling number. Contrast for
           every pair is checked in <span className="num">src/styles/tokens.test.ts</span>.
         </p>
       </Section>
@@ -98,7 +141,7 @@ export default function StyleguidePage() {
             <p className="num text-base">1 240,50 · −0,1% · σ = 0,01 · (4.1)</p>
           </Specimen>
         </div>
-        <Table caption="Type scale" className="mt-8 max-w-xl">
+        <Table caption="Type scale" label="Type scale" className="mt-8 max-w-xl">
           <thead>
             <tr>
               <Th>Token</Th>
@@ -114,6 +157,7 @@ export default function StyleguidePage() {
               ["text-base", "15", "Interface"],
               ["text-sm", "13", "Notes, captions"],
               ["text-xs", "12", "Labels, meta"],
+              ["text-2xs", "11", "Chart ticks, figure parameters"],
             ].map(([t, px, use]) => (
               <tr key={t}>
                 <Td className="num">{t}</Td>
@@ -123,6 +167,36 @@ export default function StyleguidePage() {
             ))}
           </tbody>
         </Table>
+      </Section>
+
+      <Section id="shape" title="Spacing, radii, motion, layers">
+        <div className="grid gap-10 lg:grid-cols-2">
+          <div>
+            <h3 className="mb-3 font-sans text-sm font-medium">Spacing</h3>
+            <p className="mb-4 text-sm text-ink-muted">
+              Tailwind’s 4px step (<span className="num">--spacing: 0.25rem</span>). Prefer 1, 2, 3,
+              4, 6, 8, 12, 16.
+            </p>
+            <ul className="grid gap-2">
+              {[1, 2, 3, 4, 6, 8, 12, 16].map((n) => (
+                <li key={n} className="flex items-center gap-3">
+                  <span className="w-8 num text-xs text-ink-muted">{n}</span>
+                  <span
+                    className="h-2 bg-ink-muted"
+                    style={{ width: `${String(n * 4)}px` }}
+                    aria-hidden="true"
+                  />
+                  <span className="num text-xs text-ink-muted">{n * 4}px</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="grid gap-8">
+            <TokenTable label="Radii" head={["Token", "Class", "Value · use"]} rows={RADII} />
+            <TokenTable label="Motion" head={["Token", "Value", "Use"]} rows={MOTION} />
+            <TokenTable label="Layers" head={["Token", "z-index"]} rows={LAYERS} />
+          </div>
+        </div>
       </Section>
 
       <Section id="lesson" title="Lesson components">
@@ -135,12 +209,12 @@ export default function StyleguidePage() {
           <p>
             Jeśli kurs rośnie o 50%, a potem spada o 50%, nie wracasz do punktu wyjścia: zostaje ci
             75% kapitału. Średnia arytmetyczna obu zwrotów wynosi zero, a mimo to kapitał zmalał.
-            <MarginNote n={1}>
+            <MarginNote n={1} srLabel="Przypis">
               Przybliżenie poniżej wynika z rozwinięcia Taylora ln(1 + x) ≈ x − x²/2. Przy dużych
               zwrotach jest coraz mniej dokładne.
             </MarginNote>
           </p>
-          <EquationBlock number="4.1">
+          <EquationBlock number="4.1" label="Równanie (4.1)">
             <span className="font-serif text-lg italic">
               E[ln(1 + R)] ≈ μ − σ<sup>2</sup>/2
             </span>
@@ -157,17 +231,21 @@ export default function StyleguidePage() {
           >
             <WalkChart
               seed={7}
-              label="Wykres błądzenia losowego przez 250 dni, od 100 do około 98"
-              formatValue={(v) => pl.format(v)}
+              days={250}
+              format={(v) => pl1.format(v)}
+              describe={(s) =>
+                `Wykres błądzenia losowego przez ${pl0.format(s.days)} dni: start ${pl1.format(s.start)}, ` +
+                `koniec ${pl1.format(s.end)}, zakres od ${pl1.format(s.min)} do ${pl1.format(s.max)}.`
+              }
             />
           </FigureFrame>
-          <Callout tone="accent" label="Mit">
+          <Callout label="Mit">
             <p className="italic">
               „Strategia zarabia średnio +1% na transakcję, więc musi zarabiać.”
             </p>
-            <p className="mb-0 text-[1.0625rem]">
+            <p className="mb-0">
               Przy σ = 10% spadek zmienności to 0,5%. Po kosztach 0,6% oczekiwany wzrost kapitału
-              wynosi <span className="text-wrong">−0,1%</span> na transakcję.
+              wynosi <span className="text-data-down">−0,1%</span> na transakcję.
             </p>
           </Callout>
         </ReadingColumn>
@@ -177,7 +255,7 @@ export default function StyleguidePage() {
           <StatTicker label="Liga" value="Gauss" />
         </div>
         <DataRule
-          values={randomWalk({ steps: 60, sigma: 0.02, seed: 3 })}
+          values={randomWalk({ points: 60, sigma: 0.02, seed: 3 })}
           label="Ozdobna linia: 60 dni błądzenia losowego"
         />
         <DataRule />
@@ -215,7 +293,7 @@ export default function StyleguidePage() {
       <Section id="status" title="Badges, progress, skeleton">
         <div className="flex flex-wrap gap-2">
           <Badge>Szkic</Badge>
-          <Badge tone="accent">Nowe</Badge>
+          <Badge>Nowe</Badge>
           <Badge tone="correct">Rozwiązane</Badge>
           <Badge tone="wrong">Błąd w treści</Badge>
         </div>
@@ -231,7 +309,11 @@ export default function StyleguidePage() {
       </Section>
 
       <Section id="table" title="Table">
-        <Table caption="Poziom 2 · statystyki zadań (przykładowe dane)" className="max-w-2xl">
+        <Table
+          caption="Poziom 2 · statystyki zadań (przykładowe dane)"
+          label="Statystyki zadań, przykładowe dane"
+          className="max-w-2xl"
+        >
           <thead>
             <tr>
               <Th>Zadanie</Th>
@@ -241,12 +323,14 @@ export default function StyleguidePage() {
             </tr>
           </thead>
           <tbody>
-            {[
-              ["Odrabianie straty 20%", "71%", "0:48", "+3,1", true],
-              ["Seria 6 strat przy 55%", "38%", "2:12", "−1,4", false],
-              ["Wariancja sumy", "54%", "1:35", "+0,6", true],
-            ].map(([name, rate, time, delta, up]) => (
-              <tr key={String(name)}>
+            {(
+              [
+                ["Odrabianie straty 20%", "71%", "0:48", "+3,1", true],
+                ["Seria 6 strat przy 55%", "38%", "2:12", "−1,4", false],
+                ["Wariancja sumy", "54%", "1:35", "+0,6", true],
+              ] as const
+            ).map(([name, rate, time, delta, up]) => (
+              <tr key={name}>
                 <Td>{name}</Td>
                 <Td numeric>{rate}</Td>
                 <Td numeric>{time}</Td>
@@ -258,7 +342,7 @@ export default function StyleguidePage() {
           </tbody>
         </Table>
       </Section>
-    </div>
+    </main>
   );
 }
 
@@ -287,5 +371,38 @@ function Specimen({
       <p className="mb-1 text-xs tracking-[0.06em] text-ink-muted uppercase">{label}</p>
       <div className={className}>{children}</div>
     </div>
+  );
+}
+
+function TokenTable({
+  label,
+  head,
+  rows,
+}: {
+  label: string;
+  head: readonly string[];
+  rows: readonly (readonly string[])[];
+}) {
+  return (
+    <Table caption={label} label={label}>
+      <thead>
+        <tr>
+          {head.map((h) => (
+            <Th key={h}>{h}</Th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r[0]}>
+            {r.map((cell, i) => (
+              <Td key={cell} className={i < 2 ? "num" : undefined}>
+                {cell}
+              </Td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 }

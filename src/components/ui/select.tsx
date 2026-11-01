@@ -6,6 +6,7 @@ import type { ComponentProps } from "react";
 import { cx } from "@/lib/cx";
 
 import { fieldClass } from "./field";
+import { CheckIcon, ChevronDownIcon } from "./icons";
 
 export type SelectOption = { value: string; label: string };
 
@@ -38,7 +39,7 @@ export function Select({
       >
         <RadixSelect.Value placeholder={placeholder} />
         <RadixSelect.Icon className="text-ink-muted">
-          <Chevron />
+          <ChevronDownIcon />
         </RadixSelect.Icon>
       </RadixSelect.Trigger>
       <RadixSelect.Portal>
@@ -52,18 +53,11 @@ export function Select({
               <RadixSelect.Item
                 key={o.value}
                 value={o.value}
-                className="flex cursor-default items-center justify-between gap-4 rounded-sm px-2 py-1.5 text-base text-ink outline-none select-none data-highlighted:bg-sunken"
+                className="flex cursor-default items-center justify-between gap-4 rounded-sm px-2 py-1.5 text-base text-ink outline-none select-none data-highlighted:bg-sunken data-highlighted:outline-2 data-highlighted:-outline-offset-2 data-highlighted:outline-focus data-highlighted:outline-solid"
               >
                 <RadixSelect.ItemText>{o.label}</RadixSelect.ItemText>
                 <RadixSelect.ItemIndicator className="text-accent-text">
-                  <svg viewBox="0 0 12 12" className="size-3" aria-hidden="true">
-                    <path
-                      d="M2.5 6.2 5 8.5l4.5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.75"
-                    />
-                  </svg>
+                  <CheckIcon />
                 </RadixSelect.ItemIndicator>
               </RadixSelect.Item>
             ))}
@@ -71,13 +65,5 @@ export function Select({
         </RadixSelect.Content>
       </RadixSelect.Portal>
     </RadixSelect.Root>
-  );
-}
-
-function Chevron() {
-  return (
-    <svg viewBox="0 0 12 12" className="size-3" aria-hidden="true">
-      <path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
   );
 }

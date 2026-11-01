@@ -5,6 +5,8 @@ import type { ComponentProps } from "react";
 
 import { cx } from "@/lib/cx";
 
+import { CheckIcon } from "./icons";
+
 const box =
   "flex size-[18px] shrink-0 items-center justify-center border border-rule-strong bg-surface";
 
@@ -19,9 +21,7 @@ export function Checkbox({ className, ...props }: ComponentProps<typeof RadixChe
       {...props}
     >
       <RadixCheckbox.Indicator className="text-bg">
-        <svg viewBox="0 0 12 12" className="size-3" aria-hidden="true">
-          <path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="currentColor" strokeWidth="1.75" />
-        </svg>
+        <CheckIcon />
       </RadixCheckbox.Indicator>
     </RadixCheckbox.Root>
   );

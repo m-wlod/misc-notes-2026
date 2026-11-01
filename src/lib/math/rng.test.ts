@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { mulberry32, normal, randomWalk } from "./rng";
 
 describe("mulberry32", () => {
@@ -32,11 +34,11 @@ describe("normal", () => {
 });
 
 describe("randomWalk", () => {
-  it("starts at `start`, has `steps` points, stays positive and is reproducible", () => {
-    const p = randomWalk({ steps: 250, sigma: 0.01, seed: 7 });
-    expect(p).toHaveLength(250);
+  it("starts at `start`, has `points` prices, stays positive and is reproducible", () => {
+    const p = randomWalk({ points: 251, sigma: 0.01, seed: 7 });
+    expect(p).toHaveLength(251);
     expect(p[0]).toBe(100);
     expect(p.every((v) => v > 0)).toBe(true);
-    expect(randomWalk({ steps: 250, sigma: 0.01, seed: 7 })).toEqual(p);
+    expect(randomWalk({ points: 251, sigma: 0.01, seed: 7 })).toEqual(p);
   });
 });

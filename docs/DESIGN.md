@@ -27,7 +27,7 @@ Live reference: `/styleguide` (development and Vercel previews; returns 404 in p
 | Motion   | `--duration-fast` 100ms, `--duration` 150ms, `--ease`             |                                                   |
 | Layers   | `--z-sticky` `--z-dropdown` `--z-overlay` `--z-modal` `--z-toast` |                                                   |
 
-In Tailwind they're `bg-bg`, `text-ink`, `border-rule`, `text-accent-text` and so on. The default palette, radii and shadows are **removed** from the theme (`globals.css`), so `bg-purple-500`, `rounded-2xl` and `shadow-lg` don't compile to anything. `src/styles/tokens.test.ts` checks contrast for every text/background pair in both themes.
+In Tailwind they're `bg-bg`, `text-ink`, `border-rule`, `text-accent-text` and so on. The default palette, radii, shadows, blurs and animations are **removed** from the theme (`globals.css`), so `bg-purple-500`, `rounded-2xl`, `shadow-lg`, `backdrop-blur-md` and `animate-bounce` don't compile to anything. Arbitrary values that would bypass the tokens (`shadow-[…]`, `rounded-[…]`, `bg-[#…]`, `text-[13px]`) fail ESLint. `src/styles/tokens.test.ts` checks contrast for every text/background pair in both themes.
 
 ### Type
 

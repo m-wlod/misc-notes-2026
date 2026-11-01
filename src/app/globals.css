@@ -2,8 +2,10 @@
 @import "../styles/tokens.css";
 
 /*
- * Tailwind is mapped onto our tokens only. Default colours, radii and shadows are
- * removed, so off-palette colours, rounded-2xl and drop shadows don't exist as classes.
+ * Tailwind is mapped onto our tokens only. Default colours, radii, shadows, blurs and
+ * animations are removed, so off-palette colours, rounded-2xl, drop shadows, glass blur
+ * and bounce don't exist as classes. Arbitrary values (shadow-[…], rounded-[…],
+ * bg-[#…], text-[…]) are blocked by ESLint (eslint.config.mjs).
  */
 @theme {
   --color-*: initial;
@@ -11,7 +13,22 @@
   --shadow-*: initial;
   --inset-shadow-*: initial;
   --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+  --blur-*: initial;
+  --backdrop-blur-*: initial;
+  --animate-*: initial;
   --font-*: initial;
+
+  /* The only animation: skeleton loading. */
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  @keyframes pulse {
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  --text-2xs: 0.6875rem; /* 11: chart ticks, figure meta */
+  --text-2xs--line-height: 1.35;
 
   --text-xs: 0.75rem; /* 12 */
   --text-xs--line-height: 1.4;
@@ -59,9 +76,9 @@
   --radius-none: 0;
   --radius-full: 9999px; /* only for dots and the radio indicator */
 
-  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-plex-sans), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "Cascadia Mono", monospace;
+  --font-serif: var(--stack-serif);
+  --font-sans: var(--stack-sans);
+  --font-mono: var(--stack-mono);
 
   --ease-standard: var(--ease);
   --default-transition-duration: var(--duration);
@@ -79,7 +96,7 @@
   body {
     background: var(--bg);
     color: var(--ink);
-    font-family: var(--font-plex-sans), system-ui, sans-serif;
+    font-family: var(--stack-sans);
     font-size: 0.9375rem;
     line-height: var(--leading-ui);
     -webkit-font-smoothing: antialiased;
@@ -88,7 +105,7 @@
   h1,
   h2,
   h3 {
-    font-family: var(--font-newsreader), Georgia, serif;
+    font-family: var(--stack-serif);
     font-weight: 500;
     text-wrap: balance;
   }
@@ -120,7 +137,17 @@
   }
 }
 
+/*
+ * Reading column prose. In the components layer, so any utility (mb-0, mb-1.5) on a
+ * paragraph inside still wins: cascade layers beat specificity (review M1).
+ */
+@layer components {
+  .reading :where(p) {
+    margin-block: 0 1em;
+  }
+}
+
 @utility num {
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-family: var(--stack-mono);
   font-variant-numeric: tabular-nums lining-nums;
 }

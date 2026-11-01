@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { describe, expect, it } from "vitest";
+
 /**
  * Reads the real tokens.css and checks WCAG 2.1 contrast for every pair the UI uses,
  * in both themes. Text needs 4.5:1 (AA); control borders and focus rings need 3:1.

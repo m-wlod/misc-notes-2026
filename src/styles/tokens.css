@@ -30,7 +30,10 @@
   --data-up: #2f6b3a;
   --data-down: #a8322b;
 
-  /* Type */
+  /* Type: next/font variables first, then local fallbacks. */
+  --stack-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --stack-sans: var(--font-plex-sans), system-ui, sans-serif;
+  --stack-mono: var(--font-plex-mono), ui-monospace, "Cascadia Mono", monospace;
   --measure: 68ch;
   --leading-reading: 1.6;
   --leading-ui: 1.45;

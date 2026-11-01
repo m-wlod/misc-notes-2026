@@ -5,10 +5,10 @@ import { cx } from "@/lib/cx";
 
 /* ---------- Badge ---------- */
 
-type BadgeTone = "neutral" | "accent" | "correct" | "wrong";
+/** No accent tone: orange is for actions and focus only (DESIGN.md principle 2). */
+type BadgeTone = "neutral" | "correct" | "wrong";
 const badgeTones: Record<BadgeTone, string> = {
   neutral: "border-rule-strong text-ink-muted",
-  accent: "border-accent-text text-accent-text",
   correct: "border-correct text-correct",
   wrong: "border-wrong text-wrong",
 };
@@ -32,6 +32,11 @@ export function Badge({
 
 /* ---------- Progress ---------- */
 
+export function clampProgress(value: number, max: number): number {
+  if (!Number.isFinite(value) || !(max > 0)) return 0;
+  return Math.min(max, Math.max(0, value));
+}
+
 export function Progress({
   value,
   max = 100,
@@ -41,11 +46,14 @@ export function Progress({
   value: number;
   max?: number;
 }) {
-  const pct = Math.min(100, Math.max(0, (value / max) * 100));
+  // Radix treats value > max as invalid and drops aria-valuenow, so clamp before passing it on.
+  const safeMax = max > 0 ? max : 100;
+  const v = clampProgress(value, safeMax);
+  const pct = (v / safeMax) * 100;
   return (
     <RadixProgress.Root
-      value={value}
-      max={max}
+      value={v}
+      max={safeMax}
       className={cx("relative h-0.5 w-full overflow-hidden bg-rule", className)}
       {...props}
     >
@@ -85,14 +93,16 @@ export function Kbd({ className, ...props }: ComponentProps<"kbd">) {
 
 /* ---------- Table ---------- */
 
-export function Table({
-  className,
-  caption,
-  children,
-  ...props
-}: ComponentProps<"table"> & { caption?: ReactNode }) {
+type TableProps = ComponentProps<"table"> & {
+  caption?: ReactNode;
+  /** Accessible name of the horizontal scroll region (usually the caption text). */
+  label: string;
+};
+
+export function Table({ className, caption, label, children, ...props }: TableProps) {
   return (
-    <div className="overflow-x-auto">
+    // Focusable scroll region so keyboard users can scroll wide tables (WCAG 2.1.1).
+    <div role="region" aria-label={label} tabIndex={0} className="overflow-x-auto">
       <table className={cx("w-full border-collapse text-sm", className)} {...props}>
         {caption ? (
           <caption className="mb-2 text-left text-xs text-ink-muted">{caption}</caption>
@@ -140,30 +150,36 @@ export function Td({
 
 /* ---------- Callout ---------- */
 
-type CalloutTone = "note" | "accent" | "correct" | "wrong";
+type CalloutTone = "note" | "correct" | "wrong";
 const calloutTones: Record<CalloutTone, string> = {
   note: "border-rule-strong",
-  accent: "border-accent",
   correct: "border-correct",
   wrong: "border-wrong",
 };
 
-/** A left-ruled aside. `label` is a small uppercase heading (e.g. "Uwaga", "Mit"). */
+/**
+ * A left-ruled note inside running text (`role="note"`, not an <aside> landmark).
+ * `label` is a small uppercase heading (e.g. "Uwaga", "Mit").
+ */
 export function Callout({
   tone = "note",
   label,
   className,
   children,
   ...props
-}: ComponentProps<"aside"> & { tone?: CalloutTone; label?: ReactNode }) {
+}: ComponentProps<"div"> & { tone?: CalloutTone; label?: ReactNode }) {
   return (
-    <aside className={cx("border-l-2 py-1 pl-5", calloutTones[tone], className)} {...props}>
+    <div
+      role="note"
+      className={cx("border-l-2 py-1 pl-5", calloutTones[tone], className)}
+      {...props}
+    >
       {label ? (
-        <p className="mb-1.5 text-xs font-semibold tracking-[0.08em] text-ink-muted uppercase">
+        <p className="mb-1.5 font-sans text-xs font-semibold tracking-[0.08em] text-ink-muted uppercase">
           {label}
         </p>
       ) : null}
       {children}
-    </aside>
+    </div>
   );
 }

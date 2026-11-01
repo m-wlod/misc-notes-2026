@@ -5,6 +5,8 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cx } from "@/lib/cx";
 
+import { CloseIcon } from "./icons";
+
 /* Overlays are separated by a 1px rule, never a shadow. */
 const panel = "rounded border border-rule-strong bg-surface text-ink";
 
@@ -35,7 +37,7 @@ export function DialogContent({
       <RadixDialog.Content
         className={cx(
           panel,
-          "fixed top-1/2 left-1/2 z-(--z-modal) w-[min(32rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 p-6",
+          "fixed top-1/2 left-1/2 z-(--z-modal) max-h-[calc(100dvh-2rem)] w-[min(32rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto p-6",
           className,
         )}
         {...(description ? {} : { "aria-describedby": undefined })}
@@ -47,9 +49,7 @@ export function DialogContent({
             aria-label={closeLabel}
             className="-m-1 rounded-sm p-1 text-ink-muted hover:text-ink"
           >
-            <svg viewBox="0 0 12 12" className="size-3.5" aria-hidden="true">
-              <path d="m2.5 2.5 7 7m0-7-7 7" stroke="currentColor" strokeWidth="1.5" />
-            </svg>
+            <CloseIcon className="size-3.5" />
           </RadixDialog.Close>
         </div>
         {description ? (
@@ -68,15 +68,18 @@ export function DialogContent({
 export const Popover = RadixPopover.Root;
 export const PopoverTrigger = RadixPopover.Trigger;
 
+/** Radix renders popover content as role="dialog", so it needs an accessible name. */
 export function PopoverContent({
   className,
   sideOffset = 6,
+  label,
   ...props
-}: ComponentProps<typeof RadixPopover.Content>) {
+}: ComponentProps<typeof RadixPopover.Content> & { label: string }) {
   return (
     <RadixPopover.Portal>
       <RadixPopover.Content
         sideOffset={sideOffset}
+        aria-label={label}
         className={cx(panel, "z-(--z-dropdown) w-72 p-4 text-sm", className)}
         {...props}
       />

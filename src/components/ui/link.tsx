@@ -10,7 +10,7 @@ export function Link({ className, quiet = false, ...props }: LinkProps) {
   return (
     <NextLink
       className={cx(
-        "underline decoration-1 underline-offset-[0.2em] transition-colors",
+        "underline decoration-1 underline-offset-[0.2em] transition-[color,text-decoration-color]",
         quiet
           ? "text-ink decoration-rule-strong hover:decoration-ink"
           : "text-accent-text decoration-accent-text/40 hover:decoration-accent-text",
