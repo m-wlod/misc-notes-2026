@@ -4,7 +4,7 @@ Living log. Update at the end of every phase: what's done, decisions, open quest
 
 ## Phase checklist
 
-- [ ] 0 — Repo bootstrap and tooling
+- [x] 0 — Repo bootstrap and tooling (pending: `supabase start` once Docker runs; Vercel preview) — 2026-11-01
 - [ ] 1 — Design system and brand foundations **[you: sign-off]**
 - [ ] 2 — i18n, routing and app shell
 - [ ] 3 — Auth, profiles and database schema
@@ -33,30 +33,30 @@ Review sessions due after phases 1, 4, 8, 12, 19.
 
 ## Environment (checked 2026-11-01)
 
-| Tool | Status |
-| --- | --- |
-| git 2.53, Node 24.19, npm 11.17, Python 3.12, Docker 29.4, gh 2.91, Vercel CLI 54.6 | present |
-| pnpm 12.16.1 | installed via corepack (user-level shims) |
-| Supabase CLI | **missing**: add as a dev dependency (`pnpm add -D supabase`) in Phase 0; local stack needs Docker running |
+| Tool                                                                                | Status                                                                                                         |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| git 2.53, Node 24.19, npm 11.17, Python 3.12, Docker 29.4, gh 2.91, Vercel CLI 54.6 | present                                                                                                        |
+| pnpm 12.16.1                                                                        | installed via corepack (user-level shims)                                                                      |
+| Supabase CLI 2.122                                                                  | dev dependency (`pnpm exec supabase`); local stack needs Docker Desktop **running** (it was not on 2026-11-01) |
 
 ## External accounts and secrets
 
-| Service | Needed by | Env vars |
-| --- | --- | --- |
-| GitHub repo | Phase 0 (CI) | none |
-| Vercel (linked to repo) | Phase 0 | `NEXT_PUBLIC_SITE_URL` |
-| Supabase (EU, Frankfurt): dev now, separate prod project in Phase 23 | Phase 3 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
-| Google OAuth client | Phase 3 | configured in Supabase dashboard |
-| GitHub OAuth app | Phase 3 | configured in Supabase dashboard |
-| Anthropic API | Phase 10 | `ANTHROPIC_API_KEY`, `AI_GRADER_MODEL`, `AI_DAILY_BUDGET_USD`, `AI_USER_DAILY_QUOTA` |
-| Upstash Redis | Phase 10 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` |
-| Resend (+ verified sending domain) | Phase 3 (magic-link SMTP) / Phase 15 | `RESEND_API_KEY`, `EMAIL_FROM` |
-| Web push (VAPID keys, self-generated) | Phase 15 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` |
-| Cron auth | Phase 14 | `CRON_SECRET` |
-| PostHog EU | Phase 22 (consent wiring earlier) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` |
-| Sentry | Phase 22 | `SENTRY_DSN`, `SENTRY_AUTH_TOKEN` |
-| Turnstile or Vercel BotID | Phase 21 | `TURNSTILE_SECRET_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (if Turnstile) |
-| Domain + Discord server | Phase 23 | none |
+| Service                                                              | Needed by                            | Env vars                                                                                  |
+| -------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------- |
+| GitHub repo                                                          | Phase 0 (CI)                         | none                                                                                      |
+| Vercel (linked to repo)                                              | Phase 0                              | `NEXT_PUBLIC_SITE_URL`                                                                    |
+| Supabase (EU, Frankfurt): dev now, separate prod project in Phase 23 | Phase 3                              | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` |
+| Google OAuth client                                                  | Phase 3                              | configured in Supabase dashboard                                                          |
+| GitHub OAuth app                                                     | Phase 3                              | configured in Supabase dashboard                                                          |
+| Anthropic API                                                        | Phase 10                             | `ANTHROPIC_API_KEY`, `AI_GRADER_MODEL`, `AI_DAILY_BUDGET_USD`, `AI_USER_DAILY_QUOTA`      |
+| Upstash Redis                                                        | Phase 10                             | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`                                      |
+| Resend (+ verified sending domain)                                   | Phase 3 (magic-link SMTP) / Phase 15 | `RESEND_API_KEY`, `EMAIL_FROM`                                                            |
+| Web push (VAPID keys, self-generated)                                | Phase 15                             | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`                                       |
+| Cron auth                                                            | Phase 14                             | `CRON_SECRET`                                                                             |
+| PostHog EU                                                           | Phase 22 (consent wiring earlier)    | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`                                     |
+| Sentry                                                               | Phase 22                             | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN`                                             |
+| Turnstile or Vercel BotID                                            | Phase 21                             | `TURNSTILE_SECRET_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (if Turnstile)                   |
+| Domain + Discord server                                              | Phase 23                             | none                                                                                      |
 
 ## Open questions (answer before the phase that needs them)
 
@@ -67,21 +67,36 @@ Review sessions due after phases 1, 4, 8, 12, 19.
 
 ## Decisions log
 
-| Date | Decision | Why |
-| --- | --- | --- |
-| 2026-11-01 | Repo at `C:\projects\quant-learning-app`, branch `main` | Kickoff |
-| 2026-11-01 | All graded exercises graded server-side, incl. signed-out users (IP rate limit, attempts kept in localStorage). Only ungraded inline "check yourself" questions may grade client-side | Answers must never reach the client before submission; server action latency is fine |
-| 2026-11-01 | Add all 15+ missing tables in Phase 3; later phases may amend via new migrations | No schema surprises, not a frozen schema |
-| 2026-11-01 | Dev magic links use the Supabase local mail catcher; Resend as custom SMTP is a [you] step once the domain is verified | Resend only sends from a verified domain |
-| 2026-11-01 | Next.js 16 `proxy.ts` replaces `middleware.ts` (Phases 2, 18); proxy only redirects, authorization is in RLS and server code | Follow Next.js 16; defence in depth |
-| 2026-11-01 | One shared league until ~60 weekly actives (config value), then auto-split into groups of ~30 | Cold start at launch |
-| 2026-11-01 | Phases 4–6 use one clearly labelled sample lesson. Phase 7 drafts Fundamenty and Wartość oczekiwana from own knowledge as `status: draft`; modules 4+ wait for `content/_inbox/` notes | No fake content; those two modules are standard material |
-| 2026-11-01 | pnpm 12.16.1 via corepack, shims in `%APPDATA%\npm` (`corepack enable pnpm --install-directory`) | Default `corepack enable` needs admin to write into `C:\Program Files\nodejs` |
-| 2026-11-01 | Supabase CLI installed as a dev dependency in Phase 0, right after the Next.js scaffold | Needs a package.json; create-next-app refuses a folder that already has one |
+| Date       | Decision                                                                                                                                                                               | Why                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 2026-11-01 | Repo at `C:\projects\quant-learning-app`, branch `main`                                                                                                                                | Kickoff                                                                              |
+| 2026-11-01 | All graded exercises graded server-side, incl. signed-out users (IP rate limit, attempts kept in localStorage). Only ungraded inline "check yourself" questions may grade client-side  | Answers must never reach the client before submission; server action latency is fine |
+| 2026-11-01 | Add all 15+ missing tables in Phase 3; later phases may amend via new migrations                                                                                                       | No schema surprises, not a frozen schema                                             |
+| 2026-11-01 | Dev magic links use the Supabase local mail catcher; Resend as custom SMTP is a [you] step once the domain is verified                                                                 | Resend only sends from a verified domain                                             |
+| 2026-11-01 | Next.js 16 `proxy.ts` replaces `middleware.ts` (Phases 2, 18); proxy only redirects, authorization is in RLS and server code                                                           | Follow Next.js 16; defence in depth                                                  |
+| 2026-11-01 | One shared league until ~60 weekly actives (config value), then auto-split into groups of ~30                                                                                          | Cold start at launch                                                                 |
+| 2026-11-01 | Phases 4–6 use one clearly labelled sample lesson. Phase 7 drafts Fundamenty and Wartość oczekiwana from own knowledge as `status: draft`; modules 4+ wait for `content/_inbox/` notes | No fake content; those two modules are standard material                             |
+| 2026-11-01 | pnpm 12.16.1 via corepack, shims in `%APPDATA%\npm` (`corepack enable pnpm --install-directory`)                                                                                       | Default `corepack enable` needs admin to write into `C:\Program Files\nodejs`        |
+| 2026-11-01 | Supabase CLI installed as a dev dependency in Phase 0, right after the Next.js scaffold                                                                                                | Needs a package.json; create-next-app refuses a folder that already has one          |
+| 2026-11-01 | TypeScript pinned to 6.0.3 (latest is 7.0.2)                                                                                                                                           | typescript-eslint 8.72 peer range is `<6.1.0`; revisit when it supports TS 7         |
+| 2026-11-01 | ESLint pinned to 9.39.x (latest is 10)                                                                                                                                                 | eslint-plugin-react and eslint-plugin-jsx-a11y peer ranges stop at ESLint 9          |
+| 2026-11-01 | Supabase keys named `PUBLISHABLE_KEY` / `SECRET_KEY`, not `ANON_KEY` / `SERVICE_ROLE_KEY`                                                                                              | Supabase's current API key model; legacy names avoided from day one                  |
+| 2026-11-01 | Kept create-next-app 16.4 defaults `cacheComponents` and `partialPrefetching` on                                                                                                       | Default for new apps on this Next version; every route so far is static              |
+| 2026-11-01 | Env vars for later phases are optional in `src/env.schema.ts`; each phase makes its own required                                                                                       | Build must pass without secrets that don't exist yet                                 |
+| 2026-11-01 | Playwright runs against `next start` (production build) on port 3100, desktop + Pixel 7 projects                                                                                       | Test what ships; avoid clashing with `pnpm dev` on 3000                              |
 
 ## New dependencies
 
-(Log each with a one-line reason.)
+| Package                                                                                                      | Why                                                        |
+| ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| next, react, react-dom, tailwindcss, @tailwindcss/turbopack                                                  | Stack (create-next-app 16.4.3 defaults)                    |
+| zod, @t3-oss/env-nextjs                                                                                      | Validated env (`src/env.ts`), Zod everywhere per CLAUDE.md |
+| typescript, eslint, eslint-config-next, typescript-eslint, eslint-plugin-jsx-a11y, eslint-config-prettier    | Strict lint + typecheck                                    |
+| prettier, prettier-plugin-tailwindcss                                                                        | Formatting, class sorting                                  |
+| husky, lint-staged                                                                                           | Pre-commit lint/format on staged files                     |
+| vitest, @vitejs/plugin-react, jsdom, @testing-library/react, @testing-library/dom, @testing-library/jest-dom | Unit and component tests                                   |
+| @playwright/test                                                                                             | E2E tests                                                  |
+| supabase                                                                                                     | Supabase CLI for local stack, migrations, type generation  |
 
 ## TODO(verify)
 
