@@ -66,7 +66,7 @@ export function SimPlayer({
     let live = true;
     void computeSim(def, params, seed).then((d) => {
       if (!live) return;
-      const start = Math.min(wantFrame.current ?? 0, d.T);
+      const start = def.static ? d.T : Math.min(wantFrame.current ?? 0, d.T);
       wantFrame.current = null;
       frameRef.current = start;
       drawn.current = 0;
@@ -98,12 +98,19 @@ export function SimPlayer({
 
   const fmt = useCallback(
     (v: number, f: AxisFormat | undefined) =>
-      f === "int"
-        ? format.number(v, { maximumFractionDigits: 0 })
-        : f === "pct"
-          ? format.number(v, { style: "percent", maximumFractionDigits: 0 })
-          : format.number(v, { maximumFractionDigits: Math.abs(v) < 10 ? 2 : 0 }),
+      f === "log10"
+        ? format.number(10 ** v, { maximumSignificantDigits: 2 })
+        : f === "int"
+          ? format.number(v, { maximumFractionDigits: 0 })
+          : f === "pct"
+            ? format.number(v, { style: "percent", maximumFractionDigits: 0 })
+            : format.number(v, { maximumFractionDigits: Math.abs(v) < 10 ? 2 : 0 }),
     [format],
+  );
+
+  const label = useCallback(
+    (key: string) => (def ? t(`${def.id}.labels.${key}` as "coin-walk.title") : key),
+    [def, t],
   );
 
   /** Draws the persistent layer up to `to` (incrementally) and the overlay at `to`. */
@@ -134,10 +141,10 @@ export function SimPlayer({
       o.clearRect(0, 0, o.canvas.width, o.canvas.height);
       o.save();
       clip(o);
-      def.overlay?.(o, data, to, plot, c, params);
+      def.overlay?.(o, data, to, plot, c, params, label);
       o.restore();
     },
-    [def, data, view, size, dpr, params],
+    [def, data, view, size, dpr, params, label],
   );
 
   // Full repaint when the data, size or theme changes.
@@ -253,8 +260,17 @@ export function SimPlayer({
   }, []);
 
   if (!def) return null;
-  const summary = data
-    ? t(`${def.id}.summary` as "coin-walk.summary", def.summary(data, frame, params) as never)
+  // Numbers in the description follow the locale (Polish decimal comma).
+  const summaryValues = data
+    ? Object.fromEntries(
+        Object.entries(def.summary(data, frame, params)).map(([k, v]) => [
+          k,
+          typeof v === "number" ? format.number(v, { maximumFractionDigits: 4 }) : v,
+        ]),
+      )
+    : null;
+  const summary = summaryValues
+    ? t(`${def.id}.summary` as "coin-walk.summary", summaryValues as never)
     : t("computing");
   const cssPlot = view ? makePlot(view, size.w, size.h, 1) : null;
   const axis = view && cssPlot ? ticks(view, cssPlot, fmt) : null;
@@ -342,58 +358,60 @@ export function SimPlayer({
         {summary}
       </p>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Button
-          type="button"
-          disabled={!data}
-          onClick={() => {
-            setPlaying((p) => !p);
-          }}
-        >
-          {playing ? t("pause") : frame >= T && T > 0 ? t("replay") : t("play")}
-        </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          disabled={!data || frame >= T}
-          onClick={() => {
-            setPlaying(false);
-            goTo(frame + stepSize);
-          }}
-        >
-          {t("step")}
-        </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          disabled={!data}
-          onClick={() => {
-            setPlaying(false);
-            goTo(0);
-          }}
-        >
-          {t("reset")}
-        </Button>
-        <label className="flex items-center gap-2 font-sans text-sm text-ink">
-          {t("speed")}
-          <select
-            value={speed}
-            onChange={(e) => {
-              setSpeed(Number(e.target.value));
+      {def.static ? null : (
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            disabled={!data}
+            onClick={() => {
+              setPlaying((p) => !p);
             }}
-            className="rounded border border-rule-strong bg-surface px-2 py-1"
           >
-            {SPEEDS.map((s) => (
-              <option key={s} value={s}>
-                {format.number(s)}×
-              </option>
-            ))}
-          </select>
-        </label>
-        <span className="num font-sans text-xs text-ink-muted">
-          {t("frame", { frame, total: T })}
-        </span>
-      </div>
+            {playing ? t("pause") : frame >= T && T > 0 ? t("replay") : t("play")}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={!data || frame >= T}
+            onClick={() => {
+              setPlaying(false);
+              goTo(frame + stepSize);
+            }}
+          >
+            {t("step")}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={!data}
+            onClick={() => {
+              setPlaying(false);
+              goTo(0);
+            }}
+          >
+            {t("reset")}
+          </Button>
+          <label className="flex items-center gap-2 font-sans text-sm text-ink">
+            {t("speed")}
+            <select
+              value={speed}
+              onChange={(e) => {
+                setSpeed(Number(e.target.value));
+              }}
+              className="rounded border border-rule-strong bg-surface px-2 py-1"
+            >
+              {SPEEDS.map((s) => (
+                <option key={s} value={s}>
+                  {format.number(s)}×
+                </option>
+              ))}
+            </select>
+          </label>
+          <span className="num font-sans text-xs text-ink-muted">
+            {t("frame", { frame, total: T })}
+          </span>
+        </div>
+      )}
 
       {compact ? null : (
         <fieldset className="grid gap-3 rounded-md border border-rule px-4 py-3 sm:grid-cols-2">
@@ -462,6 +480,7 @@ export function SimPlayer({
                 frame,
                 readPalette(),
                 fmt,
+                label,
                 {
                   title: t(`${def.id}.title` as "coin-walk.title"),
                   xLabel: t(`axes.${view.xLabel}` as "axes.days"),
@@ -507,6 +526,8 @@ function ParamControl({
   option: (o: string) => string;
   onChange: (raw: unknown) => void;
 }) {
+  const format = useFormatter();
+  const display = (v: number) => format.number(v, { maximumFractionDigits: 6, useGrouping: false });
   if (spec.kind === "choice") {
     return (
       <div className="grid gap-1">
@@ -564,13 +585,13 @@ function ParamControl({
           }}
           className="min-w-0 flex-1 accent-(--accent)"
         />
+        {/* Text, not type=number: Polish users type a decimal comma (0,25). */}
         <input
-          type="number"
+          type="text"
+          inputMode="decimal"
+          autoComplete="off"
           aria-label={label}
-          min={spec.min}
-          max={spec.max}
-          step={step}
-          defaultValue={Number(value)}
+          defaultValue={display(Number(value))}
           key={String(value)}
           onBlur={(e) => {
             onChange(e.target.value);

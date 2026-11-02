@@ -97,5 +97,6 @@ export function readPalette(el: Element = document.documentElement): Palette {
     grid: v("--grid", "#e7dfd0"),
     bg: v("--bg", "#f6f1e7"),
     surface: v("--surface", "#fbf8f2"),
+    series: [v("--series-1", "#2a78d6"), v("--series-2", "#eb6834"), v("--series-3", "#1baf7a")],
   };
 }
