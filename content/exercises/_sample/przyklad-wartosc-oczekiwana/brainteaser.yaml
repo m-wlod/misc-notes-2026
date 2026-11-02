@@ -7,6 +7,7 @@ lessonIds: [przyklad-wartosc-oczekiwana]
 estimatedMinutes: 1
 status: draft
 sample: true
+interview: [brainteasers]
 prompt:
   pl: "Przykład: ile razy wskazówki zegara pokrywają się w ciągu doby?"
   en: "Sample: how many times do a clock's hands overlap in a day?"

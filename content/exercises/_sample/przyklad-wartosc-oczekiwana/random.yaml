@@ -7,6 +7,7 @@ lessonIds: [przyklad-wartosc-oczekiwana]
 estimatedMinutes: 1
 status: draft
 sample: true
+interview: [sprint]
 prompt:
   pl: 'Przykład: kwota ${k}$ zł rośnie o ${r}\%$. Ile wynosi po wzroście?'
   en: 'Sample: an amount of ${k}$ PLN grows by ${r}\%$. What is it after the growth?'

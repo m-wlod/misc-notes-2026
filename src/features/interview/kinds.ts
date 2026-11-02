@@ -39,7 +39,7 @@ export const KINDS: readonly KindInfo[] = [
     size: 10,
     minutes: 20,
     offline: false,
-    playable: false,
+    playable: true,
   },
   {
     kind: "brainteasers",
@@ -47,7 +47,7 @@ export const KINDS: readonly KindInfo[] = [
     size: 3,
     minutes: 30,
     offline: false,
-    playable: false,
+    playable: true,
   },
   {
     kind: "open_modelling",
@@ -55,7 +55,7 @@ export const KINDS: readonly KindInfo[] = [
     size: 1,
     minutes: 20,
     offline: false,
-    playable: false,
+    playable: true,
   },
 ];
 

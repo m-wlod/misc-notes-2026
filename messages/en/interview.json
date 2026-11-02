@@ -42,7 +42,12 @@
     "start": "Start",
     "rulesMental": "Type the result and press Enter. Fractions and percentages can be typed as 0.125, 1/8 or 12.5%. There is no going back to a previous calculation.",
     "rulesMarket": "Each round, give a bid (what you'd buy at) and an ask (what you'd sell at). The trader roughly knows the value and trades when your price suits them.",
-    "best": "Your best at this level: {percent}%"
+    "best": "Your best at this level: {percent}%",
+    "rules": {
+      "probability_sprint": "Answer in order. You see your score only at the end, with the solutions. There is no going back to a previous question.",
+      "brainteasers": "Think it through on paper, then write your answer. At the end you compare it with the solution.",
+      "open_modelling": "Describe how you would approach the problem: assumptions, data, the test, what could go wrong."
+    }
   },
   "timer": {
     "left": "Left",
@@ -136,5 +141,29 @@
     "level": "Level",
     "result": "Score",
     "best": "best"
+  },
+  "followUp": {
+    "ask": "Ask me a follow-up",
+    "asking": "Thinking of a question…",
+    "quota": "A follow-up counts toward the daily AI limit.",
+    "failed": "The question couldn't be prepared. Try later.",
+    "title": "Follow-up question",
+    "reply": "Your answer",
+    "practice": "This answer isn't graded: it's practice, as in a real interview."
+  },
+  "pool": {
+    "empty": "There are no questions for this session yet.",
+    "short": "For now this session has {count} of {size} questions.",
+    "question": "Question {n} of {total}",
+    "solution": "Show solution"
+  },
+  "roadmap": {
+    "title": "Interview prep roadmap",
+    "lead": "What quant interviews usually test and where to practise it: course tracks, timed sessions and exercise sets.",
+    "learn": "Learn",
+    "train": "Sessions",
+    "practice": "Exercises from this track",
+    "soon": "The description of this topic is being written.",
+    "link": "Prep roadmap"
   }
 }

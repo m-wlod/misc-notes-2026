@@ -33,11 +33,17 @@ export function OpenPanel({
   version,
   lang,
   aiAvailable,
+  onResult,
+  followUp = false,
 }: {
   exerciseId: string;
   version: number;
   lang: "pl" | "en";
   aiAvailable: boolean;
+  /** Called once with the result (AI grade or self-assessment), e.g. by an interview session. */
+  onResult?: (r: { score: number; given: string; graded: "ai" | "self" }) => void;
+  /** Offer the interviewer's follow-up question after an AI grade (Phase 11). */
+  followUp?: boolean;
 }) {
   const t = useTranslations("exercises.open");
   const id = useId();
@@ -75,6 +81,7 @@ export function OpenPanel({
           { ok: true; grade: AiGrade; attemptId: number | null } | { error: AiFailure };
         if ("grade" in body) {
           setGraded({ grade: body.grade, attemptId: body.attemptId });
+          onResult?.({ score: body.grade.score / 4, given: answer, graded: "ai" });
           recordAttempt({
             exerciseId,
             score: body.grade.score / 4,
@@ -99,6 +106,11 @@ export function OpenPanel({
       answer: { kind: "self", value: answer, ticked },
     });
     setSavedSelf(true);
+    onResult?.({
+      score: ticked.length / Math.max(1, selfCheck.rubricHtml.length),
+      given: answer,
+      graded: "self",
+    });
   };
 
   return (
@@ -151,6 +163,9 @@ export function OpenPanel({
       </div>
 
       {graded ? <AiResult graded={graded} /> : null}
+      {graded && followUp ? (
+        <FollowUp exerciseId={exerciseId} version={version} lang={lang} answer={answer} />
+      ) : null}
 
       {selfCheck ? (
         <section aria-labelledby={`${id}-self`} className="border-t border-rule pt-4">
@@ -298,6 +313,73 @@ function AiResult({ graded }: { graded: Graded }) {
         )
       ) : null}
       {reported === "sent" ? <p className="mt-2 text-sm text-ink">{t("reported")}</p> : null}
+    </section>
+  );
+}
+
+/** One probing question from the "interviewer" (Phase 11), answered for practice only. */
+function FollowUp({
+  exerciseId,
+  version,
+  lang,
+  answer,
+}: {
+  exerciseId: string;
+  version: number;
+  lang: "pl" | "en";
+  answer: string;
+}) {
+  const t = useTranslations("interview.followUp");
+  const id = useId();
+  const [question, setQuestion] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [reply, setReply] = useState("");
+  const [pending, startTransition] = useTransition();
+  if (question === null) {
+    return (
+      <div className="grid gap-2">
+        <div>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={pending}
+            onClick={() => {
+              startTransition(async () => {
+                const res = await fetch("/api/interview/follow-up", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ exerciseId, version, locale: lang, answer }),
+                }).catch(() => null);
+                const body = (await res?.json().catch(() => null)) as { question?: string } | null;
+                if (body?.question) setQuestion(body.question);
+                else setFailed(true);
+              });
+            }}
+          >
+            {pending ? t("asking") : t("ask")}
+          </Button>
+        </div>
+        <p className="font-sans text-xs text-ink-muted">{t("quota")}</p>
+        {failed ? <p className="text-sm text-wrong">{t("failed")}</p> : null}
+      </div>
+    );
+  }
+  return (
+    <section aria-labelledby={`${id}-q`} className="grid gap-2 border-t border-rule pt-4">
+      <h3 id={`${id}-q`} className="font-sans text-sm font-semibold text-ink">
+        {t("title")}
+      </h3>
+      <p className="text-base text-ink">{question}</p>
+      <Label htmlFor={`${id}-reply`}>{t("reply")}</Label>
+      <Textarea
+        id={`${id}-reply`}
+        rows={4}
+        value={reply}
+        onChange={(e) => {
+          setReply(e.target.value);
+        }}
+      />
+      <FieldHint>{t("practice")}</FieldHint>
     </section>
   );
 }

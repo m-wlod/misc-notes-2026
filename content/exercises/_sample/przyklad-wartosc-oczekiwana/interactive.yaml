@@ -7,6 +7,7 @@ lessonIds: [przyklad-wartosc-oczekiwana]
 estimatedMinutes: 1
 status: draft
 sample: true
+interview: [sprint]
 prompt:
   pl: "Przykład: ustaw suwak dokładnie w połowie zakresu."
   en: "Sample: set the slider exactly halfway along its range."

@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
+import type { z } from "zod";
 
 import { aiGradeSchema } from "./grade-schema";
 import type { GraderModel, ModelReply } from "./grader";
@@ -8,10 +9,10 @@ import type { GraderModel, ModelReply } from "./grader";
 export const DEFAULT_GRADER_MODEL = "claude-opus-5-5";
 
 /**
- * The Anthropic-backed grader for a key and model id. No env access here, so the live
- * eval script can use it too; app code goes through `graderModel()` in client.ts.
+ * An Anthropic-backed model that answers in a given structured shape. No env access
+ * here, so the live eval script can use it too; app code goes through client.ts.
  */
-export function anthropicGrader(apiKey: string, id: string = DEFAULT_GRADER_MODEL): GraderModel {
+export function anthropicStructured(apiKey: string, id: string, schema: z.ZodType): GraderModel {
   const client = new Anthropic({ apiKey, maxRetries: 1, timeout: 60_000 });
   return {
     id,
@@ -20,10 +21,10 @@ export function anthropicGrader(apiKey: string, id: string = DEFAULT_GRADER_MODE
         const res = await client.messages.parse({
           model: id,
           max_tokens: 16_000,
-          // Frozen system prompt: cached across gradings.
+          // Frozen system prompt: cached across calls.
           system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
           messages: [{ role: "user", content: user }],
-          output_config: { effort: "medium", format: zodOutputFormat(aiGradeSchema) },
+          output_config: { effort: "medium", format: zodOutputFormat(schema) },
         });
         if (res.stop_reason === "refusal")
           return { ok: false, reason: "refusal", usage: res.usage };
@@ -42,3 +43,7 @@ export function anthropicGrader(apiKey: string, id: string = DEFAULT_GRADER_MODE
     },
   };
 }
+
+/** The open-answer grader (Phase 10). */
+export const anthropicGrader = (apiKey: string, id: string = DEFAULT_GRADER_MODEL) =>
+  anthropicStructured(apiKey, id, aiGradeSchema);

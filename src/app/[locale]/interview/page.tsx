@@ -28,6 +28,10 @@ export default async function InterviewPage({ params }: PageProps<"/[locale]/int
       <h1 className="mb-3 text-3xl">{t("hub.title")}</h1>
       <p className="mb-4 max-w-(--measure) text-base text-ink-muted">{t("hub.lead")}</p>
       <p className="mb-8 font-sans text-sm">
+        <Link href="/interview/roadmap">{t("roadmap.link")}</Link>
+        <span aria-hidden="true" className="mx-2 text-ink-muted">
+          ·
+        </span>
         <Link href="/interview/history">{t("hub.history")}</Link>
       </p>
       <ul className="grid gap-4 sm:grid-cols-2">

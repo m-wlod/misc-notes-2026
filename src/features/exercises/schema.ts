@@ -47,6 +47,11 @@ const base = {
     .strict()
     .optional(),
   status: z.enum(["draft", "review", "published"]),
+  /**
+   * Interview sessions this exercise can appear in (Phase 11): the probability sprint
+   * (auto-graded types), brainteasers and the modelling question (open types).
+   */
+  interview: z.array(z.enum(["sprint", "brainteasers", "modelling"])).default([]),
   /** Placeholder exercises that demonstrate the engine (Phase 8); never real content. */
   sample: z.boolean().default(false),
   /**
@@ -167,6 +172,13 @@ export const VERIFIED_TYPES = ["numeric", "estimation", "interactive", "symbolic
 /** Rules a single exercise must meet beyond its shape. */
 export function exerciseRuleErrors(ex: Exercise): string[] {
   const errors: string[] = [];
+  const open = ex.type === "open" || ex.type === "brainteaser";
+  if (ex.interview.includes("sprint") && (open || ex.type === "code")) {
+    errors.push("interview: the sprint needs an auto-graded type (not open, brainteaser or code)");
+  }
+  if ((ex.interview.includes("brainteasers") || ex.interview.includes("modelling")) && !open) {
+    errors.push("interview: brainteasers and modelling need an open or brainteaser exercise");
+  }
   if ((VERIFIED_TYPES as readonly string[]).includes(ex.type) && !ex.verify) {
     errors.push(
       `verify: a ${ex.type} exercise needs a Python verify block that computes the answer`,

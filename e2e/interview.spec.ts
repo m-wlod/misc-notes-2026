@@ -33,7 +33,7 @@ const hydrated = async (page: Page) => {
   await page.waitForLoadState("networkidle");
 };
 
-test("the hub lists the five session types; two are playable", async ({ page }) => {
+test("the hub lists the five session types, all playable, and the roadmap", async ({ page }) => {
   await page.goto("/pl/rozmowa");
   await expect(page.getByRole("heading", { level: 1, name: "Rozmowa rekrutacyjna" })).toBeVisible();
   await expect(page.locator("li[data-kind]")).toHaveCount(5);
@@ -41,7 +41,24 @@ test("the hub lists the five session types; two are playable", async ({ page }) 
     "href",
     "/pl/rozmowa/matematyka-w-pamieci",
   );
-  await expect(page.getByRole("link", { name: "Market making" })).toBeVisible();
+  for (const name of [
+    "Market making",
+    "Sprint z prawdopodobieństwa",
+    "Łamigłówki",
+    "Pytanie o modelowanie",
+  ]) {
+    await expect(page.getByRole("link", { name })).toBeVisible();
+  }
+  await axe(page);
+  await page.getByRole("link", { name: "Plan przygotowań" }).click();
+  await expect(page).toHaveURL(/\/pl\/rozmowa\/plan-przygotowan$/, { timeout: 15_000 });
+  await expect(
+    page.getByRole("heading", { level: 2, name: /Prawdopodobieństwo i kombinatoryka/ }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Prawdopodobieństwo" }).first()).toHaveAttribute(
+    "href",
+    /\/pl\/nauka\//,
+  );
   await axe(page);
 });
 
@@ -170,3 +187,70 @@ for (const theme of ["light", "dark"] as const) {
     await axe(page);
   });
 }
+
+/** Answers whatever auto-graded question is shown (the pick is seeded, the type varies). */
+async function answerAny(page: Page) {
+  const number = page.getByLabel("Twoja odpowiedź");
+  const expression = page.getByLabel("Wyrażenie");
+  if (await number.count()) await number.fill("1");
+  else if (await expression.count()) await expression.fill("x");
+  else if (await page.getByRole("radio").count()) await page.getByRole("radio").first().check();
+  else if (await page.getByRole("checkbox").count())
+    await page.getByRole("checkbox").first().check();
+  await page.getByRole("button", { name: "Sprawdź" }).click();
+}
+
+test("probability sprint on the samples: one way only, scorecard, review with solutions", async ({
+  page,
+}) => {
+  // Grading is rate-limited per client; this test is its own client.
+  await page.setExtraHTTPHeaders({
+    "x-forwarded-for": `10.1.${String(Math.floor(Math.random() * 250))}.1`,
+  });
+  await page.goto("/pl/rozmowa/sprint-prawdopodobienstwa");
+  await hydrated(page);
+  await expect(page.getByText(/Na razie ta sesja ma \d+ z 10 pytań/)).toBeVisible();
+  await page.getByRole("button", { name: "Start" }).click();
+
+  await expect(page.getByText(/Pytanie 1 z \d+/)).toBeVisible();
+  await answerAny(page);
+  await expect(page.getByText(/Pytanie 2 z \d+/)).toBeVisible();
+  // No feedback during the sprint, and no way back.
+  await expect(page.getByText("Dobrze!")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /Wstecz|Poprzednie/ })).toHaveCount(0);
+  await answerAny(page);
+  await expect(page.getByText(/Pytanie 3 z \d+/)).toBeVisible();
+  await page.getByRole("button", { name: "Zakończ teraz" }).click();
+
+  await expect(page.getByRole("heading", { name: "Karta wyników" })).toBeVisible();
+  await expect(page.getByText(/Odpowiedzi: 2 z \d+/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Przegląd odpowiedzi" })).toBeVisible();
+  await page.getByRole("button", { name: "Pokaż rozwiązanie" }).first().click();
+  await expect(page.getByRole("button", { name: "Pokaż rozwiązanie" })).toHaveCount(
+    (await page.locator("ol > li").count()) - 1,
+  );
+  await axe(page);
+});
+
+test("brainteasers without AI: answer, self-check, next, scorecard", async ({ page }) => {
+  await page.goto("/pl/rozmowa/lamiglowki");
+  await hydrated(page);
+  await page.getByRole("button", { name: "Start" }).click();
+  await expect(page.getByText("Pytanie 1 z 1")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Zadaj mi pytanie dodatkowe" })).toHaveCount(0);
+  await page.getByLabel("Twoja odpowiedź").fill("22 razy, bo 11 razy na 12 godzin.");
+  await page.getByRole("button", { name: "Porównaj z rozwiązaniem" }).click();
+  await page.getByLabel("Podaje 22").check();
+  await page.getByLabel("Wyjaśnia, że w 12 godzin wskazówki pokrywają się 11 razy").check();
+  await page.getByRole("button", { name: "Zapisz samoocenę" }).click();
+  await page.getByRole("button", { name: "Dalej" }).click();
+  await expect(page.getByRole("heading", { name: "Karta wyników" })).toBeVisible();
+  await expect(page.getByText("Wynik: 100%")).toBeVisible();
+});
+
+test("the follow-up route needs an account", async ({ request }) => {
+  const res = await request.post("/api/interview/follow-up", {
+    data: { exerciseId: "przyklad-otwarte", version: 0, locale: "pl", answer: "Test." },
+  });
+  expect(res.status()).toBe(401);
+});

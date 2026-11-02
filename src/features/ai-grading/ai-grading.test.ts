@@ -84,6 +84,7 @@ describe("gradeOpenAnswer", () => {
     estimatedMinutes: 1,
     status: "draft",
     sample: true,
+    interview: [],
     rubric: ["Adds the values", { pl: "Dzieli przez liczbę", en: "Divides by the count" }],
   } satisfies Exercise;
   const good: AiGrade = {

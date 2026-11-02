@@ -42,7 +42,12 @@
     "start": "Start",
     "rulesMental": "Wpisz wynik i naciśnij Enter. Ułamki i procenty możesz wpisać jako 0,125, 1/8 albo 12,5%. Nie ma powrotu do poprzedniego działania.",
     "rulesMarket": "W każdej rundzie podaj bid (po ile kupisz) i ask (po ile sprzedasz). Trader zna wartość mniej więcej i handluje, gdy Twoja cena mu się opłaca.",
-    "best": "Twój rekord na tym poziomie: {percent}%"
+    "best": "Twój rekord na tym poziomie: {percent}%",
+    "rules": {
+      "probability_sprint": "Odpowiadaj po kolei. Wynik zobaczysz dopiero na końcu, razem z rozwiązaniami. Nie ma powrotu do poprzedniego zadania.",
+      "brainteasers": "Pomyśl na głos na papierze, potem zapisz odpowiedź. Na końcu porównasz ją z rozwiązaniem.",
+      "open_modelling": "Opisz, jak podszedłbyś do problemu: założenia, dane, test, co może pójść źle."
+    }
   },
   "timer": {
     "left": "Zostało",
@@ -136,5 +141,29 @@
     "level": "Poziom",
     "result": "Wynik",
     "best": "rekord"
+  },
+  "followUp": {
+    "ask": "Zadaj mi pytanie dodatkowe",
+    "asking": "Myślę nad pytaniem…",
+    "quota": "Pytanie dodatkowe liczy się do dziennego limitu AI.",
+    "failed": "Nie udało się przygotować pytania. Spróbuj później.",
+    "title": "Pytanie dodatkowe",
+    "reply": "Twoja odpowiedź",
+    "practice": "Ta odpowiedź nie jest oceniana: to trening, jak na prawdziwej rozmowie."
+  },
+  "pool": {
+    "empty": "W tej chwili nie ma jeszcze pytań do tej sesji.",
+    "short": "Na razie ta sesja ma {count} z {size} pytań.",
+    "question": "Pytanie {n} z {total}",
+    "solution": "Pokaż rozwiązanie"
+  },
+  "roadmap": {
+    "title": "Plan przygotowań do rozmowy",
+    "lead": "Czego zwykle sprawdzają rozmowy na stanowisko quanta i gdzie to przećwiczyć: działy kursu, sesje na czas i zestawy zadań.",
+    "learn": "Do nauki",
+    "train": "Sesje",
+    "practice": "Zadania z tego działu",
+    "soon": "Opis tego tematu jest w przygotowaniu.",
+    "link": "Plan przygotowań"
   }
 }
