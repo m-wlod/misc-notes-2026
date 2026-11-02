@@ -39,6 +39,8 @@ const base = {
     .strict()
     .optional(),
   status: z.enum(["draft", "review", "published"]),
+  /** Placeholder exercises that demonstrate the engine (Phase 8); never real content. */
+  sample: z.boolean().default(false),
   /**
    * Python that computes the answer from `params` and assigns it to `result`.
    * `pnpm content:verify` runs it and compares with `answer`.
@@ -46,10 +48,17 @@ const base = {
   verify: z.string().min(1).optional(),
 };
 
+const params = z.record(z.string(), z.union([z.number(), z.string(), z.boolean()]));
+
 const numericAnswer = {
   answer: z.number(),
   /** Absolute tolerance for grading and for `verify`. */
   tolerance: z.number().min(0).default(1e-9),
+  /**
+   * Further versions of the same exercise ("similar exercise"): params that override the
+   * base params, and the answer for them. `content:verify` checks every variant.
+   */
+  variants: z.array(z.object({ params, answer: z.number() }).strict()).default([]),
 };
 
 export const exerciseSchema = z.discriminatedUnion("type", [
@@ -59,7 +68,14 @@ export const exerciseSchema = z.discriminatedUnion("type", [
   z
     .object({ type: z.literal("interactive"), ...base, ...numericAnswer, widget: z.string() })
     .strict(),
-  z.object({ type: z.literal("symbolic"), ...base, answer: z.string().min(1) }).strict(),
+  z
+    .object({
+      type: z.literal("symbolic"),
+      ...base,
+      answer: z.string().min(1),
+      variants: z.array(z.object({ params, answer: z.string().min(1) }).strict()).default([]),
+    })
+    .strict(),
   z
     .object({
       type: z.literal("choice"),

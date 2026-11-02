@@ -1,0 +1,24 @@
+# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+id: przyklad-wielokrotny
+type: multi
+level: 1
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 1
+status: draft
+sample: true
+prompt:
+  pl: "Przykład: zaznacz wszystkie liczby pierwsze."
+  en: "Sample: select every prime number."
+options:
+  - { id: a, pl: "2", en: "2" }
+  - { id: b, pl: "4", en: "4" }
+  - { id: c, pl: "5", en: "5" }
+  - { id: d, pl: "9", en: "9" }
+answer: [a, c]
+hints:
+  - pl: "Liczba pierwsza ma dokładnie dwa dzielniki."
+    en: "A prime has exactly two divisors."
+solution:
+  pl: '2 i 5 są pierwsze; $4 = 2 \cdot 2$ i $9 = 3 \cdot 3$ nie są.'
+  en: '2 and 5 are prime; $4 = 2 \cdot 2$ and $9 = 3 \cdot 3$ are not.'

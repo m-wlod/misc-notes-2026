@@ -5,6 +5,7 @@ import type common from "../messages/pl/common.json";
 import type content from "../messages/pl/content.json";
 import type curriculum from "../messages/pl/curriculum.json";
 import type errors from "../messages/pl/errors.json";
+import type exercises from "../messages/pl/exercises.json";
 import type glossary from "../messages/pl/glossary.json";
 import type home from "../messages/pl/home.json";
 import type nav from "../messages/pl/nav.json";
@@ -35,6 +36,7 @@ declare module "next-intl" {
       curriculum: typeof curriculum;
       reader: typeof reader;
       notes: typeof notes;
+      exercises: typeof exercises;
     };
     Formats: typeof formats;
   }

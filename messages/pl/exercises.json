@@ -1,0 +1,69 @@
+{
+  "exercise": "Zadanie",
+  "sample": "Przykład (demonstracja silnika zadań, nie treść kursu)",
+  "level": "Poziom {level}",
+  "minutes": "{minutes} min",
+  "types": {
+    "numeric": "Liczba",
+    "estimation": "Szacowanie",
+    "interactive": "Interaktywne",
+    "symbolic": "Wyrażenie",
+    "choice": "Jednokrotny wybór",
+    "multi": "Wielokrotny wybór",
+    "ordering": "Kolejność",
+    "code": "Kod",
+    "open": "Otwarte",
+    "brainteaser": "Łamigłówka"
+  },
+  "answer": "Twoja odpowiedź",
+  "submit": "Sprawdź",
+  "checking": "Sprawdzanie…",
+  "result": {
+    "correct": "Dobrze!",
+    "partial": "Częściowo dobrze ({percent}%).",
+    "wrong": "Jeszcze nie."
+  },
+  "hint": "Podpowiedź",
+  "hintN": "Podpowiedź {n} z {total}",
+  "moreHint": "Pokaż podpowiedź ({left} zostało)",
+  "noHints": "Brak podpowiedzi.",
+  "solution": "Rozwiązanie",
+  "showSolution": "Pokaż rozwiązanie",
+  "similar": "Podobne zadanie",
+  "tryAgain": "Spróbuj ponownie",
+  "errors": {
+    "rate-limited": "Za dużo prób w krótkim czasie. Odczekaj chwilę i spróbuj ponownie.",
+    "not-found": "Nie znaleźliśmy tego zadania.",
+    "invalid": "Tej odpowiedzi nie da się sprawdzić. Sprawdź, czy wszystko jest wypełnione.",
+    "unreadable": "Nie umiemy odczytać tej odpowiedzi. Sprawdź zapis.",
+    "not-gradable": "Tego typu zadań jeszcze nie oceniamy.",
+    "network": "Nie udało się połączyć. Spróbuj ponownie."
+  },
+  "expression": {
+    "label": "Wyrażenie",
+    "hint": "Np. (x+1)^2, 2x + 1, sqrt(x), ln(x). Przecinek albo kropka w liczbach.",
+    "preview": "Podgląd",
+    "invalid": "Nie umiemy odczytać tego wyrażenia: {reason}"
+  },
+  "slider": {
+    "label": "Wartość",
+    "value": "Wybrano: {value}"
+  },
+  "ordering": {
+    "label": "Kolejność",
+    "up": "Przesuń wyżej: {item}",
+    "down": "Przesuń niżej: {item}",
+    "moved": "{item} jest teraz na pozycji {position}.",
+    "drag": "Przeciągnij elementy albo użyj przycisków ze strzałkami."
+  },
+  "code": {
+    "label": "Kod",
+    "soon": "Uruchamianie i sprawdzanie kodu pojawi się razem z Laboratorium."
+  },
+  "open": {
+    "label": "Twoja odpowiedź",
+    "soon": "Ocena odpowiedzi otwartych przez AI pojawi się wkrótce."
+  },
+  "keys": "Skróty: Enter sprawdza, H pokazuje podpowiedź, N przechodzi dalej.",
+  "stored": "Wynik zapisany w tej przeglądarce."
+}

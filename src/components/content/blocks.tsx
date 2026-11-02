@@ -245,18 +245,20 @@ export async function PythonCell({ children }: Children) {
   );
 }
 
-/** Link to a practice exercise. TODO(phase-8): validate the id and link to the exercise. */
+/** Link to a practice exercise (its page decides visibility: published, or internal). */
 export async function ExerciseRef({ id, title }: { id: string; title?: string }) {
   const t = await getTranslations("content");
   return (
     <div data-exercise={id} className="my-8 rounded-md border border-rule-strong px-5 py-4">
       <p className={labelClass}>{t("exerciseRef.label")}</p>
       <p className="mt-1 text-base">
-        <Link href="/practice" className="text-accent-text underline underline-offset-2">
+        <Link
+          href={{ pathname: "/practice/[exercise]", params: { exercise: id } }}
+          className="text-accent-text underline underline-offset-2"
+        >
           {title ?? id}
         </Link>
       </p>
-      <p className="mt-1 font-sans text-xs text-ink-muted">{t("exerciseRef.soon")}</p>
     </div>
   );
 }

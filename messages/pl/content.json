@@ -25,8 +25,7 @@
     "soon": "Uruchamianie kodu w przeglądarce pojawi się wkrótce."
   },
   "exerciseRef": {
-    "label": "Zadanie",
-    "soon": "Zadania interaktywne pojawią się w sekcji Praktyka."
+    "label": "Zadanie"
   },
   "walk": {
     "describe": "Wykres błądzenia losowego przez {days} dni: start {start}, koniec {end}, zakres od {min} do {max}."

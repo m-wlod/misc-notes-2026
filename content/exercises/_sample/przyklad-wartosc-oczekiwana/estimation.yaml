@@ -1,0 +1,22 @@
+# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+id: przyklad-szacowanie
+type: estimation
+level: 2
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 1
+status: draft
+sample: true
+prompt:
+  pl: "Przykład (szacowanie): ile sekund ma doba?"
+  en: "Sample (estimation): how many seconds are there in a day?"
+answer: 86400
+tolerance: 0
+hints:
+  - pl: "Doba ma 24 godziny, godzina 60 minut, minuta 60 sekund."
+    en: "A day has 24 hours, an hour 60 minutes, a minute 60 seconds."
+solution:
+  pl: '$24 \cdot 60 \cdot 60 = 86\,400$ sekund. Odpowiedź tego samego rzędu wielkości dostaje część punktów.'
+  en: '$24 \cdot 60 \cdot 60 = 86\,400$ seconds. An answer of the same order of magnitude earns partial credit.'
+verify: |
+  result = 24 * 60 * 60

@@ -23,6 +23,7 @@ export const routing = defineRouting({
     "/map": { pl: "/mapa", en: "/map" },
     "/notes": { pl: "/notatki", en: "/notes" },
     "/practice": { pl: "/praktyka", en: "/practice" },
+    "/practice/[exercise]": { pl: "/praktyka/[exercise]", en: "/practice/[exercise]" },
     "/interview": { pl: "/rozmowa", en: "/interview" },
     "/debunk": "/debunk",
     "/glossary": { pl: "/slowniczek", en: "/glossary" },

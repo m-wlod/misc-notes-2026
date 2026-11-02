@@ -1,0 +1,24 @@
+# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+id: przyklad-kod
+type: code
+level: 1
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 1
+status: draft
+sample: true
+prompt:
+  pl: "Przykład: napisz funkcję, która podwaja liczbę."
+  en: "Sample: write a function that doubles a number."
+starter: |
+  def double(x):
+      ...
+tests: |
+  assert double(2) == 4
+  assert double(-1.5) == -3
+hints:
+  - pl: "Pomnóż argument przez 2."
+    en: "Multiply the argument by 2."
+solution:
+  pl: "Funkcja zwraca 2 razy x."
+  en: "The function returns 2 times x."

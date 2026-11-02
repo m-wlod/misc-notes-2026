@@ -25,8 +25,7 @@
     "soon": "Running code in the browser is coming soon."
   },
   "exerciseRef": {
-    "label": "Exercise",
-    "soon": "Interactive exercises are coming to the Practice section."
+    "label": "Exercise"
   },
   "walk": {
     "describe": "Random-walk chart over {days} days: start {start}, end {end}, range {min} to {max}."
