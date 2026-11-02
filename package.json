@@ -32,7 +32,8 @@
     "db:types": "supabase gen types typescript --local > src/lib/db/database.types.ts",
     "db:env": "node scripts/supabase-env.mjs",
     "prepare": "husky && next typegen",
-    "datasets": "tsx scripts/gen-datasets.ts"
+    "datasets": "tsx scripts/gen-datasets.ts",
+    "gamification:catalog": "tsx scripts/gen-gamification-catalog.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",

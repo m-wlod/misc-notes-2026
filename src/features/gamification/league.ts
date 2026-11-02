@@ -134,3 +134,17 @@ export function joinGroup(
   }
   return best ?? Math.max(...sizes.keys()) + 1;
 }
+
+/**
+ * The tier for someone returning after weeks away: their last week's tier, one lower if
+ * that week's final rank was in the demotion zone (inactive learners can't be promoted).
+ * `weekActive` decides whether that week was shared (nobody moved) or split.
+ */
+export function tierOnReturn(
+  last: { tier: number; finalRank: number | null; groupSize: number; weekActive: number },
+  cfg: LeagueConfig = LEAGUE,
+): number {
+  if (last.finalRank === null || modeFor(last.weekActive, cfg) === "shared") return last.tier;
+  const down = Math.floor(last.groupSize * cfg.demoteShare);
+  return last.finalRank > last.groupSize - down ? Math.max(1, last.tier - 1) : last.tier;
+}

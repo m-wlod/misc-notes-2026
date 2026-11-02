@@ -3,7 +3,11 @@ import { Suspense, type ReactNode } from "react";
 
 import { StatTicker } from "@/components/content/data";
 import { siteConfig } from "@/config/site";
+import { Celebration } from "@/features/gamification/celebration";
+import { readMe } from "@/features/gamification/server/read";
 import { Link } from "@/i18n/navigation";
+import { isSupabaseConfigured } from "@/lib/db/config";
+import { getSession } from "@/lib/db/session";
 
 import { AccountLink, AccountLinkFallback } from "./account-link";
 import { LocaleSwitch, SearchButton, ThemeControl } from "./controls";
@@ -26,6 +30,7 @@ export async function AppShell({ children }: { children: ReactNode }) {
       </main>
       <Footer />
       <BottomNav />
+      <Celebration />
     </>
   );
 }
@@ -45,9 +50,9 @@ async function TopBar() {
             role="group"
             className="hidden items-center gap-4 md:flex"
           >
-            <StatTicker label={t("common.stats.streak")} value="—" />
-            <StatTicker label={t("common.stats.xp")} value="—" />
-            <span className="text-2xs text-ink-muted">{t("common.stats.signedOut")}</span>
+            <Suspense fallback={<SignedOutStats />}>
+              <HeaderStats />
+            </Suspense>
           </div>
           <SearchButton />
           <div className="hidden sm:block">
@@ -62,6 +67,32 @@ async function TopBar() {
         </div>
       </div>
     </header>
+  );
+}
+
+async function SignedOutStats() {
+  const t = await getTranslations("common.stats");
+  return (
+    <>
+      <StatTicker label={t("streak")} value="—" />
+      <StatTicker label={t("xp")} value="—" />
+      <span className="text-2xs text-ink-muted">{t("signedOut")}</span>
+    </>
+  );
+}
+
+/** Streak and XP for a signed-in learner (Phase 14); the signed-out dashes otherwise. */
+async function HeaderStats() {
+  if (!isSupabaseConfigured()) return <SignedOutStats />;
+  const session = await getSession();
+  const me = session ? await readMe(session) : null;
+  if (!me) return <SignedOutStats />;
+  const t = await getTranslations("common.stats");
+  return (
+    <>
+      <StatTicker label={t("streak")} value={String(me.streak.current)} />
+      <StatTicker label={t("xp")} value={String(me.totalXp)} />
+    </>
   );
 }
 

@@ -19,11 +19,22 @@
   --animate-*: initial;
   --font-*: initial;
 
-  /* The only animation: skeleton loading. */
+  /* Skeleton loading, and the one celebration (Phase 14): a short pop on earned XP. */
   --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   @keyframes pulse {
     50% {
       opacity: 0.5;
+    }
+  }
+  --animate-pop: pop 450ms cubic-bezier(0.2, 0, 0, 1);
+  @keyframes pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
     }
   }
 

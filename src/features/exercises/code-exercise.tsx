@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useId, useRef, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
+import { celebrate } from "@/features/gamification/celebrate";
 import { getRuntime } from "@/features/python/client";
 import { OutputPanel } from "@/features/python/output-panel";
 import type { RunOutput } from "@/features/python/protocol";
@@ -102,8 +103,10 @@ export function CodeExercise({
           value: res.value,
         };
         const graded = await send(submission);
-        if (graded.ok) onGraded({ result: graded.result, score: graded.score, answer: submission });
-        else onFailure(graded.reason === "percent-not-allowed" ? "invalid" : graded.reason);
+        if (graded.ok) {
+          onGraded({ result: graded.result, score: graded.score, answer: submission });
+          celebrate(graded.rewards);
+        } else onFailure(graded.reason === "percent-not-allowed" ? "invalid" : graded.reason);
       } catch {
         onFailure("network");
       }
@@ -117,6 +120,7 @@ export function CodeExercise({
         const submission: Submission = { kind: "text", value: answer };
         const graded = await send(submission);
         if (graded.ok) {
+          celebrate(graded.rewards);
           // The learner's own code is kept with the local attempt only, for reference.
           onGraded({
             result: graded.result,

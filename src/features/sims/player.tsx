@@ -4,6 +4,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { claimAchievement } from "@/features/gamification/actions";
 import { cx } from "@/lib/cx";
 
 import { makePlot, readPalette, ticks } from "./axes";
@@ -43,6 +44,16 @@ export function SimPlayer({
   const uid = useId();
 
   const [params, setParams] = useState<Params>(initial.params);
+  // A run played to the end can earn a browser-claimed achievement (Phase 14): the
+  // martingale with 1,000+ players is "Ruina gracza". Signed out the claim does nothing.
+  const onRunEnd = useRef<() => void>(() => undefined);
+  useEffect(() => {
+    onRunEnd.current = () => {
+      if (id === "martingale" && Number(params.players) >= 1000) {
+        void claimAchievement({ id: "ruina-gracza" }).catch(() => undefined);
+      }
+    };
+  });
   const [seed, setSeed] = useState(initial.seed);
   const [data, setData] = useState<SimData | null>(null);
   const [frame, setFrame] = useState(0);
@@ -187,6 +198,7 @@ export function SimPlayer({
       if (next >= data.T) {
         setFrame(next);
         setPlaying(false);
+        onRunEnd.current();
         return;
       }
       raf = requestAnimationFrame(tick);

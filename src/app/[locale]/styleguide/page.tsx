@@ -15,9 +15,13 @@ import { Badge, Callout, Kbd, Progress, Skeleton, Table, Td, Th } from "@/compon
 import { Link } from "@/components/ui/link";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
+import { AchievementsGrid } from "@/features/gamification/ui/achievements-grid";
+import { Dashboard } from "@/features/gamification/ui/dashboard";
+import { LeagueTable } from "@/features/gamification/ui/league-table";
+import { SkillRadar } from "@/features/gamification/ui/skill-radar";
 import { randomWalk } from "@/lib/math/rng";
 
-import { FieldDemos, OverlayDemos, TabDemos } from "./demos";
+import { CelebrationDemo, FieldDemos, OverlayDemos, TabDemos } from "./demos";
 
 // Internal tool at /[locale]/styleguide. TODO(phase-18): also allow admins in production.
 // Documented i18n exception (CLAUDE.md): chrome is English and the samples are Polish
@@ -350,6 +354,49 @@ function Styleguide() {
             ))}
           </tbody>
         </Table>
+      </Section>
+
+      <Section id="gamification" title="Gamification (sample data)">
+        <p className="mb-6 max-w-(--measure) text-sm text-ink-muted">
+          Signed-in only, dormant until accounts are on: shown here with sample data.
+        </p>
+        <div className="grid gap-10">
+          <Dashboard
+            data={{
+              todayXp: 30,
+              goal: 50,
+              streak: { current: 6, freezes: 1, atRisk: true, repairable: null },
+              league: { kind: "member", tierName: "Gauss", rank: 4, size: 28 },
+              nextLesson: null,
+              recommended: { title: "Wartość oczekiwana rzutu kostką", level: 1, href: "#" },
+              problem: null,
+            }}
+          />
+          <LeagueTable
+            data={{
+              tierName: "Gauss",
+              mode: "split",
+              me: "u4",
+              members: Array.from({ length: 10 }, (_, i) => ({
+                userId: `u${String(i + 1)}`,
+                handle: `gracz_${String(i + 1)}`,
+                weeklyXp: 520 - i * 45,
+                rank: i + 1,
+              })),
+            }}
+          />
+          <SkillRadar
+            ratings={[
+              { topic: "prawdopodobieństwo", rating: 1240 },
+              { topic: "statystyka", rating: 1080 },
+              { topic: "opcje", rating: 960 },
+              { topic: "ryzyko", rating: 1310 },
+              { topic: "szeregi czasowe", rating: 1010 },
+            ]}
+          />
+          <AchievementsGrid owned={new Set(["pierwszy-krok", "seria-3", "seria-7", "xp-100"])} />
+          <CelebrationDemo />
+        </div>
       </Section>
     </div>
   );

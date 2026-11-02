@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 
 import { alternatesFor, SECTIONS } from "@/components/shell/section-page";
+import { Skeleton } from "@/components/ui/display";
+import { TodaySection } from "@/features/gamification/ui/today-section";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 
@@ -26,6 +29,10 @@ export default async function HomePage() {
       <p className="mb-14 max-w-(--measure) border-l-2 border-rule-strong pl-5 text-base text-ink-muted">
         {t("home.status")}
       </p>
+
+      <Suspense fallback={<Skeleton className="mb-14 h-40" />}>
+        <TodaySection />
+      </Suspense>
 
       <h2 className="mb-6 border-b border-rule pb-2 text-xl">{t("home.sectionsHeading")}</h2>
       <ol className="grid gap-x-10 gap-y-6 sm:grid-cols-2">

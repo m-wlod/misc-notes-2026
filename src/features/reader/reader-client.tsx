@@ -5,6 +5,8 @@ import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useLocalProgress } from "@/features/curriculum/use-local-progress";
+import { celebrate } from "@/features/gamification/celebrate";
+import { completeLesson } from "@/features/progress/actions";
 import { cx } from "@/lib/cx";
 
 import {
@@ -257,6 +259,12 @@ export function CompleteLesson({ lessonId, next }: { lessonId: string; next: Rea
             disabled={statuses === null}
             onClick={() => {
               setLessonStatus(lessonId, "completed");
+              // Signed in: on the account too, with XP (Phase 14). Signed out: no-op.
+              void completeLesson({ lessonId })
+                .then((r) => {
+                  celebrate(r.rewards);
+                })
+                .catch(() => undefined);
             }}
           >
             {t("complete")}
