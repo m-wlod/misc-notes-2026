@@ -6,6 +6,7 @@ import type content from "../messages/pl/content.json";
 import type curriculum from "../messages/pl/curriculum.json";
 import type errors from "../messages/pl/errors.json";
 import type exercises from "../messages/pl/exercises.json";
+import type gamification from "../messages/pl/gamification.json";
 import type glossary from "../messages/pl/glossary.json";
 import type home from "../messages/pl/home.json";
 import type interview from "../messages/pl/interview.json";
@@ -43,6 +44,7 @@ declare module "next-intl" {
       interview: typeof interview;
       sims: typeof sims;
       python: typeof python;
+      gamification: typeof gamification;
     };
     Formats: typeof formats;
   }

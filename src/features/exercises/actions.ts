@@ -5,6 +5,8 @@ import { z } from "zod";
 
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
+import type { Rewards } from "@/features/gamification/server/award";
+import { onExerciseGraded } from "@/features/gamification/server/hooks";
 import { createAdminClient } from "@/lib/db/admin";
 import { getSession } from "@/lib/db/session";
 
@@ -60,7 +62,9 @@ const internal = () => isStyleguideEnabled(env);
 
 export async function submitAttempt(
   input: unknown,
-): Promise<{ ok: true; result: Result; score: number; feedback?: string } | Failure> {
+): Promise<
+  { ok: true; result: Result; score: number; feedback?: string; rewards: Rewards | null } | Failure
+> {
   const parsed = z
     .object({
       exerciseId: id,
@@ -82,9 +86,18 @@ export async function submitAttempt(
     return { ok: false, reason: graded.reason === "wrong-kind" ? "invalid" : graded.reason };
   }
 
+  let rewards: Rewards | null = null;
   if (who.userId) {
     // Dormant until accounts are enabled: attempts are server-written (no client insert policy).
     const admin = createAdminClient();
+    // First try = no earlier attempt at this exercise (any variant): earns the bonus.
+    const { count } = admin
+      ? await admin
+          .from("exercise_attempts")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", who.userId)
+          .eq("exercise_id", ex.id)
+      : { count: null };
     await admin?.from("exercise_attempts").insert({
       user_id: who.userId,
       exercise_id: ex.id,
@@ -96,10 +109,15 @@ export async function submitAttempt(
       time_ms: parsed.data.timeMs,
       source: "app",
     });
+    rewards = await onExerciseGraded(who.userId, ex, {
+      score: graded.score,
+      hintsUsed: parsed.data.hintsUsed,
+      firstTry: count === 0,
+    });
   }
   const mistake =
     graded.mistake !== undefined && "mistakes" in ex ? ex.mistakes[graded.mistake] : undefined;
-  if (!mistake) return { ok: true, result: graded.result, score: graded.score };
+  if (!mistake) return { ok: true, result: graded.result, score: graded.score, rewards };
   // A known mistake: targeted feedback, rendered here like hints.
   const lang = parsed.data.locale;
   const text = lang === "en" ? (mistake.feedback.en ?? mistake.feedback.pl) : mistake.feedback.pl;
@@ -108,6 +126,7 @@ export async function submitAttempt(
     result: graded.result,
     score: graded.score,
     feedback: exerciseHtml(text, variantOf(ex, parsed.data.variant).params, lang),
+    rewards,
   };
 }
 

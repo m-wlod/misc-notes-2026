@@ -1,10 +1,15 @@
 "use server";
 
+import { z } from "zod";
+
+import type { Rewards } from "@/features/gamification/server/award";
+import { onLessonCompleted } from "@/features/gamification/server/hooks";
 import { createAdminClient } from "@/lib/db/admin";
 import type { Json } from "@/lib/db/database.types";
 import { getSession } from "@/lib/db/session";
 
 import { lessonUpserts, localProgressSchema, type LessonStatus } from "./schema";
+import { curriculum } from "../../../content/curriculum";
 
 export type MergeResult = { ok: true; lessons: number; attempts: number } | { ok: false };
 
@@ -68,4 +73,35 @@ export async function mergeAnonymousProgress(input: unknown): Promise<MergeResul
   }
 
   return { ok: true, lessons: lessonCount, attempts: attempts.length };
+}
+
+const LESSON_IDS = new Set(
+  curriculum.flatMap((t) => t.modules.flatMap((m) => m.lessons as readonly string[])),
+);
+
+/**
+ * "Oznacz jako zrozumiane" for a signed-in learner (Phase 14): records the lesson as
+ * completed on the account and awards its XP once. Signed out it does nothing (the
+ * browser keeps the status, as before). Only curriculum lessons count.
+ */
+export async function completeLesson(
+  input: unknown,
+): Promise<{ ok: boolean; rewards: Rewards | null }> {
+  const parsed = z.object({ lessonId: z.string().max(120) }).safeParse(input);
+  if (!parsed.success || !LESSON_IDS.has(parsed.data.lessonId)) {
+    return { ok: false, rewards: null };
+  }
+  const session = await getSession();
+  if (!session) return { ok: false, rewards: null };
+  const { error } = await session.supabase.from("lesson_progress").upsert(
+    {
+      user_id: session.user.id,
+      lesson_id: parsed.data.lessonId,
+      status: "completed",
+      completed_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,lesson_id" },
+  );
+  if (error) return { ok: false, rewards: null };
+  return { ok: true, rewards: await onLessonCompleted(session.user.id, parsed.data.lessonId) };
 }

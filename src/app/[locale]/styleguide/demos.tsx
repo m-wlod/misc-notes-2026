@@ -20,6 +20,7 @@ import {
 import { Select } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toast, ToastProvider } from "@/components/ui/toast";
+import { celebrate } from "@/features/gamification/celebrate";
 import { parseLocaleNumber, type ParseNumberResult } from "@/lib/math/parse-number";
 
 // Style guide sample copy is Polish on purpose: it is what users will see.
@@ -206,5 +207,19 @@ export function OverlayDemos() {
         />
       </ToastProvider>
     </TooltipProvider>
+  );
+}
+
+/** Fires a sample reward through the real celebration toast in the app shell. */
+export function CelebrationDemo() {
+  return (
+    <Button
+      variant="secondary"
+      onClick={() => {
+        celebrate({ xp: 45, goalMet: true, repaired: false, streak: 7, achievements: ["seria-7"] });
+      }}
+    >
+      Pokaż nagrodę
+    </Button>
   );
 }

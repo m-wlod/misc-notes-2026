@@ -8,6 +8,7 @@ import { addDays, daysBetween, leagueWeek, localDate, mondayOf, weekday } from "
 import { joinGroup, rankGroup, rollWeek, splitIntoGroups, tierAfter, type Member } from "./league";
 import { difficulty, expectedScore, recommend, updateRating } from "./rating";
 import { replayStreak } from "./streak";
+import { goalShare, nextLesson, pickOfDay } from "./today";
 import { exerciseXp, goalXp, xpKey } from "./xp";
 
 const at = (iso: string) => new Date(iso);
@@ -457,5 +458,34 @@ describe("achievements", () => {
     expect(earned({ claims: ["ruina-gracza"] })).toEqual(["ruina-gracza"]);
     expect(earned({ solved: 10 }, ["pierwszy-krok"])).toEqual(["dziesiatka"]);
     expect(ACHIEVEMENTS.filter((a) => a.client).map((a) => a.id)).toEqual(["ruina-gracza"]);
+  });
+});
+
+describe("dashboard helpers", () => {
+  it("next lesson is the first one not completed", () => {
+    const order = [{ id: "a" }, { id: "b" }, { id: "c" }];
+    const done = new Map([
+      ["a", "completed"],
+      ["b", "in_progress"],
+    ]);
+    expect(nextLesson(order, (id) => done.get(id))?.id).toBe("b");
+    expect(nextLesson(order, () => "mastered")).toBeNull();
+  });
+
+  it("problem of the day: same for everyone on a date, changes day to day, none when empty", () => {
+    const items = Array.from({ length: 9 }, (_, i) => ({ id: `e${String(i)}` }));
+    expect(pickOfDay(items, "2026-11-02")).toEqual(pickOfDay([...items].reverse(), "2026-11-02"));
+    const week = Array.from(
+      { length: 7 },
+      (_, i) => pickOfDay(items, addDays("2026-11-02", i))?.id,
+    );
+    expect(new Set(week).size).toBe(7);
+    expect(pickOfDay([], "2026-11-02")).toBeNull();
+  });
+
+  it("goal share is clamped", () => {
+    expect(goalShare(10, 50)).toBe(0.2);
+    expect(goalShare(80, 50)).toBe(1);
+    expect(goalShare(5, 0)).toBe(1);
   });
 });

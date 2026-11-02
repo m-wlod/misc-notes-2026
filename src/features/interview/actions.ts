@@ -2,6 +2,8 @@
 
 import { z } from "zod";
 
+import type { Rewards } from "@/features/gamification/server/award";
+import { onInterviewSaved } from "@/features/gamification/server/hooks";
 import { createAdminClient } from "@/lib/db/admin";
 import type { Json } from "@/lib/db/database.types";
 import { getSession } from "@/lib/db/session";
@@ -38,7 +40,9 @@ const input = z.object({
     .max(200),
 });
 
-export async function saveInterviewSession(raw: unknown): Promise<{ ok: boolean }> {
+export async function saveInterviewSession(
+  raw: unknown,
+): Promise<{ ok: boolean; rewards?: Rewards | null }> {
   const parsed = input.safeParse(raw);
   if (!parsed.success) return { ok: false };
   const session = await getSession();
@@ -71,5 +75,14 @@ export async function saveInterviewSession(raw: unknown): Promise<{ ok: boolean 
       })),
     );
   }
-  return { ok: true };
+  const rewards = await onInterviewSaved(session.user.id, {
+    id: entry.id,
+    kind: entry.kind,
+    personalBest: (entry as { personalBest?: unknown }).personalBest === true,
+    pnl:
+      typeof (entry as { pnl?: unknown }).pnl === "number"
+        ? ((entry as { pnl?: number }).pnl ?? null)
+        : null,
+  });
+  return { ok: true, rewards };
 }

@@ -7,6 +7,7 @@ import { useCallback, useEffect, useId, useRef, useState, useTransition } from "
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/display";
 import { OpenPanel } from "@/features/ai-grading/open-panel";
+import { celebrate } from "@/features/gamification/celebrate";
 import { cx } from "@/lib/cx";
 
 import { getHint, revealSolution, submitAttempt } from "./actions";
@@ -131,6 +132,7 @@ export function ExerciseCard({
         }
         setResult({ result: res.result, score: res.score, feedback: res.feedback });
         recordAttempt({ exerciseId: view.id, score: res.score, answer: sub });
+        celebrate(res.rewards);
       } catch {
         setFailure("network");
       }

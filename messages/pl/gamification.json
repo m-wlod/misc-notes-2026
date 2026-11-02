@@ -1,0 +1,217 @@
+{
+  "celebrate": {
+    "label": "Nagrody",
+    "xp": "+{xp} XP",
+    "goalMet": "Cel dnia zrobiony",
+    "streak": "Seria: {days, plural, one {# dzień} other {# dni}}",
+    "repaired": "Seria uratowana",
+    "achievement": "Nowa odznaka: {name}",
+    "soundOn": "Wycisz dźwięk",
+    "soundOff": "Włącz dźwięk",
+    "close": "Zamknij"
+  },
+  "dashboard": {
+    "title": "Twój dzień",
+    "goal": "Cel dnia",
+    "goalProgress": "{xp} z {goal} XP",
+    "goalDone": "Zrobione",
+    "streak": "Seria",
+    "streakDays": "{days, plural, one {# dzień} other {# dni}}",
+    "atRisk": "Zrób dziś cel, żeby nie stracić serii.",
+    "repair": "Wczoraj seria się urwała ({lost, plural, one {# dzień} other {# dni}}). Zdobądź dziś {xp} XP, żeby ją uratować.",
+    "freezes": "Zamrożenia: {n} z 2",
+    "league": "Liga",
+    "leaguePlace": "{tier}: miejsce {rank} z {size}",
+    "leagueNone": "Zdobądź XP w tym tygodniu, żeby dołączyć.",
+    "leagueOff": "Nie bierzesz udziału w ligach.",
+    "nextLesson": "Następna lekcja",
+    "allLessons": "Wszystkie lekcje ukończone.",
+    "recommended": "Zadanie dla Ciebie",
+    "noRecommendation": "Na razie nie ma nowego zadania do polecenia.",
+    "review": "Powtórki",
+    "reviewNote": "Powtórki pojawią się w kolejnej wersji.",
+    "problemOfDay": "Zadanie dnia",
+    "problemEmpty": "Zadanie dnia pojawi się, gdy opublikujemy pierwsze zadania.",
+    "today": "Na dziś",
+    "level": "Poziom {level}"
+  },
+  "league": {
+    "metaTitle": "Liga",
+    "lead": "Co tydzień grasz z osobami o podobnej aktywności. Liczy się XP zdobyte od poniedziałku.",
+    "signedOut": "Ligi są dla zalogowanych.",
+    "optedOut": "Nie bierzesz udziału w ligach. Możesz to zmienić w ustawieniach.",
+    "settings": "Ustawienia",
+    "notJoined": "W tym tygodniu nie masz jeszcze XP. Rozwiąż zadanie albo ukończ lekcję, żeby dołączyć.",
+    "tier": "Liga {tier}",
+    "shared": "Na razie jest jedna wspólna liga: dopóki w tygodniu uczy się mniej niż {n} osób, wszyscy grają razem i nikt nie awansuje ani nie spada.",
+    "split": "Najlepsze 20% awansuje, ostatnie 20% spada.",
+    "endsOn": "Tydzień kończy się w niedzielę {date} o północy (czas polski).",
+    "rank": "Miejsce",
+    "name": "Osoba",
+    "xp": "XP w tym tygodniu",
+    "you": "Ty",
+    "promotion": "Strefa awansu",
+    "demotion": "Strefa spadku",
+    "anonymous": "Uczestnik"
+  },
+  "tiers": {
+    "bernoulli": "Bernoulli",
+    "gauss": "Gauss",
+    "markov": "Markow",
+    "kolmogorov": "Kołmogorow",
+    "ito": "Itô",
+    "black-scholes": "Black–Scholes"
+  },
+  "profile": {
+    "skills": "Umiejętności",
+    "skillsLabel": "Ocena umiejętności w poszczególnych tematach",
+    "skillsEmpty": "Rozwiąż kilka zadań, żeby zobaczyć ocenę umiejętności.",
+    "skillsNote": "Ocena rośnie, gdy rozwiązujesz trudniejsze zadania; 1000 to start.",
+    "achievements": "Odznaki",
+    "achievementsCount": "{n} z {total}",
+    "earned": "Zdobyta",
+    "locked": "Do zdobycia"
+  },
+  "achievements": {
+    "pierwszy-krok": {
+      "name": "Pierwszy krok",
+      "description": "Rozwiąż pierwsze zadanie."
+    },
+    "dziesiatka": {
+      "name": "Dziesiątka",
+      "description": "Rozwiąż 10 zadań."
+    },
+    "pol-setki": {
+      "name": "Pół setki",
+      "description": "Rozwiąż 50 zadań."
+    },
+    "setka": {
+      "name": "Setka",
+      "description": "Rozwiąż 100 zadań."
+    },
+    "piecset": {
+      "name": "Pięćset",
+      "description": "Rozwiąż 500 zadań."
+    },
+    "za-pierwszym-razem": {
+      "name": "Za pierwszym razem",
+      "description": "Rozwiąż 10 zadań przy pierwszej próbie."
+    },
+    "bez-podpowiedzi": {
+      "name": "Bez podpowiedzi",
+      "description": "Rozwiąż 25 zadań bez podpowiedzi."
+    },
+    "poziom-piaty": {
+      "name": "Poziom piąty",
+      "description": "Rozwiąż zadanie z poziomu 5."
+    },
+    "wszystkie-typy": {
+      "name": "Wszystkie typy",
+      "description": "Rozwiąż po jednym zadaniu każdego typu sprawdzanego automatycznie."
+    },
+    "xp-100": {
+      "name": "100 XP",
+      "description": "Zdobądź 100 XP."
+    },
+    "xp-1000": {
+      "name": "1000 XP",
+      "description": "Zdobądź 1000 XP."
+    },
+    "xp-10000": {
+      "name": "10 000 XP",
+      "description": "Zdobądź 10 000 XP."
+    },
+    "seria-3": {
+      "name": "Trzy dni",
+      "description": "Utrzymaj serię przez 3 dni."
+    },
+    "seria-7": {
+      "name": "Tydzień",
+      "description": "Utrzymaj serię przez 7 dni."
+    },
+    "seria-30": {
+      "name": "Miesiąc",
+      "description": "Utrzymaj serię przez 30 dni."
+    },
+    "seria-100": {
+      "name": "Sto dni",
+      "description": "Utrzymaj serię przez 100 dni."
+    },
+    "seria-365": {
+      "name": "Rok",
+      "description": "Utrzymaj serię przez 365 dni."
+    },
+    "zamrozenie": {
+      "name": "Zamrożenie",
+      "description": "Zamrożenie uratowało Twoją serię."
+    },
+    "naprawa": {
+      "name": "Naprawa",
+      "description": "Napraw przerwaną serię następnego dnia."
+    },
+    "idealny-tydzien": {
+      "name": "Idealny tydzień",
+      "description": "Zrób cel dnia od poniedziałku do niedzieli."
+    },
+    "pierwsza-lekcja": {
+      "name": "Pierwsza lekcja",
+      "description": "Ukończ pierwszą lekcję."
+    },
+    "dziesiec-lekcji": {
+      "name": "Dziesięć lekcji",
+      "description": "Ukończ 10 lekcji."
+    },
+    "caly-modul": {
+      "name": "Cały moduł",
+      "description": "Ukończ wszystkie lekcje jednego modułu."
+    },
+    "rozmowa": {
+      "name": "Rozmowa",
+      "description": "Ukończ pierwszą sesję rozmowy kwalifikacyjnej."
+    },
+    "wszystkie-rozmowy": {
+      "name": "Pełna rozmowa",
+      "description": "Ukończ sesję każdego rodzaju."
+    },
+    "szybkie-liczenie": {
+      "name": "Szybkie liczenie",
+      "description": "Pobij swój rekord w liczeniu w pamięci."
+    },
+    "animator-rynku": {
+      "name": "Animator rynku",
+      "description": "Zakończ grę w animatora rynku na plusie."
+    },
+    "awans": {
+      "name": "Awans",
+      "description": "Awansuj do wyższej ligi."
+    },
+    "podium": {
+      "name": "Podium",
+      "description": "Skończ tydzień w lidze w pierwszej trójce."
+    },
+    "ito": {
+      "name": "Itô",
+      "description": "Dojdź do ligi Itô."
+    },
+    "black-scholes": {
+      "name": "Black–Scholes",
+      "description": "Dojdź do ligi Black–Scholes."
+    },
+    "ekspert": {
+      "name": "Ekspert",
+      "description": "Osiągnij ocenę 1400 w dowolnym temacie."
+    },
+    "kelly": {
+      "name": "Kelly",
+      "description": "Oblicz ułamek Kelly'ego poprawnie za pierwszym razem."
+    },
+    "anty-guru": {
+      "name": "Anty-guru",
+      "description": "Ukończ 10 wpisów w Debunk Lab."
+    },
+    "ruina-gracza": {
+      "name": "Ruina gracza",
+      "description": "Przeprowadź symulację martyngału dla 1000 graczy."
+    }
+  }
+}

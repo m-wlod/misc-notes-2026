@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { celebrate } from "@/features/gamification/celebrate";
+
 import { saveInterviewSession } from "./actions";
 import {
   answer as answerQ,
@@ -45,7 +47,11 @@ export function useSessionRunner<Q>(kind: SessionKind) {
       );
       saveSession(entry);
       // Dormant until accounts exist; never blocks the scorecard.
-      void saveInterviewSession({ entry, answers: s.answers }).catch(() => undefined);
+      void saveInterviewSession({ entry, answers: s.answers })
+        .then((r) => {
+          celebrate(r.rewards);
+        })
+        .catch(() => undefined);
     },
     [kind],
   );

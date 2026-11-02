@@ -13,6 +13,8 @@ export const XP = {
   /** Correct on the first attempt at this exercise. */
   firstTryBonus: 0.5,
   interviewSession: 30,
+  /** Interview sessions are finished in the browser: XP for at most this many a day. */
+  interviewSessionsPerDay: 5,
   dailyGoalMet: 20,
   /** The daily goal is set in minutes (5, 10, 20); this many XP stand for a minute. */
   perGoalMinute: 5,

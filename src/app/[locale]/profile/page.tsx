@@ -5,6 +5,9 @@ import { Suspense, type ReactNode } from "react";
 import { buttonClass } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/display";
 import { signOut } from "@/features/auth/actions";
+import { readAchievements, readRatings } from "@/features/gamification/server/read";
+import { AchievementsGrid } from "@/features/gamification/ui/achievements-grid";
+import { SkillRadar } from "@/features/gamification/ui/skill-radar";
 import { Link, redirect } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { isSupabaseConfigured } from "@/lib/db/config";
@@ -60,12 +63,14 @@ async function ProfileBody({ params }: { params: PageProps<"/[locale]/profile">[
     .single();
   if (!profile) return null;
   if (!profile.onboarded_at) redirect({ href: "/onboarding", locale });
+  const tG = await getTranslations("gamification");
+  const [ratings, owned] = await Promise.all([readRatings(session), readAchievements(session)]);
 
   const level = (n: number | null) =>
     n ? `${String(n)} · ${tOn(`levels.${String(n) as "1"}.name`)}` : t("notSet");
 
   return (
-    <div className="grid max-w-xl gap-8">
+    <div className="grid max-w-4xl gap-8">
       <dl className="grid gap-x-8 gap-y-4 border-y border-rule py-6 sm:grid-cols-[12rem_1fr]">
         <Row label={t("handle")}>
           <span className="num">{profile.handle}</span>
@@ -103,6 +108,18 @@ async function ProfileBody({ params }: { params: PageProps<"/[locale]/profile">[
           </button>
         </form>
       </div>
+      <section aria-labelledby="skills-title" className="grid gap-3">
+        <h2 id="skills-title" className="text-xl">
+          {tG("profile.skills")}
+        </h2>
+        <SkillRadar ratings={[...ratings].map(([topic, rating]) => ({ topic, rating }))} />
+      </section>
+      <section aria-labelledby="achievements-title" className="grid gap-3">
+        <h2 id="achievements-title" className="text-xl">
+          {tG("profile.achievements")}
+        </h2>
+        <AchievementsGrid owned={owned} />
+      </section>
     </div>
   );
 }

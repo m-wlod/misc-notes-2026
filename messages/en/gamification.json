@@ -1,0 +1,217 @@
+{
+  "celebrate": {
+    "label": "Rewards",
+    "xp": "+{xp} XP",
+    "goalMet": "Daily goal met",
+    "streak": "Streak: {days, plural, one {# day} other {# days}}",
+    "repaired": "Streak saved",
+    "achievement": "New achievement: {name}",
+    "soundOn": "Mute sound",
+    "soundOff": "Turn sound on",
+    "close": "Close"
+  },
+  "dashboard": {
+    "title": "Your day",
+    "goal": "Daily goal",
+    "goalProgress": "{xp} of {goal} XP",
+    "goalDone": "Done",
+    "streak": "Streak",
+    "streakDays": "{days, plural, one {# day} other {# days}}",
+    "atRisk": "Meet today's goal to keep your streak.",
+    "repair": "Your streak broke yesterday ({lost, plural, one {# day} other {# days}}). Earn {xp} XP today to save it.",
+    "freezes": "Freezes: {n} of 2",
+    "league": "League",
+    "leaguePlace": "{tier}: place {rank} of {size}",
+    "leagueNone": "Earn XP this week to join.",
+    "leagueOff": "You're not taking part in leagues.",
+    "nextLesson": "Next lesson",
+    "allLessons": "Every lesson completed.",
+    "recommended": "An exercise for you",
+    "noRecommendation": "Nothing new to recommend right now.",
+    "review": "Review",
+    "reviewNote": "Review arrives in the next version.",
+    "problemOfDay": "Problem of the day",
+    "problemEmpty": "The problem of the day appears once the first exercises are published.",
+    "today": "For today",
+    "level": "Level {level}"
+  },
+  "league": {
+    "metaTitle": "League",
+    "lead": "Each week you play against people with similar activity. XP earned since Monday counts.",
+    "signedOut": "Leagues are for signed-in learners.",
+    "optedOut": "You're not taking part in leagues. You can change that in settings.",
+    "settings": "Settings",
+    "notJoined": "No XP this week yet. Solve an exercise or complete a lesson to join.",
+    "tier": "{tier} league",
+    "shared": "For now there is one shared league: until fewer than {n} people learn in a week, everyone plays together and nobody moves up or down.",
+    "split": "The top 20% move up, the bottom 20% move down.",
+    "endsOn": "The week ends on Sunday {date} at midnight (Polish time).",
+    "rank": "Place",
+    "name": "Learner",
+    "xp": "XP this week",
+    "you": "You",
+    "promotion": "Promotion zone",
+    "demotion": "Demotion zone",
+    "anonymous": "Learner"
+  },
+  "tiers": {
+    "bernoulli": "Bernoulli",
+    "gauss": "Gauss",
+    "markov": "Markov",
+    "kolmogorov": "Kolmogorov",
+    "ito": "Itô",
+    "black-scholes": "Black–Scholes"
+  },
+  "profile": {
+    "skills": "Skills",
+    "skillsLabel": "Skill rating per topic",
+    "skillsEmpty": "Solve a few exercises to see your skill rating.",
+    "skillsNote": "The rating rises as you solve harder exercises; 1000 is the start.",
+    "achievements": "Achievements",
+    "achievementsCount": "{n} of {total}",
+    "earned": "Earned",
+    "locked": "Not yet"
+  },
+  "achievements": {
+    "pierwszy-krok": {
+      "name": "First step",
+      "description": "Solve your first exercise."
+    },
+    "dziesiatka": {
+      "name": "Ten",
+      "description": "Solve 10 exercises."
+    },
+    "pol-setki": {
+      "name": "Fifty",
+      "description": "Solve 50 exercises."
+    },
+    "setka": {
+      "name": "Hundred",
+      "description": "Solve 100 exercises."
+    },
+    "piecset": {
+      "name": "Five hundred",
+      "description": "Solve 500 exercises."
+    },
+    "za-pierwszym-razem": {
+      "name": "First time",
+      "description": "Solve 10 exercises on the first try."
+    },
+    "bez-podpowiedzi": {
+      "name": "No hints",
+      "description": "Solve 25 exercises without hints."
+    },
+    "poziom-piaty": {
+      "name": "Level five",
+      "description": "Solve a level 5 exercise."
+    },
+    "wszystkie-typy": {
+      "name": "Every type",
+      "description": "Solve one exercise of every auto-graded type."
+    },
+    "xp-100": {
+      "name": "100 XP",
+      "description": "Earn 100 XP."
+    },
+    "xp-1000": {
+      "name": "1,000 XP",
+      "description": "Earn 1,000 XP."
+    },
+    "xp-10000": {
+      "name": "10,000 XP",
+      "description": "Earn 10,000 XP."
+    },
+    "seria-3": {
+      "name": "Three days",
+      "description": "Keep a 3-day streak."
+    },
+    "seria-7": {
+      "name": "A week",
+      "description": "Keep a 7-day streak."
+    },
+    "seria-30": {
+      "name": "A month",
+      "description": "Keep a 30-day streak."
+    },
+    "seria-100": {
+      "name": "A hundred days",
+      "description": "Keep a 100-day streak."
+    },
+    "seria-365": {
+      "name": "A year",
+      "description": "Keep a 365-day streak."
+    },
+    "zamrozenie": {
+      "name": "Freeze",
+      "description": "A freeze saved your streak."
+    },
+    "naprawa": {
+      "name": "Repair",
+      "description": "Repair a broken streak the next day."
+    },
+    "idealny-tydzien": {
+      "name": "Perfect week",
+      "description": "Meet your daily goal Monday to Sunday."
+    },
+    "pierwsza-lekcja": {
+      "name": "First lesson",
+      "description": "Complete your first lesson."
+    },
+    "dziesiec-lekcji": {
+      "name": "Ten lessons",
+      "description": "Complete 10 lessons."
+    },
+    "caly-modul": {
+      "name": "A whole module",
+      "description": "Complete every lesson of a module."
+    },
+    "rozmowa": {
+      "name": "Interview",
+      "description": "Finish your first interview session."
+    },
+    "wszystkie-rozmowy": {
+      "name": "Full interview",
+      "description": "Finish a session of every kind."
+    },
+    "szybkie-liczenie": {
+      "name": "Quick maths",
+      "description": "Beat your mental maths personal best."
+    },
+    "animator-rynku": {
+      "name": "Market maker",
+      "description": "Finish a market-making game in profit."
+    },
+    "awans": {
+      "name": "Promoted",
+      "description": "Move up to a higher league."
+    },
+    "podium": {
+      "name": "Podium",
+      "description": "Finish a league week in the top three."
+    },
+    "ito": {
+      "name": "Itô",
+      "description": "Reach the Itô league."
+    },
+    "black-scholes": {
+      "name": "Black–Scholes",
+      "description": "Reach the Black–Scholes league."
+    },
+    "ekspert": {
+      "name": "Expert",
+      "description": "Reach a rating of 1400 in any topic."
+    },
+    "kelly": {
+      "name": "Kelly",
+      "description": "Get the Kelly fraction right on the first try."
+    },
+    "anty-guru": {
+      "name": "Anti-guru",
+      "description": "Finish 10 Debunk Lab entries."
+    },
+    "ruina-gracza": {
+      "name": "Gambler's ruin",
+      "description": "Run the martingale simulation with 1,000 players."
+    }
+  }
+}
