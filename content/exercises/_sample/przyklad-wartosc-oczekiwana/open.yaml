@@ -1,4 +1,4 @@
-# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+# SAMPLE (Phase 8, rubric Phase 10): demonstrates the exercise engine. Not course content.
 id: przyklad-otwarte
 type: open
 level: 2
@@ -11,7 +11,10 @@ prompt:
   pl: "Przykład: wyjaśnij własnymi słowami, czym jest średnia."
   en: "Sample: explain in your own words what an average is."
 rubric:
-  - "Mentions adding the values and dividing by their count"
+  - pl: "Mówi, że wartości się sumuje"
+    en: "Says the values are added up"
+  - pl: "Mówi, że sumę dzieli się przez liczbę wartości"
+    en: "Says the sum is divided by the number of values"
 hints:
   - pl: "Pomyśl o dzieleniu sumy."
     en: "Think about dividing a sum."

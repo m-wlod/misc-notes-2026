@@ -10,6 +10,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/display";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
+import { aiAvailable } from "@/features/ai-grading/service";
 import { allExercises, getExercise } from "@/features/exercises/data";
 import { ExerciseCard } from "@/features/exercises/exercise-card";
 import { nextInSet, parseFilters, toQuery } from "@/features/exercises/filter";
@@ -97,6 +98,7 @@ async function Exercise({ params, searchParams }: Pick<Props, "params" | "search
       view={view}
       similarHref={similarHref}
       nextHref={nextHref}
+      aiAvailable={aiAvailable()}
     />
   );
 }

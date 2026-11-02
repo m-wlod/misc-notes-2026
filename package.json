@@ -17,6 +17,7 @@
     "i18n:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-i18n.ts",
     "content:build": "velite build --strict",
     "content:verify": "tsx scripts/content-verify.ts",
+    "ai:eval": "tsx scripts/ai-eval.ts",
     "content:qa": "tsx scripts/content-qa.ts",
     "content:status": "tsx scripts/content-status.ts",
     "content:draft": "tsx scripts/content-draft.ts",
@@ -33,11 +34,13 @@
     "prepare": "husky && next typegen"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
     "@orama/orama": "^3.1.18",
     "@shikijs/rehype": "^4.5.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.118.0",
     "@t3-oss/env-nextjs": "^0.13.11",
+    "@upstash/redis": "^1.40.0",
     "katex": "^0.19.1",
     "next": "16.4.3",
     "next-intl": "^4.14.9",

@@ -16,6 +16,12 @@ const id = z
 /** Polish required, English optional (falls back to Polish). Text may use MDX math. */
 const text = z.object({ pl: z.string().min(1), en: z.string().min(1).optional() }).strict();
 
+/**
+ * One thing a good open answer contains (Phase 10): plain text (used as-is in both
+ * languages) or { pl, en }. The AI grader checks each one; the self-check list shows them.
+ */
+const rubricItem = z.union([z.string().min(1), text]);
+
 const option = z.object({ id, pl: z.string().min(1), en: z.string().min(1).optional() }).strict();
 
 const base = {
@@ -140,14 +146,12 @@ export const exerciseSchema = z.discriminatedUnion("type", [
       tests: z.string().min(1),
     })
     .strict(),
-  z
-    .object({ type: z.literal("open"), ...base, rubric: z.array(z.string().min(1)).min(1) })
-    .strict(),
+  z.object({ type: z.literal("open"), ...base, rubric: z.array(rubricItem).min(1) }).strict(),
   z
     .object({
       type: z.literal("brainteaser"),
       ...base,
-      rubric: z.array(z.string().min(1)).min(1),
+      rubric: z.array(rubricItem).min(1),
       answer: z.string().optional(),
       followUp: text.optional(),
     })

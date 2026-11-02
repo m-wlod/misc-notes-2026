@@ -20,6 +20,13 @@ async function open(page: Page, id: string, v?: number) {
   await expect(page.locator(`article[data-exercise="${id}"]`)).toBeVisible();
 }
 
+// Grading is rate-limited per client IP (30/min). Each test acts as its own client, so
+// the desktop and mobile runs don't use up one shared "local" budget.
+test.beforeEach(async ({ page }) => {
+  const ip = `10.0.${String(Math.floor(Math.random() * 250))}.${String(Math.floor(Math.random() * 250))}`;
+  await page.setExtraHTTPHeaders({ "x-forwarded-for": ip });
+});
+
 const status = (page: Page) =>
   page.getByRole("status").filter({ hasText: /Dobrze|Częściowo|Jeszcze nie|Za dużo|Nie / });
 const attempts = (page: Page) =>
@@ -147,17 +154,70 @@ test("the answer is not in the page before submitting", async ({ page }) => {
   ).not.toEqual(["b", "a", "c"]);
 });
 
-test("code and open exercises render with an honest note and no grading yet", async ({ page }) => {
+test("code exercises render with an honest note and no grading yet", async ({ page }) => {
   await open(page, "przyklad-kod");
   await expect(page.getByLabel("Kod")).toHaveValue(/def double\(x\):/);
   await expect(
     page.getByText("Uruchamianie i sprawdzanie kodu pojawi się razem z Laboratorium."),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Sprawdź" })).toHaveCount(0);
-  await open(page, "przyklad-otwarte");
-  await expect(
-    page.getByText("Ocena odpowiedzi otwartych przez AI pojawi się wkrótce."),
-  ).toBeVisible();
+});
+
+test.describe("open answers (Phase 10, AI switched off)", () => {
+  test("write, compare with the solution, tick the rubric, save a self-assessment", async ({
+    page,
+  }) => {
+    const bodies: string[] = [];
+    page.on("response", async (res) => {
+      const type = res.request().resourceType();
+      if (type === "document" || type === "fetch") bodies.push(await res.text().catch(() => ""));
+    });
+    await open(page, "przyklad-otwarte");
+    // Neither the solution nor the rubric is shipped before the learner asks.
+    const before = bodies.join("\n") + (await page.content());
+    expect(before).not.toContain("Średnia to suma wartości");
+    expect(before).not.toContain("Mówi, że wartości się sumuje");
+
+    await expect(
+      page.getByText("Ocena przez AI jest jeszcze wyłączona.", { exact: false }),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Oceń odpowiedź" })).toHaveCount(0);
+    const answer = page.getByLabel("Twoja odpowiedź");
+    await answer.fill("Sumuję wszystkie liczby i dzielę przez ich ilość.");
+    await expect(page.getByText("8 słów z 1500")).toBeVisible();
+
+    await page.getByRole("button", { name: "Porównaj z rozwiązaniem" }).click();
+    await expect(
+      page.getByText("Średnia to suma wartości podzielona przez ich liczbę."),
+    ).toBeVisible();
+    await page.getByLabel("Mówi, że wartości się sumuje").check();
+    await page.getByRole("button", { name: "Zapisz samoocenę" }).click();
+    await expect(
+      page.getByText("Samoocena zapisana w tej przeglądarce: 1 z 2.", { exact: false }),
+    ).toBeVisible();
+    expect((await attempts(page)).at(-1)).toMatchObject({
+      exerciseId: "przyklad-otwarte",
+      score: 0.5,
+    });
+  });
+
+  test("the word limit is shown and enforced by the server", async ({ page, request }) => {
+    await open(page, "przyklad-lamiglowka");
+    await page
+      .getByLabel("Twoja odpowiedź")
+      .fill(Array.from({ length: 1501 }, () => "x").join(" "));
+    await expect(page.getByText("Za długo: odpowiedź może mieć najwyżej 1500 słów.")).toBeVisible();
+
+    const post = (answer: string) =>
+      request.post("/api/grade/open", {
+        data: { exerciseId: "przyklad-otwarte", version: 0, locale: "pl", answer },
+      });
+    expect((await post(Array.from({ length: 1501 }, () => "x").join(" "))).status()).toBe(400);
+    // Signed out: no AI grading (it needs an account), the card falls back to self-check.
+    const signedOut = await post("Sumuję i dzielę.");
+    expect(signedOut.status()).toBe(401);
+    expect(await signedOut.json()).toMatchObject({ fallback: true });
+  });
 });
 
 test("an unknown exercise is a 404", async ({ request }) => {
@@ -239,3 +299,22 @@ test("the calibration job is dormant without a database", async ({ request }) =>
   const res = await request.get("/api/cron/calibrate");
   expect([401, 503]).toContain(res.status());
 });
+
+for (const theme of ["light", "dark"] as const) {
+  test(`axe: open answer with the self-check list (${theme})`, async ({ page }) => {
+    await page.addInitScript(
+      ([key, value]) => {
+        window.localStorage.setItem(key, value);
+      },
+      [THEME_STORAGE_KEY, theme] as const,
+    );
+    await open(page, "przyklad-otwarte");
+    await page.getByLabel("Twoja odpowiedź").fill("Sumuję i dzielę.");
+    await page.getByRole("button", { name: "Porównaj z rozwiązaniem" }).click();
+    await expect(page.getByRole("heading", { name: "Sprawdź się sam" })).toBeVisible();
+    const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
+    expect(
+      violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`),
+    ).toEqual([]);
+  });
+}

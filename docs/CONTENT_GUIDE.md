@@ -186,8 +186,20 @@ answer: b
 ### Code, open, brainteaser
 
 - `code`: `starter` and hidden Python `tests` (run in the browser sandbox from Phase 12).
-- `open`: `rubric` (what a good answer contains), graded by AI from Phase 10.
+- `open`: `rubric` (what a good answer contains).
 - `brainteaser`: `rubric`, optional `answer` and `followUp`.
+
+**Rubric items** are checked one by one, so write each as one observable thing the answer says or does ("Says the sum is divided by the number of values"), not a vague quality ("Good explanation"). Two to five items. Each item is plain text or `{ pl, en }`:
+
+```yaml
+rubric:
+  - pl: "Mówi, że wartości się sumuje"
+    en: "Says the values are added up"
+  - pl: "Mówi, że sumę dzieli się przez liczbę wartości"
+    en: "Says the sum is divided by the number of values"
+```
+
+With AI grading on, the grader marks each item met / partly / missing and scores 0–4; the score can never exceed what the marked items support. Without it (no key, signed out, daily limit used up), the learner compares their answer with `solution` and ticks the items, so a clear `solution` matters for every open exercise.
 
 Writing rules: one skill per exercise; realistic numbers; the prompt never gives away the method; hints go from a nudge to almost the answer; the solution shows every step.
 

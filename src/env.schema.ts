@@ -29,6 +29,7 @@ export const serverSchema = {
   AI_GRADER_MODEL: optionalString,
   AI_DAILY_BUDGET_USD: z.coerce.number().positive().default(5),
   AI_USER_DAILY_QUOTA: z.coerce.number().int().nonnegative().default(10),
+  AI_IP_DAILY_LIMIT: z.coerce.number().int().nonnegative().default(20),
 
   // Rate limiting (Phase 8/10)
   UPSTASH_REDIS_REST_URL: optionalUrl,
