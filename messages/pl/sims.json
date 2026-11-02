@@ -1,0 +1,105 @@
+{
+  "lab": {
+    "title": "Laboratorium",
+    "lead": "Symulacje, którymi możesz się bawić: zmieniaj parametry, odtwarzaj krok po kroku i dziel się dokładnie tym samym przebiegiem przez link.",
+    "open": "Otwórz symulację",
+    "lesson": "Lekcja: {title}",
+    "captionStub": "Opis tej symulacji jest w przygotowaniu.",
+    "recordingTitle": "Tryb nagrywania (9:16)"
+  },
+  "computing": "Liczę…",
+  "play": "Odtwórz",
+  "pause": "Pauza",
+  "replay": "Od nowa",
+  "step": "Krok",
+  "reset": "Wyzeruj",
+  "speed": "Tempo",
+  "frame": "Klatka {frame} z {total}",
+  "parameters": "Parametry",
+  "seed": "ziarno {seed}",
+  "reroll": "Nowe losowanie",
+  "share": "Kopiuj link do tego przebiegu",
+  "copied": "Skopiowano link",
+  "exportPng": "Zapisz PNG",
+  "exportRecording": "Zapisz klatkę 1080×1920",
+  "recording": "Tryb nagrywania 9:16",
+  "leaveRecording": "Zwykły widok",
+  "source": "Symulacja z kursu, ten sam przebieg pod linkiem z ziarnem.",
+  "axes": {
+    "days": "dzień",
+    "price": "cena",
+    "draws": "liczba rzutów",
+    "average": "średnia",
+    "sampleMean": "średnia z próby",
+    "density": "gęstość",
+    "steps": "krok",
+    "value": "wartość",
+    "x": "x",
+    "y": "y",
+    "samples": "liczba prób",
+    "estimate": "oszacowanie π",
+    "price_option": "cena opcji"
+  },
+  "options": {
+    "coin": "moneta (0/1)",
+    "die": "kostka",
+    "exp": "wykładniczy",
+    "clt": "rozkład średnich (CTG)",
+    "lln": "średnia bieżąca (PWL)",
+    "gbm": "geometryczny (GBM)",
+    "bm": "arytmetyczny (BM)",
+    "pi": "liczba π",
+    "call": "cena opcji call",
+    "points": "punkty",
+    "convergence": "zbieżność"
+  },
+  "coin-walk": {
+    "title": "Rzut monetą czy formacja?",
+    "short": "Ceny zrobione wyłącznie z rzutów monetą. Każdy trend i każda formacja to szum.",
+    "params": {
+      "paths": "Liczba wykresów",
+      "steps": "Liczba dni",
+      "up": "Szansa na wzrost",
+      "move": "Ruch w ciągu dnia (%)"
+    },
+    "summary": "Dzień {day} z {days}. Wyróżniony wykres: {price} (start 100). Wykresów: {paths}."
+  },
+  "lln-clt": {
+    "title": "Prawo wielkich liczb i centralne twierdzenie graniczne",
+    "short": "Średnia z wielu rzutów zbliża się do wartości oczekiwanej, a średnie z prób układają się w krzywą dzwonową.",
+    "params": {
+      "dist": "Pojedynczy rzut",
+      "n": "Rozmiar próby (n)",
+      "samples": "Liczba prób",
+      "view": "Widok"
+    },
+    "summary": "{mode, select, lln {Po {count} rzutach średnia wynosi {value}, wartość oczekiwana {mu}.} other {{count} średnich z prób: średnia {value} (oczekiwana {mu}), rozrzut {sd} (teoria σ/√n = {se}).}}"
+  },
+  "gbm": {
+    "title": "Ruch Browna i geometryczny ruch Browna",
+    "short": "Setki możliwych ścieżek ceny przez rok i rozkład ich wartości w każdej chwili.",
+    "params": {
+      "paths": "Liczba ścieżek",
+      "steps": "Liczba kroków",
+      "mu": "Dryf μ (rocznie)",
+      "sigma": "Zmienność σ (rocznie)",
+      "model": "Model"
+    },
+    "summary": "Krok {step} z {steps}, {paths} ścieżek: średnia {mean}, mediana {median}, wartość oczekiwana {expected}."
+  },
+  "monte-carlo": {
+    "title": "Metoda Monte Carlo",
+    "short": "Szacowanie liczby π i ceny opcji losowaniem, z błędem malejącym jak 1/√N.",
+    "params": {
+      "target": "Co szacujemy",
+      "view": "Widok",
+      "samples": "Liczba prób",
+      "S": "Cena akcji S",
+      "K": "Cena wykonania K",
+      "sigma": "Zmienność σ",
+      "years": "Czas do wygaśnięcia (lata)",
+      "r": "Stopa procentowa r"
+    },
+    "summary": "Po {count} próbach: oszacowanie {estimate}, prawdziwa wartość {truth}, błąd {error}, margines 95% ±{margin}."
+  }
+}

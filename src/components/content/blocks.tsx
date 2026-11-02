@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 
 import { getGlossary } from "@/features/content/lessons";
 import { TermPopover } from "@/features/glossary/term-popover";
+import { Simulation as SimulationEmbed } from "@/features/sims/embed";
+import { simById } from "@/features/sims/registry";
 import { Link } from "@/i18n/navigation";
 import { cx } from "@/lib/cx";
 
@@ -219,8 +221,22 @@ export async function GuruMyth({ claim, children }: Children & { claim: string; 
 }
 
 /** Placeholder until the simulation registry exists. TODO(phase-11): render the sim by id. */
+/**
+ * `<Simulation id="…" caption="…" />`: the live simulation when the id exists in the Lab
+ * (Phase 12), otherwise a labelled placeholder for one that is still to come.
+ */
 export async function Simulation({ id, caption }: { id: string; caption?: string }) {
   const t = await getTranslations("content");
+  if (simById(id)) {
+    return (
+      <figure data-simulation={id} className="my-8">
+        <SimulationEmbed id={id} />
+        {caption ? (
+          <figcaption className="mt-2 text-base text-ink-muted">{caption}</figcaption>
+        ) : null}
+      </figure>
+    );
+  }
   return (
     <figure
       data-simulation={id}

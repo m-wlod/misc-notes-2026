@@ -1,0 +1,105 @@
+{
+  "lab": {
+    "title": "Lab",
+    "lead": "Simulations to play with: change the parameters, replay step by step and share exactly the same run with a link.",
+    "open": "Open simulation",
+    "lesson": "Lesson: {title}",
+    "captionStub": "The description of this simulation is being written.",
+    "recordingTitle": "Recording mode (9:16)"
+  },
+  "computing": "Computing…",
+  "play": "Play",
+  "pause": "Pause",
+  "replay": "Replay",
+  "step": "Step",
+  "reset": "Reset",
+  "speed": "Speed",
+  "frame": "Frame {frame} of {total}",
+  "parameters": "Parameters",
+  "seed": "seed {seed}",
+  "reroll": "New draw",
+  "share": "Copy a link to this run",
+  "copied": "Link copied",
+  "exportPng": "Save PNG",
+  "exportRecording": "Save 1080×1920 frame",
+  "recording": "Recording mode 9:16",
+  "leaveRecording": "Normal view",
+  "source": "A simulation from the course; the same run is at the link with its seed.",
+  "axes": {
+    "days": "day",
+    "price": "price",
+    "draws": "number of draws",
+    "average": "average",
+    "sampleMean": "sample mean",
+    "density": "density",
+    "steps": "step",
+    "value": "value",
+    "x": "x",
+    "y": "y",
+    "samples": "number of samples",
+    "estimate": "estimate of π",
+    "price_option": "option price"
+  },
+  "options": {
+    "coin": "coin (0/1)",
+    "die": "die",
+    "exp": "exponential",
+    "clt": "distribution of means (CLT)",
+    "lln": "running average (LLN)",
+    "gbm": "geometric (GBM)",
+    "bm": "arithmetic (BM)",
+    "pi": "the number π",
+    "call": "call option price",
+    "points": "points",
+    "convergence": "convergence"
+  },
+  "coin-walk": {
+    "title": "Coin flip or chart pattern?",
+    "short": "Prices made only of coin flips. Every trend and every pattern is noise.",
+    "params": {
+      "paths": "Number of charts",
+      "steps": "Number of days",
+      "up": "Chance of a rise",
+      "move": "Daily move (%)"
+    },
+    "summary": "Day {day} of {days}. Highlighted chart: {price} (start 100). Charts: {paths}."
+  },
+  "lln-clt": {
+    "title": "Law of large numbers and the central limit theorem",
+    "short": "The average of many draws approaches the expected value, and sample means pile up into a bell curve.",
+    "params": {
+      "dist": "One draw",
+      "n": "Sample size (n)",
+      "samples": "Number of samples",
+      "view": "View"
+    },
+    "summary": "{mode, select, lln {After {count} draws the average is {value}; the expected value is {mu}.} other {{count} sample means: average {value} (expected {mu}), spread {sd} (theory σ/√n = {se}).}}"
+  },
+  "gbm": {
+    "title": "Brownian motion and geometric Brownian motion",
+    "short": "Hundreds of possible price paths over a year, and the distribution of their values at every moment.",
+    "params": {
+      "paths": "Number of paths",
+      "steps": "Number of steps",
+      "mu": "Drift μ (per year)",
+      "sigma": "Volatility σ (per year)",
+      "model": "Model"
+    },
+    "summary": "Step {step} of {steps}, {paths} paths: mean {mean}, median {median}, expected value {expected}."
+  },
+  "monte-carlo": {
+    "title": "Monte Carlo method",
+    "short": "Estimating π and an option price by random sampling, with the error shrinking like 1/√N.",
+    "params": {
+      "target": "What we estimate",
+      "view": "View",
+      "samples": "Number of samples",
+      "S": "Stock price S",
+      "K": "Strike K",
+      "sigma": "Volatility σ",
+      "years": "Time to expiry (years)",
+      "r": "Interest rate r"
+    },
+    "summary": "After {count} samples: estimate {estimate}, true value {truth}, error {error}, 95% margin ±{margin}."
+  }
+}
