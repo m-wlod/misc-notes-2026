@@ -65,5 +65,29 @@
     "soon": "AI grading of open answers is coming soon."
   },
   "keys": "Shortcuts: Enter checks, H shows a hint, N moves on.",
-  "stored": "Result saved in this browser."
+  "stored": "Result saved in this browser.",
+  "hub": {
+    "title": "Practice",
+    "lead": "Exercises at five levels, graded instantly. Filter by track, topic, level and type.",
+    "levels": "Level",
+    "allLevels": "All",
+    "track": "Track",
+    "allTracks": "All tracks",
+    "type": "Type",
+    "allTypes": "All types",
+    "topic": "Topic",
+    "allTopics": "All topics",
+    "filter": "Filter",
+    "clear": "Clear filters",
+    "lesson": "Exercises for the lesson: {title}",
+    "unsolved": "Unsolved only",
+    "count": "{count, plural, one {# exercise} other {# exercises}}",
+    "empty": "Exercises are coming soon. The site comes first, then the course content.",
+    "noMatch": "No exercises match these filters.",
+    "allSolved": "Every exercise in this set is solved.",
+    "solved": "solved",
+    "open": "Open exercise"
+  },
+  "next": "Next exercise",
+  "practiceLesson": "Practise this lesson ({count, plural, one {# exercise} other {# exercises}})"
 }

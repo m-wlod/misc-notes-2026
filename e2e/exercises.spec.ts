@@ -47,8 +47,9 @@ test("wrong answer → hint (H) → solution → similar exercise (N) → correc
   await page.getByRole("button", { name: "Pokaż rozwiązanie" }).click();
   await expect(page.getByRole("region", { name: "Rozwiązanie" })).toContainText("Dodajemy");
 
-  await page.locator("body").press("n");
-  await expect(page).toHaveURL(/przyklad-liczba\?v=1$/);
+  // "Podobne zadanie": the next variant of the same exercise.
+  await page.getByRole("button", { name: "Podobne zadanie" }).click();
+  await expect(page).toHaveURL(/przyklad-liczba\?v=1$/, { timeout: 15_000 });
   await expect(page.locator("article").getByText("Przykład: ile wynosi suma liczb")).toContainText(
     "4",
   );
@@ -56,6 +57,11 @@ test("wrong answer → hint (H) → solution → similar exercise (N) → correc
   await page.getByRole("button", { name: "Sprawdź" }).click();
   await expect(status(page)).toContainText("Dobrze!");
   expect((await attempts(page)).at(-1)).toMatchObject({ exerciseId: "przyklad-liczba", score: 1 });
+
+  // N: the next exercise in the set (here: all exercises, by level then id).
+  await page.waitForLoadState("networkidle");
+  await page.locator("body").press("n");
+  await expect(page).toHaveURL(/\/pl\/praktyka\/przyklad-suwak$/, { timeout: 15_000 });
 });
 
 test("every gradable type can be solved", async ({ page }) => {

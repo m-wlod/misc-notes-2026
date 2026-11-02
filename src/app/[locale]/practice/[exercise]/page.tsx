@@ -11,6 +11,8 @@ import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import { allExercises, getExercise } from "@/features/exercises/data";
 import { ExerciseCard } from "@/features/exercises/exercise-card";
+import { nextInSet, parseFilters, toQuery } from "@/features/exercises/filter";
+import { practiceSet } from "@/features/exercises/practice-set";
 import { publicView } from "@/features/exercises/view";
 import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -53,15 +55,29 @@ async function Exercise({ params, searchParams }: Pick<Props, "params" | "search
   const ex = getExercise(id, isStyleguideEnabled(env));
   if (!ex) notFound();
 
-  const { v } = await searchParams;
-  const requested = Number(typeof v === "string" ? v : 0);
+  const search = await searchParams;
+  const v = Array.isArray(search.v) ? search.v[0] : search.v;
+  const requested = Number(v ?? 0);
   const view = publicView(ex, Number.isInteger(requested) ? requested : 0, locale);
-  // "Similar exercise": the next variant of this one. The practice hub (8b) adds the next
-  // exercise in the current set.
-  const nextHref =
+  const filters = parseFilters(search);
+  const query = toQuery(filters);
+  const pageOf = (exercise: string) =>
+    getPathname({ href: { pathname: "/practice/[exercise]", params: { exercise } }, locale });
+  // "Podobne zadanie": the next variant of this exercise.
+  const similarHref =
     view.variants > 1
-      ? `${getPathname({ href: { pathname: "/practice/[exercise]", params: { exercise: id } }, locale })}?v=${String((view.variant + 1) % view.variants)}`
+      ? `${pageOf(id)}${toQuery(filters, { v: String((view.variant + 1) % view.variants) })}`
       : null;
+  // "Następne zadanie" (N): the next exercise in the set the learner came from.
+  const next = nextInSet(practiceSet(filters, isStyleguideEnabled(env)), id);
+  const nextHref = next ? `${pageOf(next.id)}${query}` : null;
 
-  return <ExerciseCard key={`${id}-${String(view.variant)}`} view={view} nextHref={nextHref} />;
+  return (
+    <ExerciseCard
+      key={`${id}-${String(view.variant)}`}
+      view={view}
+      similarHref={similarHref}
+      nextHref={nextHref}
+    />
+  );
 }

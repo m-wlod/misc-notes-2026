@@ -65,5 +65,29 @@
     "soon": "Ocena odpowiedzi otwartych przez AI pojawi się wkrótce."
   },
   "keys": "Skróty: Enter sprawdza, H pokazuje podpowiedź, N przechodzi dalej.",
-  "stored": "Wynik zapisany w tej przeglądarce."
+  "stored": "Wynik zapisany w tej przeglądarce.",
+  "hub": {
+    "title": "Praktyka",
+    "lead": "Zadania na pięciu poziomach, oceniane od razu. Filtruj po dziale, temacie, poziomie i typie.",
+    "levels": "Poziom",
+    "allLevels": "Wszystkie",
+    "track": "Dział",
+    "allTracks": "Wszystkie działy",
+    "type": "Typ",
+    "allTypes": "Wszystkie typy",
+    "topic": "Temat",
+    "allTopics": "Wszystkie tematy",
+    "filter": "Filtruj",
+    "clear": "Wyczyść filtry",
+    "lesson": "Zadania do lekcji: {title}",
+    "unsolved": "Tylko nierozwiązane",
+    "count": "{count, plural, one {# zadanie} few {# zadania} many {# zadań} other {# zadania}}",
+    "empty": "Zadania pojawią się wkrótce. Najpierw powstaje strona, potem treść kursu.",
+    "noMatch": "Brak zadań dla tych filtrów.",
+    "allSolved": "Wszystkie zadania w tym zestawie są rozwiązane.",
+    "solved": "rozwiązane",
+    "open": "Otwórz zadanie"
+  },
+  "next": "Następne zadanie",
+  "practiceLesson": "Ćwicz tę lekcję ({count, plural, one {# zadanie} few {# zadania} many {# zadań} other {# zadania}})"
 }
