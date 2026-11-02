@@ -167,6 +167,7 @@ export function SimPlayer({
     if (!playing || !def || !data) return;
     let raf = 0;
     let last = performance.now();
+    let lastUi = 0;
     let acc = frameRef.current;
     const perSecond = data.T / (def.seconds ?? 8);
     const tick = (now: number) => {
@@ -176,9 +177,15 @@ export function SimPlayer({
       if (next !== frameRef.current) {
         frameRef.current = next;
         paint(next, false);
-        setFrame(next);
+        // The canvas updates every frame; the React UI (summary, counter) ten times a
+        // second, so re-rendering never costs animation frames.
+        if (now - lastUi >= 100) {
+          lastUi = now;
+          setFrame(next);
+        }
       }
       if (next >= data.T) {
+        setFrame(next);
         setPlaying(false);
         return;
       }
@@ -211,6 +218,17 @@ export function SimPlayer({
     [data, paint],
   );
 
+  /** Play, pause (showing the exact frame), or replay from the start at the end. */
+  const togglePlay = () => {
+    if (playing) {
+      setPlaying(false);
+      setFrame(frameRef.current);
+      return;
+    }
+    if (data && frameRef.current >= data.T) goTo(0);
+    setPlaying(true);
+  };
+
   const syncLink = (next: { params?: Params; seed?: number; t?: number | null }) => {
     if (!syncUrl || !def) return;
     window.history.replaceState(
@@ -236,7 +254,7 @@ export function SimPlayer({
         return;
       if (e.key === " ") {
         e.preventDefault();
-        setPlaying((p) => !p);
+        togglePlay();
       } else if (e.key === "ArrowRight") {
         e.preventDefault();
         setPlaying(false);
@@ -360,13 +378,7 @@ export function SimPlayer({
 
       {def.static ? null : (
         <div className="flex flex-wrap items-center gap-2">
-          <Button
-            type="button"
-            disabled={!data}
-            onClick={() => {
-              setPlaying((p) => !p);
-            }}
-          >
+          <Button type="button" disabled={!data} onClick={togglePlay}>
             {playing ? t("pause") : frame >= T && T > 0 ? t("replay") : t("play")}
           </Button>
           <Button
@@ -421,7 +433,11 @@ export function SimPlayer({
               key={name}
               id={`${uid}-${name}`}
               label={t(`${def.id}.params.${name}` as "coin-walk.params.paths")}
-              option={(o) => t(`options.${o}` as "options.gbm")}
+              option={(o) =>
+                t.has(`${def.id}.options.${o}` as "options.gbm")
+                  ? t(`${def.id}.options.${o}` as "options.gbm")
+                  : t(`options.${o}` as "options.gbm")
+              }
               spec={spec}
               value={params[name] ?? spec.default}
               onChange={(raw) => {

@@ -1,10 +1,14 @@
+import { bayes } from "./defs/bayes";
 import { coinWalk } from "./defs/coin-walk";
 import { evHeatmap } from "./defs/ev-heatmap";
+import { fourier } from "./defs/fourier";
 import { gbm } from "./defs/gbm";
 import { kelly } from "./defs/kelly";
 import { llnClt } from "./defs/lln-clt";
 import { martingale } from "./defs/martingale";
 import { monteCarlo } from "./defs/monte-carlo";
+import { optionBuilder } from "./defs/options";
+import { overfitting } from "./defs/overfitting";
 import { volDrag } from "./defs/vol-drag";
 import type { SimDef } from "./types";
 
@@ -21,6 +25,10 @@ export const SIMS: readonly SimDef[] = [
   kelly,
   volDrag,
   evHeatmap,
+  overfitting,
+  fourier,
+  bayes,
+  optionBuilder,
 ];
 
 export const SIM_IDS = SIMS.map((s) => s.id);

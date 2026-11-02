@@ -46,7 +46,14 @@
     "wealth": "majątek (start 1)",
     "years": "rok",
     "winRate": "skuteczność (odsetek wygranych)",
-    "rewardRisk": "zysk do ryzyka (RR)"
+    "rewardRisk": "zysk do ryzyka (RR)",
+    "cumReturn": "skumulowany zwrot (%)",
+    "frequency": "częstotliwość (cykle na okno)",
+    "power": "moc",
+    "time": "czas",
+    "signal": "sygnał",
+    "stockPrice": "cena akcji",
+    "profit": "zysk lub strata"
   },
   "options": {
     "coin": "moneta (0/1)",
@@ -61,7 +68,14 @@
     "points": "punkty",
     "convergence": "zbieżność",
     "ruin": "odsetek bankructw",
-    "paths": "stan konta graczy"
+    "paths": "stan konta graczy",
+    "sines": "suma sinusów",
+    "walk": "błądzenie losowe",
+    "signal": "sygnał",
+    "spectrum": "widmo",
+    "long": "kupiona (long)",
+    "short": "wystawiona (short)",
+    "none": "brak"
   },
   "coin-walk": {
     "title": "Rzut monetą czy formacja?",
@@ -160,5 +174,68 @@
       "rr": "Twój zysk do ryzyka (RR)"
     },
     "summary": "Skuteczność {p}%, zysk do ryzyka {rr}, koszty {fees} R: wartość oczekiwana {ev} R na transakcję. Przy tym RR trzeba wygrywać co najmniej {breakEven}% transakcji."
+  },
+  "overfitting": {
+    "title": "Przeuczony backtest",
+    "short": "Setki strategii, które są czystym szumem. Najlepsza w próbie wygląda genialnie, a poza próbą jest tak samo losowa jak reszta.",
+    "params": {
+      "strategies": "Liczba testowanych strategii",
+      "inSample": "Dni w próbie",
+      "outSample": "Dni poza próbą"
+    },
+    "labels": {
+      "inSample": "w próbie",
+      "outSample": "poza próbą"
+    },
+    "summary": "{mode, select, oos {Najlepsza z {strategies} losowych strategii miała w próbie Sharpe {isSharpe}, a poza próbą ma {oosSharpe}. Mediana wszystkich w próbie: {median}.} other {Dzień {day}. Najlepsza z {strategies} losowych strategii ma w próbie Sharpe {isSharpe}, mediana wszystkich {median}. Żadna nie ma przewagi.}}"
+  },
+  "fourier": {
+    "title": "Fourier: sygnał i jego widmo",
+    "short": "Złóż sygnał z trzech sinusów i zobacz trzy wyraźne szczyty w widmie. Widmo błądzenia losowego nie ma szczytów, tylko opada.",
+    "params": {
+      "source": "Źródło",
+      "view": "Widok",
+      "a1": "Amplituda 1 (4 cykle)",
+      "a2": "Amplituda 2 (12 cykli)",
+      "a3": "Amplituda 3 (20 cykli)",
+      "noise": "Szum"
+    },
+    "summary": "{source, select, walk {Widmo błądzenia losowego opada jak potęga częstotliwości: nachylenie {slope} (teoria −2), bez wyraźnych szczytów.} other {Najsilniejsze częstotliwości: {p1}, {p2} i {p3} cykli na okno.}}"
+  },
+  "bayes": {
+    "title": "Bayes: prawdziwa skuteczność strategii",
+    "short": "Po każdej transakcji rozkład a posteriori skuteczności się zawęża. Kilkadziesiąt transakcji mówi zaskakująco mało.",
+    "params": {
+      "truth": "Prawdziwa skuteczność",
+      "trades": "Liczba transakcji",
+      "a": "Prior: wygrane (a)",
+      "b": "Prior: przegrane (b)"
+    },
+    "summary": "Po {trades} transakcjach ({wins} wygranych): średnia a posteriori {mean}%, przedział 95% od {lo}% do {hi}%. Szansa, że skuteczność przekracza 50%: {edge}%. Prawdziwa wartość: {truth}%."
+  },
+  "option-builder": {
+    "title": "Kreator opcji",
+    "short": "Złóż pozycję z jednej lub dwóch opcji i zobacz wypłatę w dniu wygaśnięcia, wartość dziś według Blacka–Scholesa i współczynniki greckie.",
+    "params": {
+      "type1": "Opcja 1",
+      "side1": "Strona 1",
+      "K1": "Cena wykonania 1",
+      "type2": "Opcja 2",
+      "side2": "Strona 2",
+      "K2": "Cena wykonania 2",
+      "S": "Cena akcji dziś",
+      "sigma": "Zmienność σ",
+      "years": "Czas do wygaśnięcia (lata)",
+      "r": "Stopa procentowa r"
+    },
+    "options": {
+      "call": "call (kupna)",
+      "put": "put (sprzedaży)"
+    },
+    "labels": {
+      "expiry": "w dniu wygaśnięcia",
+      "today": "dziś"
+    },
+    "summary": "Pozycja kosztuje dziś {value}. Przy cenie akcji {S}: delta {delta}, gamma {gamma}, vega {vega} na punkt procentowy zmienności, theta {theta} dziennie."
   }
 }

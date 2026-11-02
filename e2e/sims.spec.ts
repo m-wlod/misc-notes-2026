@@ -19,8 +19,14 @@ const SIMS = [
   ["martyngal-podwajanie-stawki", "Martyngał: podwajanie stawki"],
   ["kryterium-kelly-ego", "Kryterium Kelly'ego"],
   ["zmiennosc-zjada-zyski", "Zmienność zjada zyski"],
+  ["przeuczony-backtest", "Przeuczony backtest"],
+  ["fourier-i-widmo", "Fourier: sygnał i jego widmo"],
+  ["bayes-skutecznosc-strategii", "Bayes: prawdziwa skuteczność strategii"],
 ] as const;
-const STATIC = [["mapa-wartosci-oczekiwanej", "Mapa wartości oczekiwanej"]] as const;
+const STATIC = [
+  ["mapa-wartosci-oczekiwanej", "Mapa wartości oczekiwanej"],
+  ["kreator-opcji", "Kreator opcji"],
+] as const;
 
 const frame = (page: Page) => page.getByText(/^Klatka \d+ z \d+$/);
 const frameNumber = async (page: Page) =>
@@ -89,6 +95,18 @@ test("a still picture (EV map) shows complete, with no playback controls", async
   );
 });
 
+test("option builder: a bull call spread, with price and Greeks", async ({ page }) => {
+  await page.goto("/pl/laboratorium/symulacje/kreator-opcji?type2=call&side2=short&K2=110");
+  await expect(page.getByRole("heading", { level: 1, name: "Kreator opcji" })).toBeVisible();
+  await expect(page.getByLabel("Opcja 2", { exact: true })).toHaveValue("call");
+  await expect(page.getByRole("img").first()).toHaveAttribute(
+    "aria-label",
+    /Pozycja kosztuje dziś \d+,\d+\. Przy cenie akcji 100: delta 0,\d+/,
+  );
+  await page.getByLabel("Opcja 2", { exact: true }).selectOption("none");
+  await expect(page).toHaveURL(/type2=none/);
+});
+
 test("the URL reproduces a run: params, seed and frame", async ({ page }) => {
   await page.goto("/pl/laboratorium/symulacje/ruch-browna?seed=7");
   await ready(page);
@@ -135,6 +153,22 @@ test("PNG export, and a 1080×1920 frame in recording mode", async ({ page }) =>
   ]);
   expect(vertical.suggestedFilename()).toMatch(/-9x16\.png$/);
   expect(pngSize(await readFile(await vertical.path()))).toEqual({ width: 1080, height: 1920 });
+});
+
+test("at the end, the play button replays from the start", async ({ page }) => {
+  await page.goto("/pl/laboratorium/symulacje/rzut-moneta-czy-formacja?steps=50");
+  await ready(page);
+  await page.getByLabel("Tempo").selectOption("4");
+  await page.getByRole("button", { name: "Odtwórz" }).click();
+  await expect(page.getByRole("button", { name: "Od nowa" })).toBeVisible({ timeout: 10_000 });
+  await expect(frame(page)).toHaveText("Klatka 50 z 50");
+  await page.getByRole("button", { name: "Od nowa" }).click();
+  await expect.poll(() => frameNumber(page)).toBeLessThan(50);
+  await page.getByRole("button", { name: "Pauza" }).click();
+  // Paused, the counter shows the exact frame the chart is on.
+  const at = await frameNumber(page);
+  await page.getByRole("button", { name: "Krok" }).click();
+  expect(await frameNumber(page)).toBe(at + 1);
 });
 
 test("keyboard: Space plays and pauses, → steps, R resets", async ({ page }) => {
