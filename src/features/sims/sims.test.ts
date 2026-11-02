@@ -2,13 +2,17 @@ import { describe, expect, it } from "vitest";
 
 import { bsPrice } from "@/lib/math/black-scholes";
 
+import { bayes } from "./defs/bayes";
 import { coinWalk } from "./defs/coin-walk";
 import { ev, evHeatmap } from "./defs/ev-heatmap";
+import { fourier } from "./defs/fourier";
 import { expected, gbm } from "./defs/gbm";
 import { growthRate, kelly, kellyOptimum } from "./defs/kelly";
 import { llnClt } from "./defs/lln-clt";
 import { martingale } from "./defs/martingale";
 import { monteCarlo } from "./defs/monte-carlo";
+import { optionBuilder, positionGreeks, positionValue } from "./defs/options";
+import { overfitting } from "./defs/overfitting";
 import { volDrag } from "./defs/vol-drag";
 import { clampParam, defaults, parseState, stateQuery } from "./params";
 import { SIMS, simBySlug } from "./registry";
@@ -152,5 +156,53 @@ describe("12b simulations", () => {
     expect(d.T).toBe(1);
     expect(evHeatmap.summary(d, 1, {})).toMatchObject({ ev: -0.1, breakEven: 55 });
     expect(evHeatmap.static).toBe(true);
+  });
+});
+
+describe("12c simulations", () => {
+  it("overfitting: the best of many noise strategies looks good in sample, not after", () => {
+    const d = overfitting.compute({ strategies: 500, inSample: 500, outSample: 500 }, 3);
+    expect(d.bestIsSharpe).toBeGreaterThan(1.5);
+    expect(Math.abs(d.medianIsSharpe)).toBeLessThan(0.3);
+    expect(Math.abs(d.bestOosSharpe)).toBeLessThan(d.bestIsSharpe / 2);
+  });
+
+  it("Fourier: three sines give three peaks; a random walk falls like 1/f²", () => {
+    const sines = fourier.compute({ ...defaults(fourier.params), noise: 0.05 }, 1);
+    expect([...sines.peaks].sort((a, b) => a - b)).toEqual([4, 12, 20]);
+    const walk = fourier.compute({ ...defaults(fourier.params), source: "walk" }, 1);
+    expect(walk.slope).toBeLessThan(-1.4);
+    expect(walk.slope).toBeGreaterThan(-2.6);
+  });
+
+  it("Bayes: the posterior settles around the truth", () => {
+    const p = { truth: 0.55, trades: 2000, a: 1, b: 1 };
+    const d = bayes.compute(p, 6);
+    const s = bayes.summary(d, d.T, p);
+    expect(Number(s.lo)).toBeLessThan(55);
+    expect(Number(s.hi)).toBeGreaterThan(55);
+    expect(Number(s.hi) - Number(s.lo)).toBeLessThan(6);
+    // With a flat prior, 0 trades: the whole range and a 50% chance of an edge.
+    const s0 = bayes.summary(d, 0, p);
+    expect(s0).toMatchObject({ mean: 50, edge: 50 });
+  });
+
+  it("option builder: a long call costs its Black–Scholes price; a call spread is capped", () => {
+    const base = defaults(optionBuilder.params);
+    const call = optionBuilder.compute(base, 0);
+    expect(call.cost).toBeCloseTo(
+      bsPrice("call", { S: 100, K: 100, sigma: 0.25, T: 0.5, r: 0.03 }),
+      9,
+    );
+    const g = positionGreeks(call, 100);
+    expect(g.delta).toBeGreaterThan(0.5);
+    expect(g.delta).toBeLessThan(0.7);
+    const spread = optionBuilder.compute({ ...base, type2: "call", side2: "short", K2: 110 }, 0);
+    // Max profit of a 100/110 bull call spread is 10 minus its cost.
+    expect(spread.hi).toBeCloseTo(10 - spread.cost, 1);
+    expect(spread.lo).toBeCloseTo(-spread.cost, 1);
+    const straddle = optionBuilder.compute({ ...base, type2: "put", side2: "long", K2: 100 }, 0);
+    expect(Math.abs(positionGreeks(straddle, 100).delta)).toBeLessThan(0.2);
+    expect(positionValue(straddle, 100)).toBeCloseTo(straddle.cost, 9);
   });
 });

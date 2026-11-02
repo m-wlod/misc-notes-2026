@@ -46,7 +46,14 @@
     "wealth": "wealth (start 1)",
     "years": "year",
     "winRate": "win rate",
-    "rewardRisk": "reward to risk (RR)"
+    "rewardRisk": "reward to risk (RR)",
+    "cumReturn": "cumulative return (%)",
+    "frequency": "frequency (cycles per window)",
+    "power": "power",
+    "time": "time",
+    "signal": "signal",
+    "stockPrice": "stock price",
+    "profit": "profit or loss"
   },
   "options": {
     "coin": "coin (0/1)",
@@ -61,7 +68,14 @@
     "points": "points",
     "convergence": "convergence",
     "ruin": "share ruined",
-    "paths": "players' bankrolls"
+    "paths": "players' bankrolls",
+    "sines": "sum of sines",
+    "walk": "random walk",
+    "signal": "signal",
+    "spectrum": "spectrum",
+    "long": "bought (long)",
+    "short": "sold (short)",
+    "none": "none"
   },
   "coin-walk": {
     "title": "Coin flip or chart pattern?",
@@ -160,5 +174,68 @@
       "rr": "Your reward to risk (RR)"
     },
     "summary": "Win rate {p}%, reward to risk {rr}, costs {fees} R: expected value {ev} R per trade. At this RR you need to win at least {breakEven}% of trades."
+  },
+  "overfitting": {
+    "title": "Backtest overfitting",
+    "short": "Hundreds of strategies that are pure noise. The best one in sample looks brilliant; out of sample it is as random as the rest.",
+    "params": {
+      "strategies": "Strategies tested",
+      "inSample": "Days in sample",
+      "outSample": "Days out of sample"
+    },
+    "labels": {
+      "inSample": "in sample",
+      "outSample": "out of sample"
+    },
+    "summary": "{mode, select, oos {The best of {strategies} random strategies had an in-sample Sharpe of {isSharpe}; out of sample it has {oosSharpe}. Median in sample of all: {median}.} other {Day {day}. The best of {strategies} random strategies has an in-sample Sharpe of {isSharpe}; the median of all is {median}. None has an edge.}}"
+  },
+  "fourier": {
+    "title": "Fourier: a signal and its spectrum",
+    "short": "Build a signal from three sines and see three clear peaks in its spectrum. A random walk's spectrum has no peaks; it just falls.",
+    "params": {
+      "source": "Source",
+      "view": "View",
+      "a1": "Amplitude 1 (4 cycles)",
+      "a2": "Amplitude 2 (12 cycles)",
+      "a3": "Amplitude 3 (20 cycles)",
+      "noise": "Noise"
+    },
+    "summary": "{source, select, walk {The random walk's spectrum falls as a power of frequency: slope {slope} (theory −2), with no clear peaks.} other {Strongest frequencies: {p1}, {p2} and {p3} cycles per window.}}"
+  },
+  "bayes": {
+    "title": "Bayes: a strategy's true win rate",
+    "short": "After every trade the posterior for the win rate narrows. A few dozen trades say surprisingly little.",
+    "params": {
+      "truth": "True win rate",
+      "trades": "Number of trades",
+      "a": "Prior: wins (a)",
+      "b": "Prior: losses (b)"
+    },
+    "summary": "After {trades} trades ({wins} wins): posterior mean {mean}%, 95% interval from {lo}% to {hi}%. Chance the win rate is above 50%: {edge}%. True value: {truth}%."
+  },
+  "option-builder": {
+    "title": "Option builder",
+    "short": "Build a position from one or two options and see the payoff at expiry, the Black–Scholes value today and the Greeks.",
+    "params": {
+      "type1": "Option 1",
+      "side1": "Side 1",
+      "K1": "Strike 1",
+      "type2": "Option 2",
+      "side2": "Side 2",
+      "K2": "Strike 2",
+      "S": "Stock price today",
+      "sigma": "Volatility σ",
+      "years": "Time to expiry (years)",
+      "r": "Interest rate r"
+    },
+    "options": {
+      "call": "call",
+      "put": "put"
+    },
+    "labels": {
+      "expiry": "at expiry",
+      "today": "today"
+    },
+    "summary": "The position costs {value} today. At a stock price of {S}: delta {delta}, gamma {gamma}, vega {vega} per volatility point, theta {theta} per day."
   }
 }
