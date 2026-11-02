@@ -15,6 +15,7 @@ import type onboarding from "../messages/pl/onboarding.json";
 import type placement from "../messages/pl/placement.json";
 import type reader from "../messages/pl/reader.json";
 import type sections from "../messages/pl/sections.json";
+import type sims from "../messages/pl/sims.json";
 import type { formats } from "./lib/i18n/format";
 
 // Type-safe next-intl: keys and locales are checked at compile time.
@@ -39,6 +40,7 @@ declare module "next-intl" {
       notes: typeof notes;
       exercises: typeof exercises;
       interview: typeof interview;
+      sims: typeof sims;
     };
     Formats: typeof formats;
   }

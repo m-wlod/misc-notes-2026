@@ -1,0 +1,586 @@
+"use client";
+
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { cx } from "@/lib/cx";
+
+import { makePlot, readPalette, ticks } from "./axes";
+import { downloadCanvas, renderFrame } from "./export";
+import { clampParam, MAX_SEED, stateQuery, type SimState } from "./params";
+import { simById } from "./registry";
+import { computeSim } from "./run-compute";
+import type { AxisFormat, ParamSpec, Params, SimData } from "./types";
+
+const SPEEDS = [0.25, 0.5, 1, 2, 4] as const;
+
+/**
+ * The simulation player (Phase 12): computes the run (in a worker when heavy), then
+ * reveals it frame by frame. Canvas for the data, SVG for axes; play / pause / step /
+ * reset, speed, parameters with exact inputs, the state in the URL, PNG export and a
+ * 9:16 recording mode. Keyboard: Space plays or pauses, → steps, R resets.
+ */
+export function SimPlayer({
+  id,
+  initial,
+  recording = false,
+  syncUrl = true,
+  compact = false,
+}: {
+  id: string;
+  initial: SimState;
+  recording?: boolean;
+  /** Keep the page URL in sync (the /lab page does; an embed in a lesson doesn't). */
+  syncUrl?: boolean;
+  /** Embedded in a lesson: fewer controls. */
+  compact?: boolean;
+}) {
+  const def = simById(id);
+  const t = useTranslations("sims");
+  const locale = useLocale();
+  const format = useFormatter();
+  const uid = useId();
+
+  const [params, setParams] = useState<Params>(initial.params);
+  const [seed, setSeed] = useState(initial.seed);
+  const [data, setData] = useState<SimData | null>(null);
+  const [frame, setFrame] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [speed, setSpeed] = useState<number>(1);
+  const [size, setSize] = useState({ w: 0, h: 0 });
+  const [copied, setCopied] = useState(false);
+
+  const root = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const onKey = useRef<(e: KeyboardEvent) => void>(() => undefined);
+  const base = useRef<HTMLCanvasElement>(null);
+  const over = useRef<HTMLCanvasElement>(null);
+  const drawn = useRef(0);
+  const frameRef = useRef(0);
+  const wantFrame = useRef<number | null>(initial.t);
+
+  // Compute the run whenever the inputs change (in the worker for heavy simulations).
+  useEffect(() => {
+    if (!def) return;
+    let live = true;
+    void computeSim(def, params, seed).then((d) => {
+      if (!live) return;
+      const start = Math.min(wantFrame.current ?? 0, d.T);
+      wantFrame.current = null;
+      frameRef.current = start;
+      drawn.current = 0;
+      setFrame(start);
+      setData(d);
+    });
+    return () => {
+      live = false;
+    };
+  }, [def, params, seed]);
+
+  // Canvas size follows the container (and the device pixel ratio).
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const w = Math.round(entry?.contentRect.width ?? 0);
+      const h = Math.round(recording ? w * 1.0 : Math.max(240, Math.min(w * 0.6, 520)));
+      setSize((s) => (s.w === w && s.h === h ? s : { w, h }));
+    });
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+    };
+  }, [recording]);
+
+  const view = useMemo(() => (def && data ? def.view(data, params) : null), [def, data, params]);
+  const dpr = typeof window === "undefined" ? 1 : Math.min(2, window.devicePixelRatio || 1);
+
+  const fmt = useCallback(
+    (v: number, f: AxisFormat | undefined) =>
+      f === "int"
+        ? format.number(v, { maximumFractionDigits: 0 })
+        : f === "pct"
+          ? format.number(v, { style: "percent", maximumFractionDigits: 0 })
+          : format.number(v, { maximumFractionDigits: Math.abs(v) < 10 ? 2 : 0 }),
+    [format],
+  );
+
+  /** Draws the persistent layer up to `to` (incrementally) and the overlay at `to`. */
+  const paint = useCallback(
+    (to: number, full: boolean) => {
+      if (!def || !data || !view || !size.w) return;
+      const c = readPalette();
+      const plot = makePlot(view, size.w * dpr, size.h * dpr, dpr);
+      const b = base.current?.getContext("2d");
+      const o = over.current?.getContext("2d");
+      if (!b || !o) return;
+      const clip = (ctx: CanvasRenderingContext2D) => {
+        ctx.beginPath();
+        ctx.rect(plot.left, plot.top, plot.width, plot.height);
+        ctx.clip();
+      };
+      if (full || to < drawn.current) {
+        b.clearRect(0, 0, b.canvas.width, b.canvas.height);
+        drawn.current = 0;
+      }
+      if (to > drawn.current || drawn.current === 0) {
+        b.save();
+        clip(b);
+        def.draw(b, data, drawn.current, to, plot, c, params);
+        b.restore();
+        drawn.current = Math.max(drawn.current, to);
+      }
+      o.clearRect(0, 0, o.canvas.width, o.canvas.height);
+      o.save();
+      clip(o);
+      def.overlay?.(o, data, to, plot, c, params);
+      o.restore();
+    },
+    [def, data, view, size, dpr, params],
+  );
+
+  // Full repaint when the data, size or theme changes.
+  useEffect(() => {
+    paint(frameRef.current, true);
+    const mo = new MutationObserver(() => {
+      paint(frameRef.current, true);
+    });
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme", "class"],
+    });
+    return () => {
+      mo.disconnect();
+    };
+  }, [paint]);
+
+  // The animation loop.
+  useEffect(() => {
+    if (!playing || !def || !data) return;
+    let raf = 0;
+    let last = performance.now();
+    let acc = frameRef.current;
+    const perSecond = data.T / (def.seconds ?? 8);
+    const tick = (now: number) => {
+      acc = Math.min(data.T, acc + ((now - last) / 1000) * perSecond * speed);
+      last = now;
+      const next = Math.floor(acc);
+      if (next !== frameRef.current) {
+        frameRef.current = next;
+        paint(next, false);
+        setFrame(next);
+      }
+      if (next >= data.T) {
+        setPlaying(false);
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+    };
+  }, [playing, def, data, speed, paint]);
+
+  const url = useCallback(
+    (state: SimState, record = recording) => {
+      if (!def) return "";
+      const q = stateQuery(def.params, state);
+      // Query-only: resolves against the current page, and is safe to build while rendering.
+      return `?${q}${record ? "&nagranie=1" : ""}`;
+    },
+    [def, recording],
+  );
+
+  const goTo = useCallback(
+    (to: number) => {
+      if (!data) return;
+      const v = Math.max(0, Math.min(data.T, to));
+      frameRef.current = v;
+      paint(v, v < drawn.current);
+      setFrame(v);
+    },
+    [data, paint],
+  );
+
+  const syncLink = (next: { params?: Params; seed?: number; t?: number | null }) => {
+    if (!syncUrl || !def) return;
+    window.history.replaceState(
+      null,
+      "",
+      url({ params: next.params ?? params, seed: next.seed ?? seed, t: next.t ?? null }),
+    );
+  };
+
+  const T = data?.T ?? 0;
+  const stepSize = Math.max(1, Math.ceil(T / 100));
+
+  // Keyboard: Space plays or pauses, → steps, R resets (not while typing or on a button).
+  useEffect(() => {
+    onKey.current = (e: KeyboardEvent) => {
+      const el = e.target;
+      if (
+        el instanceof HTMLInputElement ||
+        el instanceof HTMLSelectElement ||
+        el instanceof HTMLButtonElement ||
+        el instanceof HTMLAnchorElement
+      )
+        return;
+      if (e.key === " ") {
+        e.preventDefault();
+        setPlaying((p) => !p);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setPlaying(false);
+        goTo(frameRef.current + stepSize);
+      } else if (e.key.toLowerCase() === "r") {
+        setPlaying(false);
+        goTo(0);
+      }
+    };
+  });
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const handler = (e: KeyboardEvent) => {
+      onKey.current(e);
+    };
+    el.addEventListener("keydown", handler);
+    return () => {
+      el.removeEventListener("keydown", handler);
+    };
+  }, []);
+
+  if (!def) return null;
+  const summary = data
+    ? t(`${def.id}.summary` as "coin-walk.summary", def.summary(data, frame, params) as never)
+    : t("computing");
+  const cssPlot = view ? makePlot(view, size.w, size.h, 1) : null;
+  const axis = view && cssPlot ? ticks(view, cssPlot, fmt) : null;
+  const plotRight = cssPlot ? cssPlot.left + cssPlot.width : size.w - 14;
+
+  const setParam = (name: string, spec: ParamSpec, raw: unknown) => {
+    const next = { ...params, [name]: clampParam(spec, raw) };
+    setPlaying(false);
+    setParams(next);
+    syncLink({ params: next });
+  };
+
+  return (
+    <div
+      ref={root}
+      className={cx("grid gap-4", recording && "mx-auto max-w-[540px]")}
+      role="region"
+      aria-label={t(`${def.id}.title` as "coin-walk.title")}
+      // Focusable so the keyboard shortcuts work without first focusing a control.
+      tabIndex={0}
+    >
+      <div
+        ref={box}
+        role="img"
+        aria-label={summary}
+        className="relative w-full"
+        style={{ height: size.h || undefined }}
+      >
+        <canvas
+          ref={base}
+          width={size.w * dpr}
+          height={size.h * dpr}
+          className="absolute inset-0 h-full w-full"
+          aria-hidden="true"
+        />
+        <canvas
+          ref={over}
+          width={size.w * dpr}
+          height={size.h * dpr}
+          className="absolute inset-0 h-full w-full"
+          aria-hidden="true"
+        />
+        {axis && view ? (
+          <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
+            <g className="fill-ink-muted font-mono text-2xs">
+              {axis.y.map((y) => (
+                <text key={`y${String(y.v)}`} x={44} y={y.at + 4} textAnchor="end">
+                  {y.label}
+                </text>
+              ))}
+              {axis.x.map((x) => (
+                <text key={`x${String(x.v)}`} x={x.at} y={size.h - 24} textAnchor="middle">
+                  {x.label}
+                </text>
+              ))}
+            </g>
+            <g className="fill-ink-muted font-sans text-xs">
+              <text x={(52 + plotRight) / 2} y={size.h - 6} textAnchor="middle">
+                {t(`axes.${view.xLabel}` as "axes.days")}
+              </text>
+              <text
+                x={12}
+                y={size.h / 2}
+                textAnchor="middle"
+                transform={`rotate(-90 12 ${String(size.h / 2)})`}
+              >
+                {t(`axes.${view.yLabel}` as "axes.days")}
+              </text>
+            </g>
+            {axis.y.map((y) => (
+              <line
+                key={`g${String(y.v)}`}
+                x1={52}
+                x2={plotRight}
+                y1={y.at}
+                y2={y.at}
+                className="stroke-grid"
+              />
+            ))}
+          </svg>
+        ) : null}
+      </div>
+
+      <p className="num font-sans text-sm text-ink" aria-live="off">
+        {summary}
+      </p>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          type="button"
+          disabled={!data}
+          onClick={() => {
+            setPlaying((p) => !p);
+          }}
+        >
+          {playing ? t("pause") : frame >= T && T > 0 ? t("replay") : t("play")}
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={!data || frame >= T}
+          onClick={() => {
+            setPlaying(false);
+            goTo(frame + stepSize);
+          }}
+        >
+          {t("step")}
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={!data}
+          onClick={() => {
+            setPlaying(false);
+            goTo(0);
+          }}
+        >
+          {t("reset")}
+        </Button>
+        <label className="flex items-center gap-2 font-sans text-sm text-ink">
+          {t("speed")}
+          <select
+            value={speed}
+            onChange={(e) => {
+              setSpeed(Number(e.target.value));
+            }}
+            className="rounded border border-rule-strong bg-surface px-2 py-1"
+          >
+            {SPEEDS.map((s) => (
+              <option key={s} value={s}>
+                {format.number(s)}×
+              </option>
+            ))}
+          </select>
+        </label>
+        <span className="num font-sans text-xs text-ink-muted">
+          {t("frame", { frame, total: T })}
+        </span>
+      </div>
+
+      {compact ? null : (
+        <fieldset className="grid gap-3 rounded-md border border-rule px-4 py-3 sm:grid-cols-2">
+          <legend className="px-1 font-sans text-sm text-ink">{t("parameters")}</legend>
+          {Object.entries(def.params).map(([name, spec]) => (
+            <ParamControl
+              key={name}
+              id={`${uid}-${name}`}
+              label={t(`${def.id}.params.${name}` as "coin-walk.params.paths")}
+              option={(o) => t(`options.${o}` as "options.gbm")}
+              spec={spec}
+              value={params[name] ?? spec.default}
+              onChange={(raw) => {
+                setParam(name, spec, raw);
+              }}
+            />
+          ))}
+          <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+            <span className="num font-sans text-xs text-ink-muted">{t("seed", { seed })}</span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                const a = new Uint32Array(1);
+                crypto.getRandomValues(a);
+                const s = (a[0] ?? 1) % MAX_SEED;
+                setPlaying(false);
+                setSeed(s);
+                syncLink({ seed: s });
+              }}
+            >
+              {t("reroll")}
+            </Button>
+          </div>
+        </fieldset>
+      )}
+
+      {compact ? null : (
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              const link = `${window.location.origin}${window.location.pathname}${url({ params, seed, t: frame })}`;
+              void navigator.clipboard.writeText(link).then(() => {
+                setCopied(true);
+              });
+              window.history.replaceState(null, "", url({ params, seed, t: frame }));
+            }}
+          >
+            {copied ? t("copied") : t("share")}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            disabled={!data}
+            onClick={() => {
+              if (!data || !view) return;
+              const canvas = renderFrame(
+                def,
+                data,
+                params,
+                frame,
+                readPalette(),
+                fmt,
+                {
+                  title: t(`${def.id}.title` as "coin-walk.title"),
+                  xLabel: t(`axes.${view.xLabel}` as "axes.days"),
+                  yLabel: t(`axes.${view.yLabel}` as "axes.days"),
+                  summary,
+                  details: `${t("seed", { seed })} · ${Object.entries(params)
+                    .map(([k, v]) => `${k} ${String(v)}`)
+                    .join(" · ")}`,
+                  source: t("source"),
+                },
+                { recording },
+              );
+              downloadCanvas(canvas, `${def.id}-${String(seed)}${recording ? "-9x16" : ""}.png`);
+            }}
+          >
+            {recording ? t("exportRecording") : t("exportPng")}
+          </Button>
+          <a
+            href={url({ params, seed, t: frame }, !recording)}
+            hrefLang={locale}
+            className="font-sans text-sm"
+          >
+            {recording ? t("leaveRecording") : t("recording")}
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ParamControl({
+  id,
+  label,
+  spec,
+  value,
+  option,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  spec: ParamSpec;
+  value: unknown;
+  option: (o: string) => string;
+  onChange: (raw: unknown) => void;
+}) {
+  if (spec.kind === "choice") {
+    return (
+      <div className="grid gap-1">
+        <label htmlFor={id} className="font-sans text-sm text-ink">
+          {label}
+        </label>
+        <select
+          id={id}
+          value={String(value)}
+          onChange={(e) => {
+            onChange(e.target.value);
+          }}
+          className="rounded border border-rule-strong bg-surface px-2 py-1.5 text-sm"
+        >
+          {spec.options.map((o) => (
+            <option key={o} value={o}>
+              {option(o)}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  }
+  if (spec.kind === "toggle") {
+    return (
+      <label className="flex items-center gap-2 font-sans text-sm text-ink">
+        <input
+          type="checkbox"
+          checked={value === true}
+          onChange={(e) => {
+            onChange(e.target.checked);
+          }}
+          className="size-4 accent-(--accent)"
+        />
+        {label}
+      </label>
+    );
+  }
+  const step = spec.kind === "int" ? (spec.step ?? 1) : spec.step;
+  return (
+    <div className="grid gap-1">
+      <label htmlFor={id} className="font-sans text-sm text-ink">
+        {label}
+      </label>
+      <div className="flex items-center gap-2">
+        <input
+          id={id}
+          type="range"
+          min={spec.min}
+          max={spec.max}
+          step={step}
+          value={Number(value)}
+          onChange={(e) => {
+            onChange(Number(e.target.value));
+          }}
+          className="min-w-0 flex-1 accent-(--accent)"
+        />
+        <input
+          type="number"
+          aria-label={label}
+          min={spec.min}
+          max={spec.max}
+          step={step}
+          defaultValue={Number(value)}
+          key={String(value)}
+          onBlur={(e) => {
+            onChange(e.target.value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") onChange(e.currentTarget.value);
+          }}
+          className="w-24 rounded border border-rule-strong bg-surface px-2 py-1 num text-sm"
+        />
+      </div>
+    </div>
+  );
+}
