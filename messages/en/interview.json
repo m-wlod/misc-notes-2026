@@ -1,0 +1,140 @@
+{
+  "hub": {
+    "title": "Quant interview",
+    "lead": "Timed sessions like a real interview: one question after another, no going back, then a scorecard and full solutions.",
+    "length": "{size} {unit} · {minutes} min",
+    "offline": "Works offline",
+    "ai": "With AI grading when it's on",
+    "start": "Choose a level and start",
+    "soon": "Coming soon",
+    "history": "Session history"
+  },
+  "kinds": {
+    "mental_math": {
+      "title": "Mental math",
+      "description": "80 calculations in 8 minutes: addition, multiplication, division, percentages and fractions. Scored at once, with a personal best.",
+      "unit": "calculations"
+    },
+    "market_making": {
+      "title": "Market making",
+      "description": "You quote a bid and an ask on an unknown quantity, such as the sum of three dice. A trader trades with you, and you see the result and the expected-value reasoning.",
+      "unit": "rounds"
+    },
+    "probability_sprint": {
+      "title": "Probability sprint",
+      "description": "10 questions in 20 minutes, graded at once.",
+      "unit": "questions"
+    },
+    "brainteasers": {
+      "title": "Brainteasers",
+      "description": "Open questions with hints, as in an interview.",
+      "unit": "questions"
+    },
+    "open_modelling": {
+      "title": "Modelling question",
+      "description": "For example: how would you test whether this strategy has an edge?",
+      "unit": "question"
+    }
+  },
+  "setup": {
+    "level": "Level",
+    "levelN": "Level {level}",
+    "start": "Start",
+    "rulesMental": "Type the result and press Enter. Fractions and percentages can be typed as 0.125, 1/8 or 12.5%. There is no going back to a previous calculation.",
+    "rulesMarket": "Each round, give a bid (what you'd buy at) and an ask (what you'd sell at). The trader roughly knows the value and trades when your price suits them.",
+    "best": "Your best at this level: {percent}%"
+  },
+  "timer": {
+    "left": "Left",
+    "oneMinute": "One minute left.",
+    "tenSeconds": "Ten seconds left."
+  },
+  "player": {
+    "question": "Calculation {n} of {total}",
+    "answer": "Result",
+    "next": "Next",
+    "finish": "Finish now",
+    "of": "of",
+    "asDecimal": "as a decimal",
+    "unreadable": "We can't read this number."
+  },
+  "market": {
+    "round": "Round {n} of {total}",
+    "bid": "Bid: what you'd buy at",
+    "ask": "Ask: what you'd sell at",
+    "quote": "Quote",
+    "crossed": "The bid must be below the ask.",
+    "invalid": "Enter two numbers.",
+    "bought": "The trader bought from you at {price}.",
+    "sold": "The trader sold to you at {price}.",
+    "none": "The trader didn't trade: your price didn't suit them.",
+    "truth": "True value: {value}.",
+    "pnl": "Round result (P&L): {pnl}",
+    "ev": "Expected value: {ev}, standard deviation: {sd}.",
+    "evInside": "The expected value is inside your quote (width {width}).",
+    "evOutside": "The expected value is outside your quote, so a well-informed trader will win against you.",
+    "score": "Quote score: {percent}%. P&L depends on the draw; the score only on your price.",
+    "next": "Next round",
+    "scenarios": {
+      "three-dice": {
+        "name": "Sum of three dice",
+        "how": "Each die averages 3.5, so the sum of three averages 10.5."
+      },
+      "ten-coins": {
+        "name": "Number of heads in 10 coin flips",
+        "how": "Each flip is heads with probability 1/2, so on average 10 · 1/2 = 5."
+      },
+      "max-two-dice": {
+        "name": "The larger of two dice",
+        "how": "P(max = k) = (2k − 1)/36, so the mean is 161/36 ≈ 4.47."
+      },
+      "two-cards": {
+        "name": "Sum of two cards from ten (1–10), without replacement",
+        "how": "Each card averages 5.5, so the sum of two averages 11."
+      }
+    }
+  },
+  "score": {
+    "title": "Scorecard",
+    "score": "Score: {percent}%",
+    "correct": "Correct: {correct} of {total}",
+    "answered": "Answered: {answered} of {total}",
+    "avg": "Average time per question: {seconds} s",
+    "pnl": "Total P&L: {pnl}",
+    "review": "To review: {topics}",
+    "noReview": "No topic needs review.",
+    "best": "A new personal best at this level.",
+    "saved": "Saved in this browser.",
+    "again": "Again",
+    "toHub": "All sessions",
+    "history": "History",
+    "reviewTitle": "Answer review",
+    "yourAnswer": "Your answer: {given}",
+    "correctAnswer": "Correct: {answer}",
+    "skipped": "no answer"
+  },
+  "topics": {
+    "add": "addition",
+    "sub": "subtraction",
+    "mul": "multiplication",
+    "div": "division",
+    "pct": "percentages",
+    "frac": "fractions",
+    "three-dice": "sum of dice",
+    "ten-coins": "coin flips",
+    "max-two-dice": "maximum of dice",
+    "two-cards": "cards without replacement"
+  },
+  "history": {
+    "title": "Session history",
+    "lead": "Your sessions saved in this browser, and your progress in each type.",
+    "empty": "You have no sessions yet.",
+    "chartTitle": "{kind}: score per session",
+    "chartLabel": "{kind}: {count} sessions, last score {last}%, best {best}%.",
+    "date": "Date",
+    "kind": "Type",
+    "level": "Level",
+    "result": "Score",
+    "best": "best"
+  }
+}

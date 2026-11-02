@@ -25,6 +25,8 @@ export const routing = defineRouting({
     "/practice": { pl: "/praktyka", en: "/practice" },
     "/practice/[exercise]": { pl: "/praktyka/[exercise]", en: "/practice/[exercise]" },
     "/interview": { pl: "/rozmowa", en: "/interview" },
+    "/interview/history": { pl: "/rozmowa/historia", en: "/interview/history" },
+    "/interview/[type]": { pl: "/rozmowa/[type]", en: "/interview/[type]" },
     "/debunk": "/debunk",
     "/glossary": { pl: "/slowniczek", en: "/glossary" },
     "/lab": { pl: "/laboratorium", en: "/lab" },

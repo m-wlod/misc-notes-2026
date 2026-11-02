@@ -1,0 +1,140 @@
+{
+  "hub": {
+    "title": "Rozmowa rekrutacyjna",
+    "lead": "Sesje na czas, jak na prawdziwej rozmowie: jedno pytanie po drugim, bez cofania, na końcu karta wyników i pełne rozwiązania.",
+    "length": "{size} {unit} · {minutes} min",
+    "offline": "Działa bez internetu",
+    "ai": "Z oceną AI, gdy jest włączona",
+    "start": "Wybierz poziom i zacznij",
+    "soon": "Wkrótce",
+    "history": "Historia sesji"
+  },
+  "kinds": {
+    "mental_math": {
+      "title": "Liczenie w pamięci",
+      "description": "80 działań w 8 minut: dodawanie, mnożenie, dzielenie, procenty i ułamki. Wynik liczony od razu, z rekordem osobistym.",
+      "unit": "działań"
+    },
+    "market_making": {
+      "title": "Market making",
+      "description": "Wystawiasz cenę kupna i sprzedaży nieznanej wielkości, na przykład sumy trzech kostek. Trader handluje z Tobą, a Ty widzisz wynik i rachunek wartości oczekiwanej.",
+      "unit": "rund"
+    },
+    "probability_sprint": {
+      "title": "Sprint z prawdopodobieństwa",
+      "description": "10 zadań w 20 minut, sprawdzanych od razu.",
+      "unit": "zadań"
+    },
+    "brainteasers": {
+      "title": "Łamigłówki",
+      "description": "Zadania otwarte z podpowiedziami, jak na rozmowie.",
+      "unit": "zadania"
+    },
+    "open_modelling": {
+      "title": "Pytanie o modelowanie",
+      "description": "Na przykład: jak sprawdzisz, czy ta strategia ma przewagę?",
+      "unit": "pytanie"
+    }
+  },
+  "setup": {
+    "level": "Poziom",
+    "levelN": "Poziom {level}",
+    "start": "Start",
+    "rulesMental": "Wpisz wynik i naciśnij Enter. Ułamki i procenty możesz wpisać jako 0,125, 1/8 albo 12,5%. Nie ma powrotu do poprzedniego działania.",
+    "rulesMarket": "W każdej rundzie podaj bid (po ile kupisz) i ask (po ile sprzedasz). Trader zna wartość mniej więcej i handluje, gdy Twoja cena mu się opłaca.",
+    "best": "Twój rekord na tym poziomie: {percent}%"
+  },
+  "timer": {
+    "left": "Zostało",
+    "oneMinute": "Została minuta.",
+    "tenSeconds": "Zostało 10 sekund."
+  },
+  "player": {
+    "question": "Działanie {n} z {total}",
+    "answer": "Wynik",
+    "next": "Dalej",
+    "finish": "Zakończ teraz",
+    "of": "z",
+    "asDecimal": "jako ułamek dziesiętny",
+    "unreadable": "Nie umiemy odczytać tej liczby."
+  },
+  "market": {
+    "round": "Runda {n} z {total}",
+    "bid": "Bid: po ile kupisz",
+    "ask": "Ask: po ile sprzedasz",
+    "quote": "Wystaw kwotowanie",
+    "crossed": "Bid musi być niższy niż ask.",
+    "invalid": "Wpisz dwie liczby.",
+    "bought": "Trader kupił od Ciebie po {price}.",
+    "sold": "Trader sprzedał Ci po {price}.",
+    "none": "Trader nie handlował: Twoja cena mu się nie opłacała.",
+    "truth": "Prawdziwa wartość: {value}.",
+    "pnl": "Wynik rundy (P&L): {pnl}",
+    "ev": "Wartość oczekiwana: {ev}, odchylenie standardowe: {sd}.",
+    "evInside": "Wartość oczekiwana mieści się w Twoim kwotowaniu (szerokość {width}).",
+    "evOutside": "Wartość oczekiwana leży poza Twoim kwotowaniem, więc trader z dobrą wiedzą będzie z Tobą wygrywał.",
+    "score": "Ocena kwotowania: {percent}%. P&L zależy od losowania, ocena tylko od ceny.",
+    "next": "Następna runda",
+    "scenarios": {
+      "three-dice": {
+        "name": "Suma trzech kostek",
+        "how": "Każda kostka ma średnio 3,5, więc suma trzech ma średnio 10,5."
+      },
+      "ten-coins": {
+        "name": "Liczba orłów w 10 rzutach monetą",
+        "how": "Każdy rzut daje orła z prawdopodobieństwem 1/2, więc średnio 10 · 1/2 = 5."
+      },
+      "max-two-dice": {
+        "name": "Większa z dwóch kostek",
+        "how": "P(max = k) = (2k − 1)/36, więc średnia to 161/36 ≈ 4,47."
+      },
+      "two-cards": {
+        "name": "Suma dwóch kart z dziesięciu (1–10), bez zwracania",
+        "how": "Każda karta ma średnio 5,5, więc suma dwóch ma średnio 11."
+      }
+    }
+  },
+  "score": {
+    "title": "Karta wyników",
+    "score": "Wynik: {percent}%",
+    "correct": "Poprawnie: {correct} z {total}",
+    "answered": "Odpowiedzi: {answered} z {total}",
+    "avg": "Średni czas na pytanie: {seconds} s",
+    "pnl": "Łączny P&L: {pnl}",
+    "review": "Do powtórki: {topics}",
+    "noReview": "Żaden temat nie wymaga powtórki.",
+    "best": "Nowy rekord osobisty na tym poziomie.",
+    "saved": "Zapisano w tej przeglądarce.",
+    "again": "Jeszcze raz",
+    "toHub": "Wszystkie sesje",
+    "history": "Historia",
+    "reviewTitle": "Przegląd odpowiedzi",
+    "yourAnswer": "Twoja odpowiedź: {given}",
+    "correctAnswer": "Poprawnie: {answer}",
+    "skipped": "bez odpowiedzi"
+  },
+  "topics": {
+    "add": "dodawanie",
+    "sub": "odejmowanie",
+    "mul": "mnożenie",
+    "div": "dzielenie",
+    "pct": "procenty",
+    "frac": "ułamki",
+    "three-dice": "suma kostek",
+    "ten-coins": "rzuty monetą",
+    "max-two-dice": "maksimum z kostek",
+    "two-cards": "karty bez zwracania"
+  },
+  "history": {
+    "title": "Historia sesji",
+    "lead": "Twoje sesje zapisane w tej przeglądarce i postęp w każdym typie.",
+    "empty": "Nie masz jeszcze żadnej sesji.",
+    "chartTitle": "{kind}: wynik kolejnych sesji",
+    "chartLabel": "{kind}: {count} sesji, ostatni wynik {last}%, najlepszy {best}%.",
+    "date": "Data",
+    "kind": "Typ",
+    "level": "Poziom",
+    "result": "Wynik",
+    "best": "rekord"
+  }
+}
