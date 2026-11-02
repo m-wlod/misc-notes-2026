@@ -23,7 +23,15 @@ export type PublicExercise = {
   hintCount: number;
   hasSolution: boolean;
   slider?: { min: number; max: number; step: number };
-  starter?: string;
+  /** Code exercises (Phase 13). Hidden tests are fetched only when checking. */
+  code?: {
+    starter: string;
+    examples: string;
+    dataset: string | null;
+    testCount: number;
+    /** A final number can be submitted without the code (bring your own tools). */
+    answerOnly: boolean;
+  };
 };
 
 type Locale = "pl" | "en";
@@ -81,6 +89,16 @@ export function publicView(ex: Exercise, variant: number, locale: Locale): Publi
     ...(ex.type === "interactive"
       ? { slider: { min: num("min", 0), max: num("max", 100), step: num("step", 1) } }
       : {}),
-    ...(ex.type === "code" ? { starter: ex.starter } : {}),
+    ...(ex.type === "code"
+      ? {
+          code: {
+            starter: ex.starter,
+            examples: ex.examples,
+            dataset: ex.dataset ?? null,
+            testCount: ex.tests.length,
+            answerOnly: ex.answer !== undefined,
+          },
+        }
+      : {}),
   };
 }

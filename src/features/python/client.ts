@@ -24,6 +24,7 @@ type Job = {
   id: number;
   code: string;
   ns: string;
+  fresh: boolean;
   timeoutMs: number;
   emit: (ev: OutputEvent) => void;
   resolve: () => void;
@@ -71,7 +72,15 @@ class PythonRuntime {
   }
   private lang: "pl" | "en" = "pl";
 
-  run(code: string, opts: { ns?: string; timeoutMs?: number; emit: (ev: OutputEvent) => void }) {
+  run(
+    code: string,
+    opts: {
+      ns?: string;
+      fresh?: boolean;
+      timeoutMs?: number;
+      emit: (ev: OutputEvent) => void;
+    },
+  ) {
     const id = this.nextId++;
     return {
       id,
@@ -80,6 +89,7 @@ class PythonRuntime {
           id,
           code,
           ns: opts.ns ?? "main",
+          fresh: opts.fresh ?? false,
           timeoutMs: opts.timeoutMs ?? DEFAULT_TIMEOUT_MS,
           emit: opts.emit,
           resolve,
@@ -146,6 +156,7 @@ class PythonRuntime {
       id: job.id,
       code: job.code,
       ns: job.ns,
+      fresh: job.fresh,
     } satisfies ToWorker);
   }
 

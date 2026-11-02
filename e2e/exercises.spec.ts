@@ -154,13 +154,15 @@ test("the answer is not in the page before submitting", async ({ page }) => {
   ).not.toEqual(["b", "a", "c"]);
 });
 
-test("code exercises render with an honest note and no grading yet", async ({ page }) => {
+test("code exercises show an editor with the starter and a check button", async ({ page }) => {
   await open(page, "przyklad-kod");
-  await expect(page.getByLabel("Kod")).toHaveValue(/def double\(x\):/);
-  await expect(
-    page.getByText("Uruchamianie i sprawdzanie kodu pojawi się razem z Laboratorium."),
-  ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Sprawdź" })).toHaveCount(0);
+  // Running and grading code is covered in python.spec.ts (it needs Pyodide).
+  await expect(page.locator("[data-code-exercise] .cm-content")).toContainText("def double(x):", {
+    timeout: 15_000,
+  });
+  await expect(page.getByRole("button", { name: "Sprawdź (2 testy)" })).toBeVisible();
+  // No final number and no dataset: no "bring your own tools" section.
+  await expect(page.getByText("Wolisz własne narzędzia?")).toHaveCount(0);
 });
 
 test.describe("open answers (Phase 10, AI switched off)", () => {

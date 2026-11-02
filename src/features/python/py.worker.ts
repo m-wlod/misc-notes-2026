@@ -92,8 +92,9 @@ async function boot(origin: string, lang: "pl" | "en"): Promise<PyodideAPI> {
 /** Packages a cell needs beyond what its imports show (qla.load reads CSVs with pandas). */
 const extraPackages = (code: string) => (/\b(?:qla\.)?load\s*\(/.test(code) ? ["pandas"] : []);
 
-async function run(py: PyodideAPI, id: number, code: string, ns: string) {
+async function run(py: PyodideAPI, id: number, code: string, ns: string, fresh: boolean) {
   current = id;
+  if (fresh) (global(py, "_reset") as (n: string) => void)(ns);
   if (usesMatplotlib(code)) {
     post({ type: "refused", id, reason: "matplotlib" });
     return;
@@ -143,7 +144,7 @@ self.onmessage = (e: MessageEvent<ToWorker>) => {
       return;
     }
     try {
-      await run(py, msg.id, msg.code, msg.ns);
+      await run(py, msg.id, msg.code, msg.ns, msg.fresh ?? false);
     } catch (err) {
       post({
         type: "done",

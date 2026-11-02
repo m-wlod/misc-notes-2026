@@ -10,10 +10,10 @@ import { OpenPanel } from "@/features/ai-grading/open-panel";
 import { cx } from "@/lib/cx";
 
 import { getHint, revealSolution, submitAttempt } from "./actions";
+import { CodeExercise } from "./code-exercise";
 import type { Result, Submission } from "./grade";
 import {
   ChoiceAnswer,
-  CodeView,
   ExpressionAnswer,
   MultiAnswer,
   NumberAnswer,
@@ -234,6 +234,26 @@ export function ExerciseCard({
         </div>
       ) : null}
 
+      {view.code ? (
+        <div className="mb-4">
+          <CodeExercise
+            view={{ ...view, code: view.code }}
+            lang={lang}
+            locked={locked}
+            meta={() => ({
+              hintsUsed: hints.length,
+              timeMs: Math.max(0, Date.now() - startedAt.current),
+            })}
+            onFailure={setFailure}
+            onGraded={(g) => {
+              setFailure(null);
+              setResult({ result: g.result, score: g.score });
+              recordAttempt({ exerciseId: view.id, score: g.score, answer: g.answer });
+            }}
+          />
+        </div>
+      ) : null}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -275,8 +295,6 @@ export function ExerciseCard({
             onChange={setOrder}
             disabled={locked}
           />
-        ) : view.type === "code" ? (
-          <CodeView starter={view.starter ?? ""} />
         ) : null}
 
         <div className="flex flex-wrap items-center gap-2">

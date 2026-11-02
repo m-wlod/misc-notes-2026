@@ -254,3 +254,118 @@ for (const theme of ["light", "dark"] as const) {
     await axe(page);
   });
 }
+
+test.describe("code exercises (13b)", () => {
+  // Grading is rate-limited per client IP: each test is its own client. (Set only here:
+  // on CDN requests the extra header would trigger a CORS preflight.)
+  test.beforeEach(async ({ page }) => {
+    const ip = `10.1.${String(Math.floor(Math.random() * 250))}.${String(Math.floor(Math.random() * 250))}`;
+    await page.setExtraHTTPHeaders({ "x-forwarded-for": ip });
+  });
+
+  const PANDAS = "/pl/praktyka/przyklad-kod-pandas";
+  const right = [
+    "import pandas as pd",
+    "",
+    "def mean_return(df):",
+    '    return df["close"].pct_change().dropna().mean()',
+  ].join("\n");
+  // Counts the first day as a zero return: fails the "skip the first day" tests.
+  const wrong = [
+    "import pandas as pd",
+    "",
+    "def mean_return(df):",
+    '    return df["close"].pct_change().fillna(0).mean()',
+  ].join("\n");
+
+  async function openExercise(page: Page) {
+    await page.goto(PANDAS);
+    const ex = page.locator("[data-code-exercise]");
+    await expect(ex.locator(".cm-content")).toContainText("def mean_return(df):", {
+      timeout: 15_000,
+    });
+    return ex;
+  }
+
+  test("hidden tests and the solution are not in the page", async ({ page }) => {
+    const html = await (await page.request.get(PANDAS)).text();
+    expect(html).toContain("mean_return");
+    expect(html).not.toContain("Pierwszy dzień nie ma zwrotu");
+    expect(html).not.toContain("dropna().mean()");
+    expect(html).not.toContain("0.0007553732608239094");
+  });
+
+  test("a correct pandas solution passes every hidden test and grades correct", async ({
+    page,
+  }, info) => {
+    desktopOnly(info.project.name);
+    test.setTimeout(LOAD * 2);
+    const ex = await openExercise(page);
+    await setEditor(page, ex, right);
+    await ex.getByRole("button", { name: "Sprawdź (3 testy)" }).click();
+    await expect(ex.locator("[data-test-result='pass']")).toHaveCount(3, { timeout: LOAD });
+    await expect(page.getByText("Dobrze!", { exact: true })).toBeVisible();
+    await axe(page);
+  });
+
+  test("a wrong solution fails the right tests with their messages", async ({ page }, info) => {
+    desktopOnly(info.project.name);
+    test.setTimeout(LOAD * 2);
+    await page.addInitScript(
+      ([key, value]) => {
+        window.localStorage.setItem(key, value);
+      },
+      [THEME_STORAGE_KEY, "dark"] as const,
+    );
+    const ex = await openExercise(page);
+    await setEditor(page, ex, wrong);
+    await ex.getByRole("button", { name: "Sprawdź (3 testy)" }).click();
+    await expect(ex.locator("[data-test-result]")).toHaveCount(3, { timeout: LOAD });
+    await expect(ex.locator("[data-test-result='fail']")).toHaveCount(2);
+    await expect(
+      ex.getByText("Pierwszy dzień nie ma zwrotu: pomiń go, zamiast liczyć jako zero."),
+    ).toBeVisible();
+    await expect(page.getByText("Dobrze!", { exact: true })).toHaveCount(0);
+    await expect(page.getByText(/^Częściowo dobrze/)).toBeVisible();
+    await axe(page); // dark theme, with failed tests listed
+  });
+
+  test("code that doesn't run stops before the tests, with its error", async ({ page }, info) => {
+    desktopOnly(info.project.name);
+    test.setTimeout(LOAD * 2);
+    const ex = await openExercise(page);
+    await setEditor(page, ex, "df = undefined_name");
+    await ex.getByRole("button", { name: "Sprawdź (3 testy)" }).click();
+    await expect(ex.locator("[data-setup-error]")).toContainText(
+      "NameError: name 'undefined_name' is not defined",
+      { timeout: LOAD },
+    );
+    await expect(ex.locator("[data-test-result]")).toHaveCount(0);
+  });
+
+  test("mobile: the code exercise fits the screen", async ({ page }, info) => {
+    test.skip(info.project.name !== "mobile", "mobile layout");
+    await openExercise(page);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+
+  test("bring your own tools: download the CSV, submit only the number", async ({ page }) => {
+    const ex = await openExercise(page);
+    await expect(ex.locator("[data-dataset-link]")).toHaveAttribute(
+      "href",
+      "/datasets/ceny-gbm.csv",
+    );
+    const answer = ex.getByRole("textbox", { name: /odpowied/i });
+    await answer.fill("0,0009");
+    await ex.getByRole("button", { name: "Wyślij tylko wynik" }).click();
+    await expect(page.getByText("Jeszcze nie.", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Spróbuj ponownie" }).click();
+    await answer.fill("0,00075537326");
+    await ex.getByLabel("Twój kod (opcjonalnie, do wglądu)").fill("df.close.pct_change().mean()");
+    await ex.getByRole("button", { name: "Wyślij tylko wynik" }).click();
+    await expect(page.getByText("Dobrze!", { exact: true })).toBeVisible();
+  });
+});

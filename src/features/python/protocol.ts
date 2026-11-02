@@ -21,7 +21,8 @@ export type LoadStage = "runtime" | "ready" | "packages";
 
 export type ToWorker =
   | { type: "init"; origin: string; lang: "pl" | "en" }
-  | { type: "run"; id: number; code: string; ns: string }
+  /** `fresh`: clear the namespace first (code exercise tests start clean). */
+  | { type: "run"; id: number; code: string; ns: string; fresh?: boolean }
   | { type: "reset"; ns: string };
 
 export type FromWorker =

@@ -77,7 +77,43 @@ describe("grade", () => {
 
   it("refuses the wrong kind of answer and ungradable types", () => {
     expect(grade(ex("przyklad-wybor"), 0, text("b"))).toEqual({ ok: false, reason: "wrong-kind" });
+    // A code exercise without a final number can't be graded from typed text.
     expect(grade(ex("przyklad-kod"), 0, text("x"))).toEqual({ ok: false, reason: "not-gradable" });
+    expect(grade(ex("przyklad-kod"), 0, { kind: "choice", value: "a" })).toEqual({
+      ok: false,
+      reason: "wrong-kind",
+    });
+  });
+
+  it("code: all tests and the server's own number check for full marks", () => {
+    const e = ex("przyklad-kod-pandas");
+    const code = (passed: number, value: number | null, total = 3) => ({
+      kind: "code" as const,
+      passed,
+      total,
+      value,
+    });
+    const right = 0.0007553732608239094;
+    expect(grade(e, 0, code(3, right))).toMatchObject({ result: "correct", score: 1 });
+    expect(grade(e, 0, code(3, right + 1e-12))).toMatchObject({ result: "correct" });
+    // Forged test counts with a wrong or missing number: never full marks.
+    expect(grade(e, 0, code(3, 0.01))).toMatchObject({ result: "partial", score: 0.5 });
+    expect(grade(e, 0, code(3, null))).toMatchObject({ result: "partial", score: 0.5 });
+    expect(grade(e, 0, code(1, right))).toMatchObject({ result: "partial" });
+    expect(grade(e, 0, code(0, null))).toMatchObject({ result: "wrong", score: 0 });
+    // The test count must match the exercise.
+    expect(grade(e, 0, code(2, right, 2))).toEqual({ ok: false, reason: "unreadable" });
+    expect(grade(e, 0, code(4, right))).toEqual({ ok: false, reason: "unreadable" });
+    // Without a number to check, passing every test is enough.
+    expect(grade(ex("przyklad-kod"), 0, code(2, null, 2))).toMatchObject({ result: "correct" });
+  });
+
+  it("code: submit only the final number (Polish decimal comma too)", () => {
+    const e = ex("przyklad-kod-pandas");
+    expect(grade(e, 0, text("0.0007553732608239094"))).toMatchObject({ result: "correct" });
+    expect(grade(e, 0, text("0,0007553732608239094"))).toMatchObject({ result: "correct" });
+    expect(grade(e, 0, text("0,00076"))).toMatchObject({ result: "wrong" });
+    expect(grade(e, 0, text("0,076%"))).toEqual({ ok: false, reason: "percent-not-allowed" });
   });
 });
 
@@ -91,7 +127,11 @@ describe("publicView", () => {
     }
     for (const h of e.hints) expect(json).not.toContain(h.pl);
     if (e.solution) expect(json).not.toContain(e.solution.pl);
-    if ("tests" in e) expect(json).not.toContain(e.tests);
+    if (e.type === "code") {
+      for (const t of e.tests) expect(json).not.toContain(t.code.trim());
+      expect(json).not.toContain(e.solutionCode.trim());
+      expect(json).not.toContain("answerExpr");
+    }
     if (e.verify) expect(json).not.toContain(e.verify.trim());
     expect(view.hintCount).toBe(e.hints.length);
   });

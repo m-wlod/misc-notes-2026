@@ -58,8 +58,24 @@
     "drag": "Przeciągnij elementy albo użyj przycisków ze strzałkami."
   },
   "code": {
-    "label": "Kod",
-    "soon": "Uruchamianie i sprawdzanie kodu pojawi się razem z Laboratorium."
+    "label": "Twój kod",
+    "runExamples": "Uruchom przykłady",
+    "examples": "Przykładowe testy (widoczne)",
+    "check": "Sprawdź ({count, plural, one {# test} few {# testy} other {# testów}})",
+    "checking": "Sprawdzanie…",
+    "progress": "Testy: {done} z {total}",
+    "setupError": "Kod nie uruchomił się, więc testy nie ruszyły. Popraw błąd poniżej:",
+    "pass": "Test {n}: zaliczony",
+    "fail": "Test {n}: niezaliczony",
+    "testTimeout": "Test przekroczył limit czasu (pętla bez końca?).",
+    "byo": {
+      "title": "Wolisz własne narzędzia?",
+      "lead": "Rozwiąż zadanie w Jupyterze, R, Excelu albo czymkolwiek innym i wpisz sam wynik.",
+      "download": "Pobierz dane ({name}.csv)",
+      "ownCode": "Twój kod (opcjonalnie, do wglądu)",
+      "ownCodeNote": "Zapisuje się tylko w tej przeglądarce, razem z próbą. Nie jest oceniany.",
+      "submit": "Wyślij tylko wynik"
+    }
   },
   "open": {
     "label": "Twoja odpowiedź",

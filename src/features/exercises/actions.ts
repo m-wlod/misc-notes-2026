@@ -26,6 +26,12 @@ const submission = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("choice"), value: id }),
   z.object({ kind: z.literal("multi"), values: z.array(id).max(50) }),
   z.object({ kind: z.literal("order"), values: z.array(id).max(50) }),
+  z.object({
+    kind: z.literal("code"),
+    passed: z.number().int().min(0).max(100),
+    total: z.number().int().min(1).max(100),
+    value: z.number().nullable(),
+  }),
 ]);
 
 type Failure = {
@@ -145,4 +151,34 @@ export async function revealSolution(
   const lang = parsed.data.locale;
   const text = lang === "en" ? (ex.solution.en ?? ex.solution.pl) : ex.solution.pl;
   return { ok: true, html: exerciseHtml(text, variantOf(ex, parsed.data.variant).params, lang) };
+}
+
+/**
+ * The hidden tests of a code exercise (Phase 13), sent only when the learner checks
+ * their code: they run in the browser, so they can be read once sent. The grade still
+ * needs the server's own check of the computed number (see gradeCode).
+ */
+export async function getCodeTests(input: unknown): Promise<
+  | {
+      ok: true;
+      tests: { code: string; message: string }[];
+      answerExpr: string | null;
+    }
+  | Failure
+> {
+  const parsed = z.object({ exerciseId: id, locale: z.enum(["pl", "en"]) }).safeParse(input);
+  if (!parsed.success) return { ok: false, reason: "invalid" };
+  if (!(await exerciseLimiter.hit((await caller()).key)))
+    return { ok: false, reason: "rate-limited" };
+  const ex = getExercise(parsed.data.exerciseId, internal());
+  if (ex?.type !== "code") return { ok: false, reason: "not-found" };
+  const lang = parsed.data.locale;
+  return {
+    ok: true,
+    tests: ex.tests.map((t) => ({
+      code: t.code,
+      message: lang === "en" ? (t.message.en ?? t.message.pl) : t.message.pl,
+    })),
+    answerExpr: ex.answerExpr ?? null,
+  };
 }

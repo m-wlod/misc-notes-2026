@@ -35,7 +35,7 @@ describe("parseFilters", () => {
 describe("applyFilters", () => {
   it("filters by level, type, topic, lesson and track", () => {
     expect(applyFilters(all, {}, trackOf)).toHaveLength(all.length);
-    expect(applyFilters(all, { level: 2 }, trackOf).map((e) => e.level)).toEqual([2, 2, 2]);
+    expect(applyFilters(all, { level: 2 }, trackOf).map((e) => e.level)).toEqual([2, 2, 2, 2]);
     expect(applyFilters(all, { type: "choice" }, trackOf).map((e) => e.id)).toEqual([
       "przyklad-wybor",
     ]);

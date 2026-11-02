@@ -49,22 +49,31 @@ export type Runner = (program: string) => RunResult;
 export const PYTHON = process.platform === "win32" ? "python" : "python3";
 
 /** Runs a program with real Python: `-I` (isolated: no user site, no cwd on sys.path). */
-export const pythonRunner: Runner = (program) => {
-  const r = spawnSync(PYTHON, ["-I", "-c", program], { encoding: "utf8", timeout: TIMEOUT_MS });
+export const pythonRunner: Runner = (program) => runPython(["-I"], program, TIMEOUT_MS);
+
+/**
+ * For code exercises, which need numpy and pandas: `-E -P` keeps environment variables
+ * and the current directory out, but allows user site-packages (`pip install --user`).
+ * pandas is slow to import, hence the longer limit.
+ */
+export const pythonWithPackagesRunner: Runner = (program) =>
+  runPython(["-E", "-P"], program, TIMEOUT_MS * 3);
+
+function runPython(flags: string[], program: string, timeout: number) {
+  const r = spawnSync(PYTHON, [...flags, "-c", program], { encoding: "utf8", timeout });
   if (r.error) {
     const code = (r.error as NodeJS.ErrnoException).code;
     return {
-      ok: false,
-      error:
-        code === "ETIMEDOUT" ? `timed out after ${String(TIMEOUT_MS / 1000)} s` : r.error.message,
+      ok: false as const,
+      error: code === "ETIMEDOUT" ? `timed out after ${String(timeout / 1000)} s` : r.error.message,
     };
   }
   if (r.status !== 0) {
     const last = r.stderr.trim().split("\n").at(-1) ?? "failed";
-    return { ok: false, error: `python error: ${last}` };
+    return { ok: false as const, error: `python error: ${last}` };
   }
-  return { ok: true, stdout: r.stdout };
-};
+  return { ok: true as const, stdout: r.stdout };
+}
 
 /** Randomness without a fixed seed would make the stored answer unverifiable. */
 export function unseededRandomness(ex: Exercise): boolean {
@@ -144,7 +153,7 @@ export function verifyExercises(
   return { checked, errors };
 }
 
-type Numeric = Extract<Exercise, { tolerance: number }>;
+type Numeric = Exclude<Extract<Exercise, { tolerance: number }>, { type: "code" }>;
 const numeric = (p: Exercise["params"]) =>
   Object.fromEntries(
     Object.entries(p).filter((e): e is [string, number] => typeof e[1] === "number"),

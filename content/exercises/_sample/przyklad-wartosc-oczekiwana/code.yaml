@@ -13,9 +13,20 @@ prompt:
 starter: |
   def double(x):
       ...
-tests: |
-  assert double(2) == 4
-  assert double(-1.5) == -3
+examples: |
+  assert double(3) == 6
+tests:
+  - code: assert double(2) == 4
+    message:
+      pl: "double(2) powinno dać 4."
+      en: "double(2) should be 4."
+  - code: assert double(-1.5) == -3
+    message:
+      pl: "Liczby ujemne i ułamki też: double(-1,5) to -3."
+      en: "Negative numbers and fractions too: double(-1.5) is -3."
+solutionCode: |
+  def double(x):
+      return 2 * x
 hints:
   - pl: "Pomnóż argument przez 2."
     en: "Multiply the argument by 2."

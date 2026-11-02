@@ -1,14 +1,18 @@
 // pnpm content:verify [--root <content-root>]
-// Runs every exercise's Python `verify` block and compares it with the stored answer.
+// Runs every exercise's Python `verify` block and compares it with the stored answer, and
+// checks code exercises (reference solution passes, starter fails, answer matches).
 import { loadExercises } from "@/features/content/pipeline/load";
 import { PYTHON, verifyExercises } from "@/features/content/pipeline/verify";
+import { verifyCodeExercises } from "@/features/content/pipeline/verify-code";
 
 const rootFlag = process.argv.indexOf("--root");
 const root = rootFlag === -1 ? "content" : (process.argv[rootFlag + 1] ?? "content");
 
 const { exercises, errors: loadErrors } = loadExercises(root);
-const { checked, errors } = verifyExercises(exercises);
-const all = [...loadErrors, ...errors];
+const computed = verifyExercises(exercises);
+const code = verifyCodeExercises(exercises);
+const checked = computed.checked + code.checked;
+const all = [...loadErrors, ...computed.errors, ...code.errors];
 
 if (all.length > 0) {
   console.error(
