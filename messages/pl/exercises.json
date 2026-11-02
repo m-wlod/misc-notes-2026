@@ -37,7 +37,8 @@
     "invalid": "Tej odpowiedzi nie da się sprawdzić. Sprawdź, czy wszystko jest wypełnione.",
     "unreadable": "Nie umiemy odczytać tej odpowiedzi. Sprawdź zapis.",
     "not-gradable": "Tego typu zadań jeszcze nie oceniamy.",
-    "network": "Nie udało się połączyć. Spróbuj ponownie."
+    "network": "Nie udało się połączyć. Spróbuj ponownie.",
+    "percent-not-allowed": "Tu wpisz liczbę, nie procent."
   },
   "expression": {
     "label": "Wyrażenie",

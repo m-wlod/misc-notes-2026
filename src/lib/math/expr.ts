@@ -290,26 +290,42 @@ function rng(seed: number) {
 }
 
 /**
- * Are two expressions the same function? Evaluated at `points` seeded random points in
- * [0.3, 2.3] (avoids 0 and negatives for ln/sqrt) with a relative tolerance.
+ * Are two expressions the same function? Both are evaluated at `points` seeded random
+ * points in [0.3, 2.3] (positive, so ln and sqrt are defined) with a relative tolerance.
+ * `fixed` pins some names (exercise params) to values. Points where either side is
+ * undefined (NaN, ±∞) are skipped; at least `minValid` must be compared.
  */
-export function equivalent(a: Expr, b: Expr, points = 7, tol = 1e-7): boolean {
-  const names = [...new Set([...variables(a), ...variables(b)])];
+export function equivalent(
+  a: Expr,
+  b: Expr,
+  {
+    points = 12,
+    minValid = 6,
+    tol = 1e-7,
+    fixed = {},
+  }: {
+    points?: number;
+    minValid?: number;
+    tol?: number;
+    fixed?: Readonly<Record<string, number>>;
+  } = {},
+): boolean {
+  const names = [...new Set([...variables(a), ...variables(b)])].filter((n) => !(n in fixed));
   const next = rng(20261102);
   let compared = 0;
   for (let i = 0; i < points * 3 && compared < points; i++) {
-    const vars = Object.fromEntries(names.map((n) => [n, 0.3 + 2 * next()]));
+    const vars = { ...Object.fromEntries(names.map((n) => [n, 0.3 + 2 * next()])), ...fixed };
     let x: number;
     let y: number;
     try {
       x = evaluate(a, vars);
       y = evaluate(b, vars);
     } catch {
-      return false;
+      return false; // an unknown name: not the same expression
     }
     if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
     compared++;
     if (Math.abs(x - y) > tol * Math.max(1, Math.abs(x), Math.abs(y))) return false;
   }
-  return compared > 0;
+  return compared >= Math.min(minValid, points);
 }

@@ -5,6 +5,7 @@ import createMiddleware from "next-intl/middleware";
 import { isInternalPath, isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import { curriculumRoute } from "@/features/curriculum/slug-redirect";
+import { LEARNER_COOKIE } from "@/features/grading/random";
 import { routing } from "@/i18n/routing";
 
 const handleI18nRouting = createMiddleware(routing);
@@ -18,6 +19,8 @@ const handleI18nRouting = createMiddleware(routing);
  *    unknown ones get the 404 page with a real 404 status.
  * 2b. Locale routing (next-intl): prefix-less URLs redirect to /pl or /en using the
  *    NEXT_LOCALE cookie, then Accept-Language, then Polish.
+ * 2c. Learner id for randomised exercises (qla_sid): random bytes, httpOnly, one year.
+ *    It only seeds exercise numbers; it identifies no one.
  * 3. Supabase session refresh: keeps the auth cookie fresh. It makes no access
  *    decisions; pages and server actions check the user themselves.
  */
@@ -35,6 +38,15 @@ export async function proxy(request: NextRequest) {
   if (route) return NextResponse.redirect(new URL(route.redirect, request.url), 308);
 
   const response = handleI18nRouting(request);
+  if (!request.cookies.has(LEARNER_COOKIE)) {
+    response.cookies.set(LEARNER_COOKIE, crypto.randomUUID(), {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: request.nextUrl.protocol === "https:",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+    });
+  }
   await refreshSupabaseSession(request, response);
   return response;
 }

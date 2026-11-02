@@ -29,10 +29,11 @@ describe("grade", () => {
     expect(variantOf(e, 2).params).toMatchObject({ a: 10, b: 15 });
   });
 
-  it("estimation: partial credit by orders of magnitude", () => {
+  it("estimation: bands by orders of magnitude (Phase 9)", () => {
     const e = ex("przyklad-szacowanie");
     expect(grade(e, 0, text("86400"))).toMatchObject({ result: "correct", score: 1 });
-    expect(grade(e, 0, text("100000"))).toMatchObject({ result: "partial", score: 0.94 });
+    expect(grade(e, 0, text("100000"))).toMatchObject({ result: "correct", score: 1 }); // within 2×
+    expect(grade(e, 0, text("432000"))).toMatchObject({ result: "partial", score: 0.5 }); // 5×
     expect(grade(e, 0, text("1000"))).toMatchObject({ result: "wrong", score: 0 });
     expect(grade(e, 0, text("-86400"))).toMatchObject({ result: "wrong" });
   });
@@ -67,9 +68,10 @@ describe("grade", () => {
     expect(grade(order, 0, { kind: "order", values: ["b", "a", "c"] })).toMatchObject({
       score: 1,
     });
+    // Kendall: one of three pairs out of order.
     expect(grade(order, 0, { kind: "order", values: ["a", "b", "c"] })).toMatchObject({
       result: "partial",
-      score: 0.5,
+      score: 2 / 3,
     });
   });
 

@@ -1,0 +1,34 @@
+# SAMPLE (Phase 9): demonstrates random params, a formula and a common mistake. Not course content.
+id: przyklad-losowe
+type: numeric
+level: 1
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 1
+status: draft
+sample: true
+prompt:
+  pl: 'Przykład: kwota ${k}$ zł rośnie o ${r}\%$. Ile wynosi po wzroście?'
+  en: 'Sample: an amount of ${k}$ PLN grows by ${r}\%$. What is it after the growth?'
+params: { k: 200, r: 5 }
+answer: 210
+tolerance: 0.005
+unit: number
+random:
+  params:
+    k: { min: 100, max: 1000, step: 50 }
+    r: { choices: [2, 5, 10, 20] }
+  formula: "k * (1 + r / 100)"
+mistakes:
+  - answer: "k * r / 100"
+    feedback:
+      pl: "To sam wzrost. Dodaj go do kwoty początkowej."
+      en: "That is the growth alone. Add it to the starting amount."
+hints:
+  - pl: 'Wzrost to ${r}\%$ kwoty ${k}$.'
+    en: 'The growth is ${r}\%$ of ${k}$.'
+solution:
+  pl: '$${k} \cdot (1 + {r}/100)$$'
+  en: '$${k} \cdot (1 + {r}/100)$$'
+verify: |
+  result = k * (1 + r / 100)

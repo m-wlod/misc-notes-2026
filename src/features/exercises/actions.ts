@@ -30,7 +30,13 @@ const submission = z.discriminatedUnion("kind", [
 
 type Failure = {
   ok: false;
-  reason: "rate-limited" | "not-found" | "invalid" | "unreadable" | "not-gradable";
+  reason:
+    | "rate-limited"
+    | "not-found"
+    | "invalid"
+    | "unreadable"
+    | "not-gradable"
+    | "percent-not-allowed";
 };
 
 async function caller(): Promise<{ key: string; userId: string | null }> {
@@ -41,16 +47,20 @@ async function caller(): Promise<{ key: string; userId: string | null }> {
   return { key: `ip:${ip}`, userId: null };
 }
 
+/** A version is a variant index or, for random exercises, a uint32 seed. */
+const VERSION_MAX = 0xffff_ffff;
+
 const internal = () => isStyleguideEnabled(env);
 
 export async function submitAttempt(
   input: unknown,
-): Promise<{ ok: true; result: Result; score: number } | Failure> {
+): Promise<{ ok: true; result: Result; score: number; feedback?: string } | Failure> {
   const parsed = z
     .object({
       exerciseId: id,
-      variant: z.number().int().min(0).max(100),
+      variant: z.number().int().min(0).max(VERSION_MAX),
       submission,
+      locale: z.enum(["pl", "en"]).default("pl"),
       hintsUsed: z.number().int().min(0).max(20),
       timeMs: z.number().int().min(0).max(86_400_000),
     })
@@ -81,14 +91,25 @@ export async function submitAttempt(
       source: "app",
     });
   }
-  return { ok: true, result: graded.result, score: graded.score };
+  const mistake =
+    graded.mistake !== undefined && "mistakes" in ex ? ex.mistakes[graded.mistake] : undefined;
+  if (!mistake) return { ok: true, result: graded.result, score: graded.score };
+  // A known mistake: targeted feedback, rendered here like hints.
+  const lang = parsed.data.locale;
+  const text = lang === "en" ? (mistake.feedback.en ?? mistake.feedback.pl) : mistake.feedback.pl;
+  return {
+    ok: true,
+    result: graded.result,
+    score: graded.score,
+    feedback: exerciseHtml(text, variantOf(ex, parsed.data.variant).params, lang),
+  };
 }
 
 export async function getHint(input: unknown): Promise<{ ok: true; html: string } | Failure> {
   const parsed = z
     .object({
       exerciseId: id,
-      variant: z.number().int().min(0).max(100),
+      variant: z.number().int().min(0).max(VERSION_MAX),
       index: z.number().int().min(0).max(20),
       locale: z.enum(["pl", "en"]),
     })
@@ -110,7 +131,7 @@ export async function revealSolution(
   const parsed = z
     .object({
       exerciseId: id,
-      variant: z.number().int().min(0).max(100),
+      variant: z.number().int().min(0).max(VERSION_MAX),
       locale: z.enum(["pl", "en"]),
     })
     .safeParse(input);

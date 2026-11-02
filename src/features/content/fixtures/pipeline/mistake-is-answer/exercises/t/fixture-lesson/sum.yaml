@@ -1,0 +1,23 @@
+# TEST FIXTURE for the content pipeline (Phase 9): a "mistake" equal to the answer. Not course content.
+id: sum
+type: numeric
+level: 1
+topics: [fixture]
+lessonIds: [fixture-lesson]
+prompt:
+  pl: "Zadanie testowe."
+params: {a: 2, b: 3}
+hints:
+  - pl: "Podpowiedź testowa."
+solution:
+  pl: "Rozwiązanie testowe."
+estimatedMinutes: 2
+status: draft
+answer: 5
+tolerance: 0
+mistakes:
+  - answer: "b + a"
+    feedback:
+      pl: "Informacja testowa."
+verify: |
+  result = a + b

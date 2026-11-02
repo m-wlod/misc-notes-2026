@@ -1,11 +1,23 @@
-import { equivalent, ExprError, parseExpr } from "@/lib/math/expr";
-import { parseLocaleNumber } from "@/lib/math/parse-number";
+import { formulaAnswer, paramsFor } from "@/features/grading/random";
+import {
+  closeEnough,
+  estimationScore,
+  multiScore,
+  orderingScore,
+  readNumber,
+  symbolicMatch,
+} from "@/features/grading/rules";
+import { evaluate, parseExpr } from "@/lib/math/expr";
 
 import type { Exercise } from "./schema";
 
 /**
- * Server-side grading, one rule per type. Pure: the server action loads the exercise,
- * picks the variant and calls this. Scores are 0–1; "partial" is anything in between.
+ * Server-side grading (Phase 8, rules from src/features/grading since Phase 9). Pure: the
+ * server action loads the exercise, picks the version and calls this. Scores are 0–1.
+ *
+ * A "version" is one number: for exercises with hand-written `variants` it is the index
+ * (0 = base); for exercises with `random` params it is the seed. The server always
+ * regenerates params and answer from it, so a client can't forge anything.
  */
 
 export type Submission =
@@ -17,94 +29,118 @@ export type Submission =
 
 export type Result = "correct" | "partial" | "wrong";
 export type Grade =
-  | { ok: true; score: number; result: Result }
-  | { ok: false; reason: "unreadable" | "wrong-kind" | "not-gradable" };
+  | { ok: true; score: number; result: Result; /** index into `mistakes` */ mistake?: number }
+  | { ok: false; reason: "unreadable" | "wrong-kind" | "not-gradable" | "percent-not-allowed" };
 
-/** The params and answer of one version of an exercise (0 = the base version). */
-export function variantOf(ex: Exercise, index: number) {
-  if (!("variants" in ex) || index <= 0 || index > ex.variants.length) {
+type Params = Record<string, number | string | boolean>;
+
+const numericParams = (p: Params) =>
+  Object.fromEntries(
+    Object.entries(p).filter((e): e is [string, number] => typeof e[1] === "number"),
+  );
+
+/** The params and answer of one version of an exercise. */
+export function variantOf(ex: Exercise, version: number) {
+  if ("random" in ex && ex.random) {
+    const seed = version >>> 0;
+    const params = { ...ex.params, ...paramsFor(ex.random, seed) };
+    return { params, answer: formulaAnswer(ex.random.formula, numericParams(params)), index: seed };
+  }
+  if (!("variants" in ex) || version <= 0 || version > ex.variants.length) {
     return { params: ex.params, answer: "answer" in ex ? ex.answer : undefined, index: 0 };
   }
-  const v = ex.variants[index - 1];
-  return { params: { ...ex.params, ...v?.params }, answer: v?.answer, index };
+  const v = ex.variants[version - 1];
+  return { params: { ...ex.params, ...v?.params }, answer: v?.answer, index: version };
 }
 
+/** Number of hand-written versions; 0 means unlimited (random params). */
 export function variantCount(ex: Exercise): number {
+  if ("random" in ex && ex.random) return 0;
   return "variants" in ex ? ex.variants.length + 1 : 1;
 }
 
 const resultOf = (score: number): Result =>
   score >= 1 ? "correct" : score > 0 ? "partial" : "wrong";
-const done = (score: number): Grade => {
+const done = (score: number, mistake?: number): Grade => {
   const s = Math.min(1, Math.max(0, score));
-  return { ok: true, score: s, result: resultOf(s) };
+  return mistake === undefined
+    ? { ok: true, score: s, result: resultOf(s) }
+    : { ok: true, score: s, result: resultOf(s), mistake };
 };
 
-export function grade(ex: Exercise, variant: number, sub: Submission): Grade {
-  const { answer } = variantOf(ex, variant);
+/** Which listed mistake (if any) a wrong numeric answer matches. */
+function numericMistake(
+  ex: Exercise,
+  values: readonly number[],
+  params: Params,
+): number | undefined {
+  if (!("mistakes" in ex) || !("tolerance" in ex)) return undefined;
+  const vars = numericParams(params);
+  const i = ex.mistakes.findIndex((m) => {
+    let target: number;
+    try {
+      target = typeof m.answer === "number" ? m.answer : evaluate(parseExpr(m.answer), vars);
+    } catch {
+      return false;
+    }
+    return values.some((v) => closeEnough(v, target, ex.tolerance, ex.relTolerance));
+  });
+  return i === -1 ? undefined : i;
+}
+
+export function grade(ex: Exercise, version: number, sub: Submission): Grade {
+  const { answer, params } = variantOf(ex, version);
   switch (ex.type) {
     case "numeric":
-    case "interactive": {
-      const value = readNumber(sub);
-      if (value === null)
-        return { ok: false, reason: sub.kind === "text" ? "unreadable" : "wrong-kind" };
-      return done(Math.abs(value - Number(answer)) <= ex.tolerance ? 1 : 0);
-    }
+    case "interactive":
     case "estimation": {
-      // Fermi scoring: full marks within tolerance, then 1 − |log10(x / answer)| (an
-      // order of magnitude off scores 0). Sign must match.
-      const value = readNumber(sub);
-      if (value === null)
-        return { ok: false, reason: sub.kind === "text" ? "unreadable" : "wrong-kind" };
+      let values: number[];
+      if (sub.kind === "number") values = [sub.value];
+      else if (sub.kind === "text") {
+        const read = readNumber(sub.value, ex.unit);
+        if (typeof read === "string") return { ok: false, reason: read };
+        values = read;
+      } else return { ok: false, reason: "wrong-kind" };
       const target = Number(answer);
-      if (Math.abs(value - target) <= ex.tolerance) return done(1);
-      if (value === 0 || Math.sign(value) !== Math.sign(target)) return done(0);
-      return done(Math.round((1 - Math.abs(Math.log10(value / target))) * 100) / 100);
+      const score =
+        ex.type === "estimation"
+          ? Math.max(
+              ...values.map((v) =>
+                closeEnough(v, target, ex.tolerance, ex.relTolerance)
+                  ? 1
+                  : estimationScore(v, target),
+              ),
+            )
+          : values.some((v) => closeEnough(v, target, ex.tolerance, ex.relTolerance))
+            ? 1
+            : 0;
+      return done(score, score < 1 ? numericMistake(ex, values, params) : undefined);
     }
     case "symbolic": {
       if (sub.kind !== "text") return { ok: false, reason: "wrong-kind" };
-      try {
-        return done(equivalent(parseExpr(sub.value), parseExpr(String(answer))) ? 1 : 0);
-      } catch (e) {
-        if (e instanceof ExprError) return { ok: false, reason: "unreadable" };
-        throw e;
-      }
+      const fixed = numericParams(params);
+      const match = symbolicMatch(sub.value, String(answer), fixed);
+      if (match === "unreadable") return { ok: false, reason: "unreadable" };
+      if (match) return done(1);
+      const i = ex.mistakes.findIndex(
+        (m) => symbolicMatch(sub.value, String(m.answer), fixed) === true,
+      );
+      return done(0, i === -1 ? undefined : i);
     }
     case "choice":
       if (sub.kind !== "choice") return { ok: false, reason: "wrong-kind" };
       return done(sub.value === ex.answer ? 1 : 0);
-    case "multi": {
+    case "multi":
       if (sub.kind !== "multi") return { ok: false, reason: "wrong-kind" };
-      const right = new Set(ex.answer);
-      const picked = new Set(sub.values);
-      const hits = [...picked].filter((v) => right.has(v)).length;
-      const misses = picked.size - hits;
-      return done((hits - misses) / right.size);
-    }
-    case "ordering": {
+      return done(multiScore(sub.values, ex.answer));
+    case "ordering":
       if (sub.kind !== "order") return { ok: false, reason: "wrong-kind" };
       if (sub.values.length !== ex.answer.length) return { ok: false, reason: "unreadable" };
-      // Share of neighbouring pairs in the right relative order.
-      const rank = new Map(ex.answer.map((id, i) => [id, i]));
-      let good = 0;
-      for (let i = 0; i < sub.values.length - 1; i++) {
-        const a = rank.get(sub.values[i] ?? "");
-        const b = rank.get(sub.values[i + 1] ?? "");
-        if (a !== undefined && b !== undefined && a < b) good++;
-      }
-      return done(good / (sub.values.length - 1));
-    }
+      return done(orderingScore(sub.values, ex.answer));
     case "code":
     case "open":
     case "brainteaser":
       // Code runs in the Lab sandbox (Phase 12); open answers are AI-graded (Phase 10).
       return { ok: false, reason: "not-gradable" };
   }
-}
-
-function readNumber(sub: Submission): number | null {
-  if (sub.kind === "number") return Number.isFinite(sub.value) ? sub.value : null;
-  if (sub.kind !== "text") return null;
-  const parsed = parseLocaleNumber(sub.value);
-  return parsed.ok ? parsed.value : null;
 }

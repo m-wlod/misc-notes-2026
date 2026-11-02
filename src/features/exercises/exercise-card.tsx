@@ -23,7 +23,14 @@ import {
 import { recordAttempt } from "./local-attempts";
 import type { PublicExercise } from "./view";
 
-type Failure = "rate-limited" | "not-found" | "invalid" | "unreadable" | "not-gradable" | "network";
+type Failure =
+  | "rate-limited"
+  | "not-found"
+  | "invalid"
+  | "unreadable"
+  | "not-gradable"
+  | "percent-not-allowed"
+  | "network";
 
 const GRADABLE = new Set([
   "numeric",
@@ -64,7 +71,11 @@ export function ExerciseCard({
   const [choice, setChoice] = useState("");
   const [multi, setMulti] = useState<string[]>([]);
   const [order, setOrder] = useState<string[]>(() => view.options.map((o) => o.id));
-  const [result, setResult] = useState<{ result: Result; score: number } | null>(null);
+  const [result, setResult] = useState<{
+    result: Result;
+    score: number;
+    feedback?: string | undefined;
+  } | null>(null);
   const [failure, setFailure] = useState<Failure | null>(null);
   const [hints, setHints] = useState<string[]>([]);
   const [solution, setSolution] = useState<string | null>(null);
@@ -105,6 +116,7 @@ export function ExerciseCard({
           exerciseId: view.id,
           variant: view.variant,
           submission: sub,
+          locale: lang,
           hintsUsed: hints.length,
           timeMs: Math.max(0, Date.now() - startedAt.current),
         });
@@ -112,7 +124,7 @@ export function ExerciseCard({
           setFailure(res.reason);
           return;
         }
-        setResult({ result: res.result, score: res.score });
+        setResult({ result: res.result, score: res.score, feedback: res.feedback });
         recordAttempt({ exerciseId: view.id, score: res.score, answer: sub });
       } catch {
         setFailure("network");
@@ -292,6 +304,13 @@ export function ExerciseCard({
                 ? t("result.partial", { percent: Math.round(result.score * 100) })
                 : t(`result.${result.result}`)}
             </p>
+            {result.feedback ? (
+              <p
+                className="mt-1 text-base"
+                data-testid="mistake-feedback"
+                dangerouslySetInnerHTML={{ __html: result.feedback }}
+              />
+            ) : null}
             <p className="font-sans text-xs text-ink-muted">{t("stored")}</p>
           </div>
         ) : null}
