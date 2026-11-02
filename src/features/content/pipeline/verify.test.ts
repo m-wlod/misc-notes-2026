@@ -38,6 +38,12 @@ describe("verifyExercises with real Python", { timeout: 60_000 }, () => {
     ["unseeded", /sim\.yaml: verify: uses randomness but params has no "seed"/],
     ["timeout", /loop\.yaml: verify: timed out after 10 s/],
     ["bad-variant", /sum\.yaml: verify \(variants\[1\]\): expected 3, got 2/],
+    // Phase 9: the TS formula vs Python verify on 100 seeds, named by seed and params.
+    [
+      "random-mismatch",
+      /grow\.yaml: random parity \(seed \d+, params \{"k":[5-9]00,"r":(10|20)\}\): formula gives [\d.]+, verify gives \d+/,
+    ],
+    ["mistake-is-answer", /sum\.yaml: mistakes\[0\]: equals the correct answer/],
   ])("%s fails with a readable message", (name, message) => {
     expect(verifyExercises(load(name).exercises).errors).toEqual([expect.stringMatching(message)]);
   });

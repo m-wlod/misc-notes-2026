@@ -1,0 +1,24 @@
+# TEST FIXTURE for the content pipeline (Phase 9): formula and verify disagree. Not course content.
+id: grow
+type: numeric
+level: 1
+topics: [fixture]
+lessonIds: [fixture-lesson]
+prompt:
+  pl: "Zadanie testowe."
+params: {k: 100, r: 10}
+hints:
+  - pl: "Podpowiedź testowa."
+solution:
+  pl: "Rozwiązanie testowe."
+estimatedMinutes: 2
+status: draft
+answer: 110
+tolerance: 0.001
+random:
+  params:
+    k: {min: 100, max: 1000, step: 100}
+    r: {choices: [10, 20]}
+  formula: "k * (1 + r / 100)"
+verify: |
+  result = k * (1 + r / 100) if k < 500 else k

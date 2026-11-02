@@ -1,6 +1,7 @@
 import "katex/dist/katex.min.css";
 
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
@@ -14,6 +15,7 @@ import { ExerciseCard } from "@/features/exercises/exercise-card";
 import { nextInSet, parseFilters, toQuery } from "@/features/exercises/filter";
 import { practiceSet } from "@/features/exercises/practice-set";
 import { publicView } from "@/features/exercises/view";
+import { LEARNER_COOKIE, seedFor } from "@/features/grading/random";
 import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 
@@ -56,18 +58,35 @@ async function Exercise({ params, searchParams }: Pick<Props, "params" | "search
   if (!ex) notFound();
 
   const search = await searchParams;
-  const v = Array.isArray(search.v) ? search.v[0] : search.v;
-  const requested = Number(v ?? 0);
-  const view = publicView(ex, Number.isInteger(requested) ? requested : 0, locale);
+  const one = (k: string) => {
+    const raw = search[k];
+    const n = Number(Array.isArray(raw) ? raw[0] : (raw ?? 0));
+    return Number.isSafeInteger(n) && n >= 0 ? n : 0;
+  };
   const filters = parseFilters(search);
   const query = toQuery(filters);
   const pageOf = (exercise: string) =>
     getPathname({ href: { pathname: "/practice/[exercise]", params: { exercise } }, locale });
-  // "Podobne zadanie": the next variant of this exercise.
-  const similarHref =
-    view.variants > 1
-      ? `${pageOf(id)}${toQuery(filters, { v: String((view.variant + 1) % view.variants) })}`
-      : null;
+
+  // Random params (Phase 9): attempt n of this learner gets its own seed; "Podobne
+  // zadanie" is n + 1. Hand-written variants keep ?v=. The server re-derives everything
+  // from the seed when grading, so a forged one only picks another valid version.
+  const random = "random" in ex && ex.random !== undefined;
+  let view;
+  let similarHref: string | null;
+  if (random) {
+    const n = one("n");
+    const learner = (await cookies()).get(LEARNER_COOKIE)?.value ?? "anon";
+    view = publicView(ex, seedFor(learner, id, n), locale);
+    similarHref = `${pageOf(id)}${toQuery(filters, { n: String(n + 1) })}`;
+  } else {
+    view = publicView(ex, one("v"), locale);
+    // "Podobne zadanie": the next variant of this exercise.
+    similarHref =
+      view.variants > 1
+        ? `${pageOf(id)}${toQuery(filters, { v: String((view.variant + 1) % view.variants) })}`
+        : null;
+  }
   // "Następne zadanie" (N): the next exercise in the set the learner came from.
   const next = nextInSet(practiceSet(filters, isStyleguideEnabled(env)), id);
   const nextHref = next ? `${pageOf(next.id)}${query}` : null;

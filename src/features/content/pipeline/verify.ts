@@ -1,6 +1,9 @@
 import { spawnSync } from "node:child_process";
 
 import type { Exercise } from "@/features/exercises/schema";
+import { formulaAnswer, paramsFor } from "@/features/grading/random";
+import { closeEnough, symbolicMatch } from "@/features/grading/rules";
+import { evaluate, parseExpr } from "@/lib/math/expr";
 
 import type { LoadedExercise } from "./load";
 
@@ -22,6 +25,21 @@ export function harness(verify: string, params: Exercise["params"]): string {
     "result = None",
     verify,
     `print(${JSON.stringify(MARK)} + __json.dumps(result))`,
+  ].join("\n");
+}
+
+/** Seeds per random exercise for the TS/Python parity check. */
+export const PARITY_SEEDS = 100;
+
+/** One Python process for many param sets: the block runs once per set, in a fresh scope. */
+export function batchHarness(verify: string, sets: readonly Exercise["params"][]): string {
+  return [
+    "import json as __json",
+    `__code = compile(${JSON.stringify(verify)}, "verify", "exec")`,
+    `for __p in __json.loads(${JSON.stringify(JSON.stringify(sets))}):`,
+    "    __g = dict(__p, params=__p, result=None)",
+    "    exec(__code, __g)",
+    `    print(${JSON.stringify(MARK)} + __json.dumps(__g["result"]))`,
   ].join("\n");
 }
 
@@ -117,6 +135,130 @@ export function verifyExercises(
       const mismatch = compare(ex, JSON.parse(line.slice(MARK.length)) as unknown);
       if (mismatch) errors.push(`${file}: verify${label}: ${mismatch}`);
     }
+    if ("random" in exercise && exercise.random) {
+      checked += 1;
+      errors.push(...randomParity(file, exercise, exercise.random, run));
+    }
   }
+  for (const { file, exercise } of exercises) errors.push(...mistakeErrors(file, exercise));
   return { checked, errors };
+}
+
+type Numeric = Extract<Exercise, { tolerance: number }>;
+const numeric = (p: Exercise["params"]) =>
+  Object.fromEntries(
+    Object.entries(p).filter((e): e is [string, number] => typeof e[1] === "number"),
+  );
+
+/**
+ * The TS formula (used for grading) and the Python verify must agree on PARITY_SEEDS
+ * seeds; the first disagreement names its seed and params.
+ */
+function randomParity(
+  file: string,
+  ex: Numeric,
+  spec: NonNullable<Numeric["random"]>,
+  run: Runner,
+): string[] {
+  if (!ex.verify) return [];
+  const sets = Array.from({ length: PARITY_SEEDS }, (_, seed) => ({
+    seed,
+    params: { ...ex.params, ...paramsFor(spec, seed) },
+  }));
+  const out = run(
+    batchHarness(
+      ex.verify,
+      sets.map((s) => s.params),
+    ),
+  );
+  if (!out.ok) return [`${file}: random parity: ${out.error}`];
+  const results = out.stdout
+    .split("\n")
+    .filter((l) => l.startsWith(MARK))
+    .map((l) => JSON.parse(l.slice(MARK.length)) as unknown);
+  if (results.length !== sets.length) {
+    return [
+      `${file}: random parity: python produced ${String(results.length)} of ${String(sets.length)} results`,
+    ];
+  }
+  for (const [i, { seed, params }] of sets.entries()) {
+    const py = results[i];
+    let ts: number;
+    try {
+      ts = formulaAnswer(spec.formula, numeric(params));
+    } catch (e) {
+      return [
+        `${file}: random parity (seed ${String(seed)}): formula: ${e instanceof Error ? e.message : String(e)}`,
+      ];
+    }
+    if (
+      typeof py !== "number" ||
+      !Number.isFinite(ts) ||
+      !closeEnough(ts, py, ex.tolerance, ex.relTolerance)
+    ) {
+      return [
+        `${file}: random parity (seed ${String(seed)}, params ${JSON.stringify(numeric(params))}): formula gives ${String(ts)}, verify gives ${JSON.stringify(py)}`,
+      ];
+    }
+  }
+  return [];
+}
+
+/** A listed mistake must never equal the correct answer (it would mark right as wrong). */
+function mistakeErrors(file: string, ex: Exercise): string[] {
+  if (!("mistakes" in ex) || ex.mistakes.length === 0) return [];
+  const errors: string[] = [];
+  if (ex.type === "symbolic") {
+    ex.mistakes.forEach((m, i) => {
+      try {
+        if (typeof m.answer === "string" && symbolicSame(m.answer, ex.answer, numeric(ex.params)))
+          errors.push(`${file}: mistakes[${String(i)}]: equals the correct answer`);
+      } catch {
+        /* parse errors are reported by the schema rules */
+      }
+    });
+    return errors;
+  }
+  if (!("tolerance" in ex)) return [];
+  // Every version a learner can get: the base, hand-written variants, random seeds.
+  const versions: { label: string; params: Exercise["params"]; answer: number }[] = [
+    { label: "", params: ex.params, answer: ex.answer },
+    ...ex.variants.map((v, i) => ({
+      label: ` (variants[${String(i)}])`,
+      params: { ...ex.params, ...v.params },
+      answer: v.answer,
+    })),
+  ];
+  if (ex.random) {
+    for (let seed = 0; seed < PARITY_SEEDS; seed++) {
+      const params = { ...ex.params, ...paramsFor(ex.random, seed) };
+      versions.push({
+        label: ` (seed ${String(seed)})`,
+        params,
+        answer: formulaAnswer(ex.random.formula, numeric(params)),
+      });
+    }
+  }
+  ex.mistakes.forEach((m, i) => {
+    for (const v of versions) {
+      let value: number;
+      try {
+        value =
+          typeof m.answer === "number"
+            ? m.answer
+            : evaluate(parseExpr(m.answer), numeric(v.params));
+      } catch {
+        return;
+      }
+      if (closeEnough(value, v.answer, ex.tolerance, ex.relTolerance)) {
+        errors.push(`${file}: mistakes[${String(i)}]${v.label}: equals the correct answer`);
+        return;
+      }
+    }
+  });
+  return errors;
+}
+
+function symbolicSame(a: string, b: string, fixed: Record<string, number>): boolean {
+  return symbolicMatch(a, b, fixed) === true;
 }

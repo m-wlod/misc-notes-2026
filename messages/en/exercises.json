@@ -37,7 +37,8 @@
     "invalid": "This answer can't be checked. Make sure everything is filled in.",
     "unreadable": "We can't read this answer. Check how it's written.",
     "not-gradable": "We don't grade this type of exercise yet.",
-    "network": "Couldn't connect. Please try again."
+    "network": "Couldn't connect. Please try again.",
+    "percent-not-allowed": "Enter a number here, not a percentage."
   },
   "expression": {
     "label": "Expression",

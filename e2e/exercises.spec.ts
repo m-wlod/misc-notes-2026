@@ -61,15 +61,15 @@ test("wrong answer → hint (H) → solution → similar exercise (N) → correc
   // N: the next exercise in the set (here: all exercises, by level then id).
   await page.waitForLoadState("networkidle");
   await page.locator("body").press("n");
-  await expect(page).toHaveURL(/\/pl\/praktyka\/przyklad-suwak$/, { timeout: 15_000 });
+  await expect(page).toHaveURL(/\/pl\/praktyka\/przyklad-losowe$/, { timeout: 15_000 });
 });
 
 test("every gradable type can be solved", async ({ page }) => {
   // numeric with a Polish decimal comma is covered above; here: the rest.
   await open(page, "przyklad-szacowanie");
-  await page.getByLabel("Twoja odpowiedź").fill("100000");
+  await page.getByLabel("Twoja odpowiedź").fill("432000");
   await page.getByRole("button", { name: "Sprawdź" }).click();
-  await expect(status(page)).toContainText("Częściowo dobrze (94%).");
+  await expect(status(page)).toContainText("Częściowo dobrze (50%).");
 
   await open(page, "przyklad-suwak");
   const slider = page.getByRole("slider", { name: "Wartość" });
@@ -99,7 +99,7 @@ test("every gradable type can be solved", async ({ page }) => {
   await page.getByRole("button", { name: "Sprawdź" }).click();
   await expect(status(page)).toContainText("Dobrze!");
 
-  expect((await attempts(page)).map((a) => a.score)).toEqual([0.94, 1, 1, 1, 0.5, 1]);
+  expect((await attempts(page)).map((a) => a.score)).toEqual([0.5, 1, 1, 1, 0.5, 1]);
 });
 
 test("ordering by keyboard, with each move announced", async ({ page }) => {
@@ -186,3 +186,56 @@ for (const theme of ["light", "dark"] as const) {
     ).toEqual([]);
   });
 }
+
+test.describe("random params (Phase 9)", () => {
+  const numbers = async (page: Page) => {
+    const parts = await page
+      .locator('article[data-exercise="przyklad-losowe"] .text-reading .katex-html')
+      .allInnerTexts();
+    const [k, r] = parts.map((p) => Number(p.replace(/[^\d.]/g, "")));
+    return { k: k ?? NaN, r: r ?? NaN };
+  };
+
+  test("each attempt has its own numbers and is graded on them", async ({ page }) => {
+    const bodies: string[] = [];
+    page.on("response", async (res) => {
+      const type = res.request().resourceType();
+      if (type === "document" || type === "fetch") bodies.push(await res.text().catch(() => ""));
+    });
+    await open(page, "przyklad-losowe");
+    const first = await numbers(page);
+    expect(first.k).toBeGreaterThanOrEqual(100);
+    // Neither the formula nor the answer for these numbers is shipped before submitting.
+    const answer = first.k * (1 + first.r / 100);
+    const all = bodies.join("\n") + (await page.content());
+    expect(all).not.toContain("1 + r / 100");
+    expect(all).not.toContain("Dodaj go do kwoty");
+
+    // The common mistake (the growth alone) gets targeted feedback.
+    await page
+      .getByLabel("Twoja odpowiedź")
+      .fill(String((first.k * first.r) / 100).replace(".", ","));
+    await page.getByRole("button", { name: "Sprawdź" }).click();
+    await expect(page.getByTestId("mistake-feedback")).toContainText("To sam wzrost.");
+    await page.getByRole("button", { name: "Spróbuj ponownie" }).click();
+    await page.getByLabel("Twoja odpowiedź").fill(String(answer).replace(".", ","));
+    await page.getByRole("button", { name: "Sprawdź" }).click();
+    await expect(status(page)).toContainText("Dobrze!");
+
+    // "Podobne zadanie" moves to the next attempt: new numbers, same learner cookie.
+    const seen = new Set([JSON.stringify(first)]);
+    for (let n = 1; n <= 3; n++) {
+      await page.goto(`/pl/praktyka/przyklad-losowe?n=${String(n)}`);
+      await expect(page.locator('article[data-exercise="przyklad-losowe"]')).toBeVisible();
+      seen.add(JSON.stringify(await numbers(page)));
+    }
+    expect(seen.size).toBeGreaterThan(1);
+    const cookies = await page.context().cookies();
+    expect(cookies.find((c) => c.name === "qla_sid")).toMatchObject({ httpOnly: true });
+  });
+});
+
+test("the calibration job is dormant without a database", async ({ request }) => {
+  const res = await request.get("/api/cron/calibrate");
+  expect([401, 503]).toContain(res.status());
+});

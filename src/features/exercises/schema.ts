@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { parseExpr } from "@/lib/math/expr";
+
 /**
  * Exercise files: `content/exercises/<track>/<lesson-id>/<exercise-id>.yaml`.
  * Phase 7 defines the format and the checks (schema, Python `verify`, QA); Phase 8 adds
@@ -50,10 +52,38 @@ const base = {
 
 const params = z.record(z.string(), z.union([z.number(), z.string(), z.boolean()]));
 
+/**
+ * A typical wrong answer and the feedback it deserves (Phase 9). `answer` is a number or
+ * an expression in our expression language (so it can use params, e.g. "k * r / 100").
+ */
+const mistake = z
+  .object({ answer: z.union([z.number(), z.string().min(1)]), feedback: text })
+  .strict();
+
+/** Randomised params per learner (Phase 9): a range or a list per param, and the formula. */
+const paramSpec = z.union([
+  z.object({ min: z.number(), max: z.number(), step: z.number().positive().optional() }).strict(),
+  z.object({ choices: z.array(z.number()).min(2) }).strict(),
+]);
+const random = z
+  .object({
+    params: z.record(z.string().regex(/^[a-zA-Z]\w*$/), paramSpec),
+    /** The answer from the params, in our expression language: the TS twin of `verify`. */
+    formula: z.string().min(1),
+  })
+  .strict();
+
 const numericAnswer = {
   answer: z.number(),
   /** Absolute tolerance for grading and for `verify`. */
   tolerance: z.number().min(0).default(1e-9),
+  /** Relative tolerance (share of the answer); either tolerance passing is enough. */
+  relTolerance: z.number().min(0).max(1).optional(),
+  /** How a typed "%" reads: fraction (25% = 0,25, default), percent (answer in %), number. */
+  unit: z.enum(["fraction", "percent", "number"]).default("fraction"),
+  mistakes: z.array(mistake).default([]),
+  /** Different numbers per learner; `answer` is then the answer for the base `params`. */
+  random: random.optional(),
   /**
    * Further versions of the same exercise ("similar exercise"): params that override the
    * base params, and the answer for them. `content:verify` checks every variant.
@@ -74,6 +104,7 @@ export const exerciseSchema = z.discriminatedUnion("type", [
       ...base,
       answer: z.string().min(1),
       variants: z.array(z.object({ params, answer: z.string().min(1) }).strict()).default([]),
+      mistakes: z.array(mistake).default([]),
     })
     .strict(),
   z
@@ -136,6 +167,32 @@ export function exerciseRuleErrors(ex: Exercise): string[] {
     errors.push(
       `verify: a ${ex.type} exercise needs a Python verify block that computes the answer`,
     );
+  }
+  if ("random" in ex && ex.random) {
+    if (ex.variants.length > 0)
+      errors.push("random: use either random params or variants, not both");
+    for (const [name, spec] of Object.entries(ex.random.params)) {
+      if ("min" in spec && spec.min > spec.max)
+        errors.push(`random.params.${name}: min is above max`);
+    }
+    try {
+      parseExpr(ex.random.formula);
+    } catch (e) {
+      errors.push(`random.formula: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+  if ("mistakes" in ex) {
+    ex.mistakes.forEach((m, i) => {
+      if (typeof m.answer === "string") {
+        try {
+          parseExpr(m.answer);
+        } catch (e) {
+          errors.push(
+            `mistakes[${String(i)}].answer: ${e instanceof Error ? e.message : String(e)}`,
+          );
+        }
+      }
+    });
   }
   if ("options" in ex) {
     const ids = new Set(ex.options.map((o) => o.id));

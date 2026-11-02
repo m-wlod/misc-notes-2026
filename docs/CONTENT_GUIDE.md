@@ -137,6 +137,38 @@ variants:
 
 Prompt placeholders `{p}` are filled per variant, locale-formatted (Polish decimal comma; inside math as `0{,}6`).
 
+**Tolerance and units.** `tolerance` is absolute; add `relTolerance: 0.01` to also accept answers within 1% of the answer (either passing is enough). `unit` says how a typed `%` reads:
+
+- `fraction` (default): `25%`, `0,25` and `1/4` are all 0.25. Store the answer as a fraction.
+- `percent`: the answer is stored in percent (`25`); `25`, `25%` and `0,25` all count.
+- `number`: a `%` is refused with a message (the answer is not a share).
+
+Estimation (Fermi) answers score by bands: within 2× of the answer is full marks, within 10× is half, anything further (or of the wrong sign) is 0. Ordering scores the share of item pairs in the right relative order (Kendall).
+
+**Common mistakes.** List typical wrong answers with targeted feedback. `answer` is a number or an expression of the params (so it works with random params). `content:verify` fails if a mistake equals the correct answer for any version.
+
+```yaml
+mistakes:
+  - answer: "k * r / 100"
+    feedback: { pl: "To sam wzrost. Dodaj go do kwoty początkowej." }
+```
+
+**Random params** (instead of `variants`, never both): each learner gets their own numbers. Give each param a range or a list and a `formula` that computes the answer in our expression language (`+ - * / ^`, `sqrt`, `ln`, `exp`…). The formula is the TypeScript twin of `verify`: `content:verify` checks they agree on 100 seeds and names the first seed that doesn't. `params` and `answer` stay as the base version.
+
+```yaml
+params: { k: 200, r: 5 }
+answer: 210
+random:
+  params:
+    k: { min: 100, max: 1000, step: 50 }
+    r: { choices: [2, 5, 10, 20] }
+  formula: "k * (1 + r / 100)"
+verify: |
+  result = k * (1 + r / 100)
+```
+
+The seed is the learner (a random `qla_sid` cookie) + the exercise + the attempt number (`?n=`); "Podobne zadanie" is the next attempt. The server regenerates the numbers from the seed when grading.
+
 ### Symbolic
 
 `answer: "2*x"`, and `verify` assigns the expression string; the comparison ignores spacing and case and treats `**` as `^`.
