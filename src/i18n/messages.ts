@@ -22,6 +22,7 @@ export const NAMESPACES = [
   "exercises",
   "interview",
   "sims",
+  "python",
 ] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 

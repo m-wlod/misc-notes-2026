@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const PORT = 3100;
+// E2E_PORT: run locally beside another server on 3100.
+const PORT = Number(process.env.E2E_PORT ?? 3100);
 const isCI = !!process.env.CI;
 
 export default defineConfig({

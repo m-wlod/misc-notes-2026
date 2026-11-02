@@ -116,6 +116,17 @@ print(round(p_ruin, 4), round(ev, 3))  # 0.0103 -0.316
 ```
 </PythonCell>
 
+<PythonCell>
+```python
+import numpy as np
+
+ceny = qla.load("ceny-gbm")["close"]  # dane syntetyczne, nie notowania
+zwroty = np.log(ceny).diff().dropna()
+show(ceny, label="Cena")
+hist(zwroty, bins=40, label="Dzienne zwroty")
+```
+</PythonCell>
+
 <InterviewTip>
 Pytanie o strategię podwajania to klasyk. Pokaż, że wartość oczekiwana jednej serii jest ujemna, i powiedz wprost, że żaden system obstawiania nie zmienia znaku wartości oczekiwanej pojedynczego zakładu.
 </InterviewTip>

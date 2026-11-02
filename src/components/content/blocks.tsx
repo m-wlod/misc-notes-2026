@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { getGlossary } from "@/features/content/lessons";
 import { TermPopover } from "@/features/glossary/term-popover";
+import { PythonCellClient } from "@/features/python/python-cell";
 import { Simulation as SimulationEmbed } from "@/features/sims/embed";
 import { simById } from "@/features/sims/registry";
 import { Link } from "@/i18n/navigation";
@@ -249,14 +250,16 @@ export async function Simulation({ id, caption }: { id: string; caption?: string
   );
 }
 
-/** Highlighted Python; running it in the browser arrives with Pyodide. TODO(phase-12). */
+/**
+ * Runnable Python (Phase 13): the highlighted code is rendered here, on the server; the
+ * client island adds Run and Edit and loads Pyodide only when the reader uses them.
+ */
 export async function PythonCell({ children }: Children) {
   const t = await getTranslations("content");
   return (
     <div className="my-7">
       <p className={cx(labelClass, "mb-1.5")}>{t("pythonCell.label")}</p>
-      {children}
-      <p className="mt-1.5 font-sans text-xs text-ink-muted">{t("pythonCell.soon")}</p>
+      <PythonCellClient>{children}</PythonCellClient>
     </div>
   );
 }

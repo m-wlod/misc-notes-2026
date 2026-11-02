@@ -1,0 +1,60 @@
+{
+  "run": "Uruchom",
+  "edit": "Edytuj",
+  "reset": "Przywróć",
+  "stop": "Zatrzymaj",
+  "keys": "Ctrl+Enter uruchamia · Esc, potem Tab wychodzi z edytora",
+  "editorLabel": "Edytor kodu Python",
+  "matplotlib": "Matplotlib nie jest tu dostępny. Wykres narysujesz funkcją show(x, y) albo hist(dane).",
+  "status": {
+    "queued": "W kolejce…",
+    "runtime": "Wczytywanie Pythona (za pierwszym razem kilkadziesiąt MB, potem z pamięci przeglądarki)…",
+    "packages": "Pobieranie pakietów: {names}…",
+    "starting": "Uruchamianie…",
+    "running": "Działa…",
+    "done": "Gotowe w {time} s",
+    "timeout": "Przekroczony limit czasu. Python został uruchomiony od nowa, zmienne wyczyszczone.",
+    "stopped": "Przerwano. Python został uruchomiony od nowa, zmienne wyczyszczone.",
+    "failed": "Nie udało się wczytać Pythona. Sprawdź połączenie i spróbuj ponownie."
+  },
+  "plot": {
+    "line": "Wykres",
+    "histogram": "Histogram",
+    "lineSummary": "Wykres liniowy, {n} punktów.",
+    "histSummary": "Histogram {n} wartości w {bins} przedziałach.",
+    "binReadout": "{from} – {to}: {count}",
+    "dropped": "Pominięto {n} wartości, które nie są liczbami (NaN lub nieskończoność).",
+    "thinned": "Linia rozrzedzona do 2000 punktów (minima i maksima zachowane)."
+  },
+  "notebook": {
+    "title": "Notatnik",
+    "lead": "Python w przeglądarce, bez instalacji: numpy, pandas, scipy i statsmodels wczytają się, gdy ich użyjesz. Komórki współdzielą zmienne. Notatnik zapisuje się w tej przeglądarce.",
+    "datasets": "Przykładowe dane",
+    "datasetsNote": "Dane syntetyczne: wygenerowane przez nas z ustalonego ziarna, to nie są prawdziwe notowania. Wczytasz je przez qla.load(\"nazwa\") albo pobierzesz jako CSV.",
+    "dataset": {
+      "ceny-gbm": "ceny-gbm: 750 dni ceny z geometrycznego ruchu Browna",
+      "ceny-rezim": "ceny-rezim: 750 dni, zmienność rośnie trzykrotnie od dnia 400"
+    },
+    "csv": "CSV",
+    "loading": "Wczytywanie notatnika…",
+    "runAll": "Uruchom wszystko",
+    "restart": "Uruchom Pythona od nowa",
+    "export": "Pobierz .py",
+    "import": "Wczytaj .py",
+    "importError": "Nie udało się wczytać pliku. Potrzebny jest plik .py (komórki oddzielone liniami # %%), do 100 komórek.",
+    "reset": "Przywróć przykładowy notatnik",
+    "resetConfirm": "Na pewno? Twoje komórki znikną",
+    "ready": "Python gotowy",
+    "readyCached": "Python gotowy (wczytany z pamięci przeglądarki)",
+    "idle": "Python wczyta się przy pierwszym uruchomieniu",
+    "cell": "Komórka {n}",
+    "runCell": "Uruchom komórkę {n}",
+    "moveUp": "Przesuń komórkę {n} w górę",
+    "moveDown": "Przesuń komórkę {n} w dół",
+    "addBelow": "Dodaj komórkę pod komórką {n}",
+    "delete": "Usuń komórkę {n}",
+    "keys": "Ctrl+Enter uruchamia komórkę, Shift+Enter uruchamia i przechodzi do następnej.",
+    "starterData": "# Dane syntetyczne: 750 dni ceny (to nie są prawdziwe notowania)\nceny = qla.load(\"ceny-gbm\")[\"close\"]\nceny.tail()",
+    "starterStats": "import numpy as np\n\nzwroty = np.log(ceny).diff().dropna()\nshow(ceny, label=\"Cena\")\nhist(zwroty, bins=40, label=\"Dzienne zwroty logarytmiczne\")\nprint(f\"średnia {zwroty.mean():.5f}, odchylenie {zwroty.std():.4f}\")"
+  }
+}
