@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { VideoEmbed } from "@/components/content/video-embed";
+import { buttonClass } from "@/components/ui/button";
 import { LessonView } from "@/features/content/lesson-view";
 import { showsBody, type ResolvedLesson } from "@/features/content/lessons";
 import { lessonHref, type LessonNode, type LessonPlace } from "@/features/curriculum";
@@ -32,6 +33,8 @@ type ReaderProps = ResolvedLesson & {
   neighbours: { prev: LessonNode | null; next: LessonNode | null };
   /** Internal preview: show drafts' bodies for review. */
   preview?: boolean;
+  /** Exercises that practise this lesson (published ones; the preview counts samples too). */
+  practiceCount?: number;
   /** Titles of prerequisites, by id. */
   prerequisiteTitles: Readonly<Record<string, LessonNode | undefined>>;
 };
@@ -48,8 +51,10 @@ export async function Reader({
   neighbours,
   prerequisiteTitles,
   preview = false,
+  practiceCount = 0,
 }: ReaderProps) {
   const t = await getTranslations("reader");
+  const tEx = await getTranslations("exercises");
   // Unpublished lessons read like stubs on public pages (review workflow).
   const withBody = showsBody(lesson, preview);
   const toc = withBody ? flattenToc(lesson.toc) : [];
@@ -133,6 +138,17 @@ export async function Reader({
                 <VideoEmbed key={v.url} url={v.url} title={v.title} />
               ))}
             </section>
+          ) : null}
+
+          {practiceCount > 0 ? (
+            <p className="mt-10 max-w-(--measure) font-sans print:hidden">
+              <Link
+                href={{ pathname: "/practice", query: { lesson: lesson.id } }}
+                className={buttonClass("primary")}
+              >
+                {tEx("practiceLesson", { count: practiceCount })}
+              </Link>
+            </p>
           ) : null}
 
           <section

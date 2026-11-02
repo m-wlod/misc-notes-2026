@@ -42,9 +42,13 @@ const GRADABLE = new Set([
  */
 export function ExerciseCard({
   view,
+  similarHref,
   nextHref,
 }: {
   view: PublicExercise;
+  /** The next variant of this exercise. */
+  similarHref: string | null;
+  /** The next exercise in the current practice set. */
   nextHref: string | null;
 }) {
   const t = useTranslations("exercises");
@@ -162,16 +166,16 @@ export function ExerciseCard({
       if (e.key === "h" || e.key === "H") {
         e.preventDefault();
         showHint();
-      } else if ((e.key === "n" || e.key === "N") && nextHref) {
+      } else if ((e.key === "n" || e.key === "N") && (nextHref ?? similarHref)) {
         e.preventDefault();
-        router.push(nextHref);
+        router.push(nextHref ?? similarHref ?? "");
       }
     };
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
     };
-  }, [nextHref, router, showHint, view.id]);
+  }, [nextHref, router, showHint, similarHref, view.id]);
 
   const locked = graded || pending;
   const statusTone =
@@ -318,15 +322,26 @@ export function ExerciseCard({
               {t("showSolution")}
             </Button>
           ) : null}
+          {similarHref ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                router.push(similarHref);
+              }}
+            >
+              {t("similar")}
+            </Button>
+          ) : null}
           {nextHref ? (
             <Button
               type="button"
-              variant={graded && result.result === "correct" ? "primary" : "ghost"}
+              variant={graded && result.result === "correct" ? "primary" : "secondary"}
               onClick={() => {
                 router.push(nextHref);
               }}
             >
-              {t("similar")}
+              {t("next")}
             </Button>
           ) : null}
         </div>

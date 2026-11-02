@@ -8,6 +8,7 @@ import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import { getLesson, listLessons } from "@/features/content/lessons";
 import { lessonNodes, neighbours } from "@/features/curriculum";
+import { exerciseCount } from "@/features/exercises/practice-set";
 import { Reader } from "@/features/reader/reader";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -54,6 +55,7 @@ async function Gate({
           <Reader
             {...resolved}
             preview
+            practiceCount={exerciseCount(resolved.lesson.id, true)}
             neighbours={neighbours(locale, resolved.lesson.id)}
             prerequisiteTitles={lessonNodes(locale)}
           />

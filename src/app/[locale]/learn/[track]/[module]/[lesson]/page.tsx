@@ -10,6 +10,7 @@ import {
   lessonsInOrder,
   neighbours,
 } from "@/features/curriculum";
+import { exerciseCount } from "@/features/exercises/practice-set";
 import { Reader } from "@/features/reader/reader";
 import { getPathname } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
@@ -66,6 +67,7 @@ export default async function LessonPage({ params }: Props) {
         place={place}
         neighbours={neighbours(locale, place.lesson.id)}
         prerequisiteTitles={nodes}
+        practiceCount={exerciseCount(place.lesson.id, false)}
       />
     </div>
   );
