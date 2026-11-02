@@ -16,6 +16,7 @@ import { ExerciseCard } from "@/features/exercises/exercise-card";
 import { nextInSet, parseFilters, toQuery } from "@/features/exercises/filter";
 import { practiceSet } from "@/features/exercises/practice-set";
 import { publicView } from "@/features/exercises/view";
+import { problemsOfTheDay } from "@/features/gamification/server/read";
 import { LEARNER_COOKIE, seedFor } from "@/features/grading/random";
 import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -92,9 +93,14 @@ async function Exercise({ params, searchParams }: Pick<Props, "params" | "search
   const next = nextInSet(practiceSet(filters, isStyleguideEnabled(env)), id);
   const nextHref = next ? `${pageOf(next.id)}${query}` : null;
 
+  // Today's problem of the day for its level? Then the card keeps a shareable result.
+  const daily = await problemsOfTheDay(new Date(), isStyleguideEnabled(env));
+  const isDaily = daily.byLevel.get(ex.level)?.id === ex.id;
+
   return (
     <ExerciseCard
       key={`${id}-${String(view.variant)}`}
+      daily={isDaily ? { day: daily.day, level: ex.level } : null}
       view={view}
       similarHref={similarHref}
       nextHref={nextHref}

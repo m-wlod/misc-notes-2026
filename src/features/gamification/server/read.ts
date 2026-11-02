@@ -1,6 +1,7 @@
 import "server-only";
 
 import { allExercises } from "@/features/exercises/data";
+import type { Exercise } from "@/features/exercises/schema";
 import { isVisible } from "@/features/exercises/visibility";
 import { createAdminClient } from "@/lib/db/admin";
 import type { Session } from "@/lib/db/session";
@@ -165,6 +166,37 @@ const published = () => allExercises().filter((e) => isVisible(e, false));
 
 export function recommendedExercise(ratings: Map<string, number>, solved: Set<string>) {
   return recommend(ratings, published(), solved);
+}
+
+/**
+ * One problem per level for a Warsaw date (Phase 15), the same for everyone. Curated rows
+ * in `daily_problems` win; otherwise a deterministic pick among that level's exercises.
+ * `internal` deployments (previews, e2e) may pick the labelled samples, so the flow can
+ * be seen and tested before real exercises exist.
+ */
+export async function problemsOfTheDay(
+  now: Date = new Date(),
+  internal = false,
+): Promise<{ day: LocalDate; byLevel: Map<number, Exercise> }> {
+  const day = localDate(now, LEAGUE.timeZone);
+  const pool = allExercises().filter((e) => isVisible(e, internal));
+  const curated = new Map<number, string>();
+  const admin = createAdminClient();
+  if (admin) {
+    const { data } = await admin.from("daily_problems").select("level, exercise_id").eq("day", day);
+    for (const r of data ?? []) curated.set(r.level, r.exercise_id);
+  }
+  const byLevel = new Map<number, Exercise>();
+  for (const level of [1, 2, 3, 4, 5]) {
+    const pick =
+      pool.find((e) => e.id === curated.get(level)) ??
+      pickOfDay(
+        pool.filter((e) => e.level === level),
+        day,
+      );
+    if (pick) byLevel.set(level, pick);
+  }
+  return { day, byLevel };
 }
 
 /** The problem of the day (Warsaw date), the same for everyone, signed in or not. */

@@ -1,0 +1,29 @@
+{
+  "metaTitle": "Powtórka",
+  "lead": "Kilka minut dziennie: wzory, definicje i zadania, które poszły źle, wracają wtedy, gdy zaczynasz je zapominać.",
+  "signedOut": "Powtórki są dla zalogowanych: karty zapisujemy na koncie.",
+  "nothingDue": "Na dziś nie ma nic do powtórki. Karty pojawiają się po ukończeniu lekcji i po błędnych odpowiedziach.",
+  "done": "Powtórka na dziś zrobiona.",
+  "summary": "{total, plural, one {# karta} few {# karty} other {# kart}}, z tego do ponownej nauki: {again}.",
+  "progress": "{n} z {total}",
+  "kind": {
+    "definition": "Definicja",
+    "formula": "Wzór",
+    "mistake": "Zadanie z błędem"
+  },
+  "formulaFront": "Kluczowy wzór z lekcji „{lesson}”",
+  "mistakeSource": "zadanie, które poszło źle",
+  "show": "Pokaż odpowiedź",
+  "solveAgain": "Rozwiąż je jeszcze raz",
+  "rate": "Jak dobrze to pamiętasz?",
+  "grade": {
+    "again": "Nie pamiętam",
+    "hard": "Trudne",
+    "good": "Dobrze",
+    "easy": "Łatwe"
+  },
+  "saveFailed": "Nie udało się zapisać oceny. Spróbuj jeszcze raz.",
+  "keys": "Spacja pokazuje odpowiedź, klawisze 1–4 oceniają.",
+  "dueToday": "{n, plural, one {# karta} few {# karty} other {# kart}} na dziś",
+  "start": "Zacznij powtórkę"
+}

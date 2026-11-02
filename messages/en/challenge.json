@@ -1,0 +1,14 @@
+{
+  "metaTitle": "Weekly challenge",
+  "lead": "Every week, one harder, open problem. The best solutions are highlighted after the deadline.",
+  "none": "There's no challenge this week yet.",
+  "deadline": "Deadline: {date}",
+  "closed": "The deadline has passed.",
+  "solution": "Your solution",
+  "submit": "Send solution",
+  "sent": "Sent. The best solutions are highlighted after the deadline.",
+  "failed": "Couldn't send. Try again.",
+  "signedOut": "Signed-in learners can send solutions.",
+  "community": "Highlighting the best solutions arrives with the community features.",
+  "tooShort": "Write at least a few sentences."
+}

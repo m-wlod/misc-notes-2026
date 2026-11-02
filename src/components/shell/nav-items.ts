@@ -23,6 +23,9 @@ export const MORE_NAV = [
   { key: "notes", href: "/notes" },
   { key: "glossary", href: "/glossary" },
   { key: "lab", href: "/lab" },
+  { key: "review", href: "/review" },
+  { key: "challenge", href: "/challenge" },
+  { key: "league", href: "/league" },
   { key: "about", href: "/about" },
   { key: "settings", href: "/settings" },
 ] as const satisfies readonly { key: string; href: StaticPathname }[];

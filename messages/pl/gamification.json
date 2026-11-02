@@ -29,11 +29,11 @@
     "recommended": "Zadanie dla Ciebie",
     "noRecommendation": "Na razie nie ma nowego zadania do polecenia.",
     "review": "Powtórki",
-    "reviewNote": "Powtórki pojawią się w kolejnej wersji.",
     "problemOfDay": "Zadanie dnia",
     "problemEmpty": "Zadanie dnia pojawi się, gdy opublikujemy pierwsze zadania.",
     "today": "Na dziś",
-    "level": "Poziom {level}"
+    "level": "Poziom {level}",
+    "reviewStart": "Zacznij powtórkę"
   },
   "league": {
     "metaTitle": "Liga",
@@ -213,5 +213,27 @@
       "name": "Ruina gracza",
       "description": "Przeprowadź symulację martyngału dla 1000 graczy."
     }
+  },
+  "share": {
+    "title": "Zadanie dnia",
+    "level": "Poziom {level}",
+    "solved": "Rozwiązane za {attempts, plural, one {pierwszym razem} other {#. razem}}",
+    "notSolved": "Jeszcze nierozwiązane",
+    "hints": "{hints, plural, one {# podpowiedź} few {# podpowiedzi} other {# podpowiedzi}}",
+    "noSpoilers": "bez spoilerów",
+    "button": "Udostępnij wynik",
+    "download": "Pobierz obraz",
+    "copy": "Kopiuj wynik",
+    "copied": "Skopiowano",
+    "yourResult": "Twój wynik",
+    "text": "Zadanie dnia, poziom {level}, {date}: {grid}"
+  },
+  "daily": {
+    "title": "Zadania dnia",
+    "lead": "Jedno zadanie na każdy poziom, takie samo dla wszystkich. Wynik możesz udostępnić bez zdradzania odpowiedzi.",
+    "empty": "Zadania dnia pojawią się, gdy opublikujemy pierwsze zadania.",
+    "slot": "Poziom {level}",
+    "none": "Na tym poziomie dziś nic.",
+    "solved": "Rozwiązane"
   }
 }
