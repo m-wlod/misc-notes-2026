@@ -1,4 +1,4 @@
-# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+# SAMPLE (Phase 8, rubric Phase 10): demonstrates the exercise engine. Not course content.
 id: przyklad-lamiglowka
 type: brainteaser
 level: 5
@@ -11,7 +11,10 @@ prompt:
   pl: "Przykład: ile razy wskazówki zegara pokrywają się w ciągu doby?"
   en: "Sample: how many times do a clock's hands overlap in a day?"
 rubric:
-  - "Gives 22 and explains the 11-per-12-hours reasoning"
+  - pl: "Podaje 22"
+    en: "Gives 22"
+  - pl: "Wyjaśnia, że w 12 godzin wskazówki pokrywają się 11 razy"
+    en: "Explains that the hands overlap 11 times in 12 hours"
 answer: "22"
 hints:
   - pl: "Policz pokrycia w ciągu 12 godzin."

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useId, useRef, useState, useTransition } from "
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/display";
+import { OpenPanel } from "@/features/ai-grading/open-panel";
 import { cx } from "@/lib/cx";
 
 import { getHint, revealSolution, submitAttempt } from "./actions";
@@ -16,7 +17,6 @@ import {
   ExpressionAnswer,
   MultiAnswer,
   NumberAnswer,
-  OpenAnswer,
   OrderingAnswer,
   SliderAnswer,
 } from "./inputs";
@@ -51,12 +51,15 @@ export function ExerciseCard({
   view,
   similarHref,
   nextHref,
+  aiAvailable = false,
 }: {
   view: PublicExercise;
   /** The next variant of this exercise. */
   similarHref: string | null;
   /** The next exercise in the current practice set. */
   nextHref: string | null;
+  /** AI grading of open answers is on (a key and accounts exist; Phase 10). */
+  aiAvailable?: boolean;
 }) {
   const t = useTranslations("exercises");
   const locale = useLocale();
@@ -85,6 +88,8 @@ export function ExerciseCard({
   }, []);
 
   const gradable = GRADABLE.has(view.type);
+  // Open answers have their own panel (AI grade or self-check with the solution).
+  const isOpenType = view.type === "open" || view.type === "brainteaser";
   const graded = result !== null;
 
   const submission = (): Submission | null => {
@@ -218,6 +223,17 @@ export function ExerciseCard({
         dangerouslySetInnerHTML={{ __html: view.promptHtml }}
       />
 
+      {isOpenType ? (
+        <div className="mb-4">
+          <OpenPanel
+            exerciseId={view.id}
+            version={view.variant}
+            lang={lang}
+            aiAvailable={aiAvailable}
+          />
+        </div>
+      ) : null}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -261,9 +277,7 @@ export function ExerciseCard({
           />
         ) : view.type === "code" ? (
           <CodeView starter={view.starter ?? ""} />
-        ) : (
-          <OpenAnswer />
-        )}
+        ) : null}
 
         <div className="flex flex-wrap items-center gap-2">
           {gradable && !graded ? (
@@ -336,7 +350,7 @@ export function ExerciseCard({
               {t("tryAgain")}
             </Button>
           ) : null}
-          {view.hasSolution && solution === null ? (
+          {view.hasSolution && solution === null && !isOpenType ? (
             <Button type="button" variant="secondary" disabled={pending} onClick={showSolution}>
               {t("showSolution")}
             </Button>

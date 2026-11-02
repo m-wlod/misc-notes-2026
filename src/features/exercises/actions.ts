@@ -10,7 +10,7 @@ import { getSession } from "@/lib/db/session";
 
 import { getExercise } from "./data";
 import { grade, variantOf, type Result } from "./grade";
-import { exerciseLimiter } from "./rate-limit";
+import { exerciseLimiter } from "./limiter";
 import { exerciseHtml } from "./render-text";
 
 /**
@@ -67,7 +67,7 @@ export async function submitAttempt(
     .safeParse(input);
   if (!parsed.success) return { ok: false, reason: "invalid" };
   const who = await caller();
-  if (!exerciseLimiter.hit(who.key)) return { ok: false, reason: "rate-limited" };
+  if (!(await exerciseLimiter.hit(who.key))) return { ok: false, reason: "rate-limited" };
   const ex = getExercise(parsed.data.exerciseId, internal());
   if (!ex) return { ok: false, reason: "not-found" };
 
@@ -115,7 +115,8 @@ export async function getHint(input: unknown): Promise<{ ok: true; html: string 
     })
     .safeParse(input);
   if (!parsed.success) return { ok: false, reason: "invalid" };
-  if (!exerciseLimiter.hit((await caller()).key)) return { ok: false, reason: "rate-limited" };
+  if (!(await exerciseLimiter.hit((await caller()).key)))
+    return { ok: false, reason: "rate-limited" };
   const ex = getExercise(parsed.data.exerciseId, internal());
   const hint = ex?.hints[parsed.data.index];
   if (!ex || !hint) return { ok: false, reason: "not-found" };
@@ -136,7 +137,8 @@ export async function revealSolution(
     })
     .safeParse(input);
   if (!parsed.success) return { ok: false, reason: "invalid" };
-  if (!exerciseLimiter.hit((await caller()).key)) return { ok: false, reason: "rate-limited" };
+  if (!(await exerciseLimiter.hit((await caller()).key)))
+    return { ok: false, reason: "rate-limited" };
   const ex = getExercise(parsed.data.exerciseId, internal());
   if (!ex?.solution) return { ok: false, reason: "not-found" };
   // From the page: next-intl's request locale isn't available inside server actions.

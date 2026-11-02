@@ -380,21 +380,3 @@ export function CodeView({ starter }: { starter: string }) {
     </div>
   );
 }
-
-export function OpenAnswer() {
-  const t = useTranslations("exercises.open");
-  const id = useId();
-  return (
-    <div className="grid gap-1.5">
-      <label htmlFor={id} className="text-sm text-ink">
-        {t("label")}
-      </label>
-      <textarea
-        id={id}
-        rows={4}
-        className="rounded border border-rule-strong bg-surface px-3 py-2 text-base text-ink"
-      />
-      <p className="text-sm text-ink-muted">{t("soon")}</p>
-    </div>
-  );
-}

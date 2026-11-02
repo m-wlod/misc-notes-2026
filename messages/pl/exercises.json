@@ -63,7 +63,39 @@
   },
   "open": {
     "label": "Twoja odpowiedź",
-    "soon": "Ocena odpowiedzi otwartych przez AI pojawi się wkrótce."
+    "words": "{count, plural, one {# słowo} few {# słowa} many {# słów} other {# słowa}} z {max}",
+    "tooLong": "Za długo: odpowiedź może mieć najwyżej {max} słów.",
+    "aiOff": "Ocena przez AI jest jeszcze wyłączona. Napisz odpowiedź, a potem porównaj ją z rozwiązaniem.",
+    "grade": "Oceń odpowiedź",
+    "grading": "Oceniam…",
+    "selfCheck": "Porównaj z rozwiązaniem",
+    "selfCheckTitle": "Sprawdź się sam",
+    "selfCheckLead": "Zaznacz, co zawiera Twoja odpowiedź.",
+    "saveSelf": "Zapisz samoocenę",
+    "selfSaved": "Samoocena zapisana w tej przeglądarce: {met} z {total}. To nie jest ocena, tylko Twoje porównanie.",
+    "score": "Ocena: {score}/4",
+    "status": {
+      "met": "Spełnione",
+      "partially": "Częściowo",
+      "missed": "Brak"
+    },
+    "misconceptions": "Błędne przekonania",
+    "nextStep": "Następny krok:",
+    "aiNote": "Ocenę przygotowało AI według kryteriów zadania. Może się mylić.",
+    "report": "Zgłoś niesprawiedliwą ocenę",
+    "reportNote": "Co jest nie tak z tą oceną?",
+    "reportSend": "Wyślij zgłoszenie",
+    "reported": "Dziękujemy. Sprawdzimy tę ocenę.",
+    "reportFailed": "Nie udało się wysłać zgłoszenia. Spróbuj ponownie.",
+    "errors": {
+      "unauthorized": "Ocena AI jest dostępna po zalogowaniu. Porównaj odpowiedź z rozwiązaniem.",
+      "not-configured": "Ocena AI jest wyłączona. Porównaj odpowiedź z rozwiązaniem.",
+      "user-quota": "Dzisiejszy limit ocen AI jest wykorzystany. Porównaj odpowiedź z rozwiązaniem.",
+      "budget": "Ocena AI jest na dziś wstrzymana. Porównaj odpowiedź z rozwiązaniem.",
+      "ip-limit": "Z tej sieci wykorzystano dzisiejszy limit ocen AI. Porównaj odpowiedź z rozwiązaniem.",
+      "fallback": "Nie udało się ocenić odpowiedzi. Porównaj ją z rozwiązaniem.",
+      "network": "Brak połączenia. Spróbuj ponownie."
+    }
   },
   "keys": "Skróty: Enter sprawdza, H pokazuje podpowiedź, N przechodzi dalej.",
   "stored": "Wynik zapisany w tej przeglądarce.",

@@ -63,7 +63,39 @@
   },
   "open": {
     "label": "Your answer",
-    "soon": "AI grading of open answers is coming soon."
+    "words": "{count, plural, one {# word} other {# words}} of {max}",
+    "tooLong": "Too long: an answer can have at most {max} words.",
+    "aiOff": "AI grading isn't switched on yet. Write your answer, then compare it with the solution.",
+    "grade": "Grade my answer",
+    "grading": "Grading…",
+    "selfCheck": "Compare with the solution",
+    "selfCheckTitle": "Check yourself",
+    "selfCheckLead": "Tick what your answer contains.",
+    "saveSelf": "Save self-assessment",
+    "selfSaved": "Self-assessment saved in this browser: {met} of {total}. This is your own comparison, not a grade.",
+    "score": "Score: {score}/4",
+    "status": {
+      "met": "Met",
+      "partially": "Partly",
+      "missed": "Missing"
+    },
+    "misconceptions": "Misconceptions",
+    "nextStep": "Next step:",
+    "aiNote": "Graded by AI against the exercise's criteria. It can be wrong.",
+    "report": "Report an unfair grade",
+    "reportNote": "What is wrong with this grade?",
+    "reportSend": "Send report",
+    "reported": "Thank you. We'll review this grade.",
+    "reportFailed": "The report couldn't be sent. Try again.",
+    "errors": {
+      "unauthorized": "AI grading is available when you're signed in. Compare your answer with the solution.",
+      "not-configured": "AI grading is switched off. Compare your answer with the solution.",
+      "user-quota": "Today's AI grading limit is used up. Compare your answer with the solution.",
+      "budget": "AI grading is paused for today. Compare your answer with the solution.",
+      "ip-limit": "Today's AI grading limit for this network is used up. Compare your answer with the solution.",
+      "fallback": "Your answer couldn't be graded. Compare it with the solution.",
+      "network": "No connection. Try again."
+    }
   },
   "keys": "Shortcuts: Enter checks, H shows a hint, N moves on.",
   "stored": "Result saved in this browser.",
