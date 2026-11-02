@@ -25,7 +25,12 @@ export type Submission =
   | { kind: "number"; value: number } // interactive (slider)
   | { kind: "choice"; value: string }
   | { kind: "multi"; values: string[] }
-  | { kind: "order"; values: string[] };
+  | { kind: "order"; values: string[] }
+  /**
+   * Code run in the browser (Phase 13): how many hidden tests passed, and the number
+   * `answerExpr` gave on the learner's code, which the server checks against `answer`.
+   */
+  | { kind: "code"; passed: number; total: number; value: number | null };
 
 export type Result = "correct" | "partial" | "wrong";
 export type Grade =
@@ -138,9 +143,35 @@ export function grade(ex: Exercise, version: number, sub: Submission): Grade {
       if (sub.values.length !== ex.answer.length) return { ok: false, reason: "unreadable" };
       return done(orderingScore(sub.values, ex.answer));
     case "code":
+      return gradeCode(ex, sub);
     case "open":
     case "brainteaser":
-      // Code runs in the Lab sandbox (Phase 12); open answers are AI-graded (Phase 10).
+      // Open answers are AI-graded (Phase 10).
       return { ok: false, reason: "not-gradable" };
   }
+}
+
+/**
+ * Code exercises: "correct" needs every hidden test passed in the browser **and** the
+ * number from `answerExpr` matching the stored answer, which the browser never sees.
+ * Test results alone could be forged; matching the number takes solving the problem.
+ * A typed number alone ("submit only the answer") is graded like a numeric exercise.
+ */
+function gradeCode(ex: Extract<Exercise, { type: "code" }>, sub: Submission): Grade {
+  const matches = (v: number) =>
+    ex.answer !== undefined && closeEnough(v, ex.answer, ex.tolerance, ex.relTolerance);
+  if (sub.kind === "text") {
+    if (ex.answer === undefined) return { ok: false, reason: "not-gradable" };
+    const read = readNumber(sub.value, "number");
+    if (typeof read === "string") return { ok: false, reason: read };
+    return done(read.some(matches) ? 1 : 0);
+  }
+  if (sub.kind !== "code") return { ok: false, reason: "wrong-kind" };
+  if (sub.total !== ex.tests.length || sub.passed > sub.total) {
+    return { ok: false, reason: "unreadable" };
+  }
+  const valueOk = ex.answer === undefined || (sub.value !== null && matches(sub.value));
+  if (sub.passed === sub.total && valueOk) return done(1);
+  // Partial credit for passed tests, never full without the server's own check.
+  return done((sub.passed / sub.total) * 0.5);
 }

@@ -360,23 +360,3 @@ export function OrderingAnswer({
     </div>
   );
 }
-
-export function CodeView({ starter }: { starter: string }) {
-  const t = useTranslations("exercises.code");
-  const id = useId();
-  return (
-    <div className="grid gap-1.5">
-      <label htmlFor={id} className="text-sm text-ink">
-        {t("label")}
-      </label>
-      <textarea
-        id={id}
-        readOnly
-        rows={Math.max(3, starter.split("\n").length)}
-        value={starter}
-        className="rounded border border-rule-strong bg-sunken px-3 py-2 font-mono text-sm text-ink"
-      />
-      <p className="text-sm text-ink-muted">{t("soon")}</p>
-    </div>
-  );
-}

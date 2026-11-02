@@ -21,7 +21,9 @@ import {
   usesMatplotlib,
   type OutputEvent,
   type RawPlot,
+  type RunOutput,
 } from "./protocol";
+import { exceptionLine, outcomeOf, readValue } from "./run-tests";
 
 const run = (events: OutputEvent[]) => events.reduce(reduceOutput, emptyOutput());
 const plot = (y: number[], x: number[] | null = null, kind: RawPlot["kind"] = "line"): RawPlot => ({
@@ -191,5 +193,44 @@ describe("notebook store", () => {
     expect(
       fromPy(Array.from({ length: MAX_CELLS + 1 }, () => "# %%\nx").join("\n"), ids),
     ).toBeNull();
+  });
+});
+
+describe("code exercise test outcomes", () => {
+  const out = (o: Partial<RunOutput>): RunOutput => ({ ...emptyOutput("done"), ...o });
+
+  it("passes a clean run, fails an assert without detail, shows a crash's exception", () => {
+    expect(outcomeOf(out({}), "m")).toEqual({
+      passed: true,
+      message: "m",
+      detail: null,
+      timedOut: false,
+    });
+    const assertFail = out({
+      status: "error",
+      error: 'Traceback (most recent call last):\n  File "<cell>", line 9\nAssertionError\n',
+    });
+    expect(outcomeOf(assertFail, "m")).toMatchObject({ passed: false, detail: null });
+    const crash = out({
+      status: "error",
+      error: "Traceback …\nNameError: name 'df' is not defined\n",
+    });
+    expect(outcomeOf(crash, "m")).toMatchObject({
+      passed: false,
+      detail: "NameError: name 'df' is not defined",
+    });
+    expect(outcomeOf(out({ status: "stopped", stopped: "timeout" }), "m")).toMatchObject({
+      passed: false,
+      timedOut: true,
+      detail: null,
+    });
+  });
+
+  it("reads the computed number from float()'s repr", () => {
+    expect(readValue("0.0007553732608239094")).toBe(0.0007553732608239094);
+    expect(readValue("1e-05")).toBe(1e-5);
+    expect(readValue("nan")).toBeNull();
+    expect(readValue(null)).toBeNull();
+    expect(exceptionLine("a\nb\n\nKeyError: 'close'\n")).toBe("KeyError: 'close'");
   });
 });

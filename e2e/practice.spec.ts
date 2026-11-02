@@ -13,8 +13,8 @@ const hydrated = (page: Page) =>
 test("the hub lists the sample exercises with a count", async ({ page }) => {
   await page.goto("/pl/praktyka");
   await expect(page.getByRole("heading", { level: 1, name: "Praktyka" })).toBeVisible();
-  await expect(results(page)).toHaveCount(11);
-  await expect(page.getByRole("status").filter({ hasText: "zada" })).toHaveText("11 zadań");
+  await expect(results(page)).toHaveCount(12);
+  await expect(page.getByRole("status").filter({ hasText: "zada" })).toHaveText("12 zadań");
 });
 
 test("level steps filter and keep the other filters", async ({ page }) => {
@@ -39,7 +39,7 @@ test("level steps filter and keep the other filters", async ({ page }) => {
     "aria-current",
     "page",
   );
-  await expect(results(page)).toHaveCount(3);
+  await expect(results(page)).toHaveCount(4);
 });
 
 test("the type filter submits on change, and filters clear", async ({ page }) => {
@@ -49,7 +49,7 @@ test("the type filter submits on change, and filters clear", async ({ page }) =>
   await expect(page).toHaveURL(/[?&]type=ordering/);
   await expect(results(page)).toHaveCount(1);
   await page.getByRole("link", { name: "Wyczyść filtry" }).click();
-  await expect(results(page)).toHaveCount(11);
+  await expect(results(page)).toHaveCount(12);
 });
 
 test("a set from the hub: open, solve, then N goes to the next in the set", async ({ page }) => {
@@ -80,17 +80,17 @@ test("unsolved only hides what was solved in this browser", async ({ page }) => 
   await expect(solved).toContainText("rozwiązane");
   await page.getByLabel("Tylko nierozwiązane").check();
   await expect(solved).toHaveCount(0);
-  await expect(results(page)).toHaveCount(10);
+  await expect(results(page)).toHaveCount(11);
 });
 
 test("practise this lesson: from the lesson to its set", async ({ page }) => {
   await page.goto("/pl/dev/content-preview?id=przyklad-wartosc-oczekiwana");
   await page.waitForLoadState("networkidle");
-  await page.getByRole("link", { name: "Ćwicz tę lekcję (11 zadań)" }).click();
+  await page.getByRole("link", { name: "Ćwicz tę lekcję (12 zadań)" }).click();
   await expect(page).toHaveURL(/\/pl\/praktyka\?lesson=przyklad-wartosc-oczekiwana$/, {
     timeout: 15_000,
   });
-  await expect(results(page)).toHaveCount(11);
+  await expect(results(page)).toHaveCount(12);
 });
 
 for (const theme of ["light", "dark"] as const) {

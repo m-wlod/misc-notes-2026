@@ -1,0 +1,56 @@
+# SAMPLE (Phase 13): demonstrates code exercises with pandas. Not course content.
+id: przyklad-kod-pandas
+type: code
+level: 2
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 5
+status: draft
+sample: true
+dataset: ceny-gbm
+prompt:
+  pl: "Przykład: napisz funkcję `mean_return(df)`, która zwraca średni dzienny zwrot (zmianę procentową ceny `close` dzień do dnia) dla tabeli z kolumną `close`."
+  en: "Sample: write a function `mean_return(df)` that returns the mean daily return (day-to-day percentage change of `close`) of a table with a `close` column."
+starter: |
+  import pandas as pd
+
+  df = qla.load("ceny-gbm")  # dane syntetyczne
+
+  def mean_return(df):
+      ...
+examples: |
+  small = pd.DataFrame({"close": [100.0, 110.0, 121.0]})
+  assert abs(mean_return(small) - 0.1) < 1e-9
+tests:
+  - code: |
+      r = mean_return(pd.DataFrame({"close": [100.0, 110.0, 121.0]}))
+      assert r is not None and abs(float(r) - 0.1) < 1e-9
+    message:
+      pl: "Dla cen 100, 110, 121 oba zwroty wynoszą 10%, więc średnia to 0,1."
+      en: "For prices 100, 110, 121 both returns are 10%, so the mean is 0.1."
+  - code: |
+      r = mean_return(pd.DataFrame({"close": [100.0, 50.0]}))
+      assert abs(float(r) + 0.5) < 1e-9
+    message:
+      pl: "Pierwszy dzień nie ma zwrotu: pomiń go, zamiast liczyć jako zero."
+      en: "The first day has no return: skip it rather than counting it as zero."
+  - code: |
+      r = mean_return(qla.load("ceny-gbm"))
+      assert 0 < float(r) < 0.01
+    message:
+      pl: "Na przykładowych danych średni dzienny zwrot to mała dodatnia liczba (ułamek, nie procent)."
+      en: "On the sample data the mean daily return is a small positive number (a fraction, not a percentage)."
+solutionCode: |
+  import pandas as pd
+
+  def mean_return(df):
+      return df["close"].pct_change().dropna().mean()
+answerExpr: mean_return(qla.load("ceny-gbm"))
+answer: 0.0007553732608239094
+tolerance: 1e-9
+hints:
+  - pl: "pandas ma metodę `pct_change()`."
+    en: "pandas has a `pct_change()` method."
+solution:
+  pl: '`df["close"].pct_change().dropna().mean()`: zmiana procentowa dzień do dnia, bez pierwszego dnia, uśredniona.'
+  en: '`df["close"].pct_change().dropna().mean()`: the day-to-day percentage change, without the first day, averaged.'

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DATASET_IDS, type DatasetId } from "@/lib/datasets/generate";
 import { parseExpr } from "@/lib/math/expr";
 
 /**
@@ -21,6 +22,9 @@ const text = z.object({ pl: z.string().min(1), en: z.string().min(1).optional() 
  * languages) or { pl, en }. The AI grader checks each one; the self-check list shows them.
  */
 const rubricItem = z.union([z.string().min(1), text]);
+
+/** One hidden test of a code exercise and the message shown when it fails. */
+const codeTest = z.object({ code: z.string().min(1), message: text }).strict();
 
 const option = z.object({ id, pl: z.string().min(1), en: z.string().min(1).optional() }).strict();
 
@@ -147,8 +151,25 @@ export const exerciseSchema = z.discriminatedUnion("type", [
       type: z.literal("code"),
       ...base,
       starter: z.string().default(""),
-      /** Hidden Python tests (Phase 12 runs them in the browser sandbox). */
-      tests: z.string().min(1),
+      /** Visible example tests (asserts) the learner can run any time. */
+      examples: z.string().default(""),
+      /**
+       * Hidden tests, each run separately against the learner's code in a fresh namespace
+       * (Phase 13). Sent to the browser only when the learner checks the solution.
+       */
+      tests: z.array(codeTest).min(1),
+      /** A reference solution: never sent to the browser; content:verify runs it. */
+      solutionCode: z.string().min(1),
+      /** A sample dataset the exercise uses (`qla.load(id)`, downloadable as CSV). */
+      dataset: z.enum(DATASET_IDS as [DatasetId, ...DatasetId[]]).optional(),
+      /**
+       * The final number, for "submit only the answer" and the server's spot check of
+       * the code path; `answerExpr` computes it from the learner's code (e.g. `f(df)`).
+       */
+      answer: z.number().optional(),
+      answerExpr: z.string().min(1).optional(),
+      tolerance: z.number().min(0).default(1e-9),
+      relTolerance: z.number().min(0).max(1).optional(),
     })
     .strict(),
   z.object({ type: z.literal("open"), ...base, rubric: z.array(rubricItem).min(1) }).strict(),
@@ -183,6 +204,9 @@ export function exerciseRuleErrors(ex: Exercise): string[] {
     errors.push(
       `verify: a ${ex.type} exercise needs a Python verify block that computes the answer`,
     );
+  }
+  if (ex.type === "code" && (ex.answer === undefined) !== (ex.answerExpr === undefined)) {
+    errors.push("answer: a code exercise has both answer and answerExpr, or neither");
   }
   if ("random" in ex && ex.random) {
     if (ex.variants.length > 0)

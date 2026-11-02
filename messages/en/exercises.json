@@ -58,8 +58,24 @@
     "drag": "Drag the items or use the arrow buttons."
   },
   "code": {
-    "label": "Code",
-    "soon": "Running and checking code arrives with the Lab."
+    "label": "Your code",
+    "runExamples": "Run examples",
+    "examples": "Example tests (visible)",
+    "check": "Check ({count, plural, one {# test} other {# tests}})",
+    "checking": "Checking…",
+    "progress": "Tests: {done} of {total}",
+    "setupError": "The code didn't run, so the tests didn't start. Fix the error below:",
+    "pass": "Test {n}: passed",
+    "fail": "Test {n}: failed",
+    "testTimeout": "The test ran out of time (an endless loop?).",
+    "byo": {
+      "title": "Prefer your own tools?",
+      "lead": "Solve it in Jupyter, R, Excel or anything else and enter just the result.",
+      "download": "Download the data ({name}.csv)",
+      "ownCode": "Your code (optional, for reference)",
+      "ownCodeNote": "Kept only in this browser, with the attempt. It isn't graded.",
+      "submit": "Submit only the result"
+    }
   },
   "open": {
     "label": "Your answer",
