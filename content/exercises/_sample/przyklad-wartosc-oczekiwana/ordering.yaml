@@ -7,6 +7,7 @@ lessonIds: [przyklad-wartosc-oczekiwana]
 estimatedMinutes: 1
 status: draft
 sample: true
+interview: [sprint]
 prompt:
   pl: "Przykład: ułóż liczby od najmniejszej do największej."
   en: "Sample: put the numbers in order, smallest first."

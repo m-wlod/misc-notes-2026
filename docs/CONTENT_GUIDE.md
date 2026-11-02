@@ -201,6 +201,8 @@ rubric:
 
 With AI grading on, the grader marks each item met / partly / missing and scores 0–4; the score can never exceed what the marked items support. Without it (no key, signed out, daily limit used up), the learner compares their answer with `solution` and ticks the items, so a clear `solution` matters for every open exercise.
 
+**Interview sessions.** Add `interview: [sprint]` to an auto-graded exercise (numeric, choice, multi, symbolic, estimation, ordering, interactive) to use it in the probability sprint, or `interview: [brainteasers]` / `interview: [modelling]` to an open or brainteaser exercise. Interview questions should be level 4–5 and solvable in the session's time (sprint: about 2 minutes each).
+
 Writing rules: one skill per exercise; realistic numbers; the prompt never gives away the method; hints go from a nudge to almost the answer; the solution shows every step.
 
 ## 6. GuruMyth
