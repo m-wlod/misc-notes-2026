@@ -1,0 +1,56 @@
+{
+  "unsubscribe": {
+    "title": "Wypisanie z powiadomień",
+    "working": "Wyłączamy…",
+    "invalid": "Ten link jest nieprawidłowy albo wygasł. Powiadomienia zmienisz w ustawieniach.",
+    "done": "Gotowe: nie będziemy wysyłać e-maili „{kind}”.",
+    "undo": "Włącz z powrotem",
+    "back": "Włączone z powrotem: „{kind}”.",
+    "settingsNote": "Wszystkie powiadomienia zmienisz w ustawieniach konta.",
+    "kind": {
+      "streak": "przypomnienie o serii",
+      "weekly": "podsumowanie tygodnia",
+      "league": "wyniki ligi"
+    }
+  },
+  "settings": {
+    "title": "Powiadomienia",
+    "streak": "E-mail z przypomnieniem, gdy seria jest zagrożona",
+    "weekly": "Podsumowanie tygodnia (poniedziałek)",
+    "league": "Wyniki ligi (poniedziałek)",
+    "push": "Powiadomienia w przeglądarce (przypomnienie o serii)",
+    "pushUnavailable": "Ta przeglądarka nie obsługuje powiadomień albo są wyłączone w tej wersji aplikacji.",
+    "pushDenied": "Powiadomienia są zablokowane w ustawieniach przeglądarki.",
+    "quiet": "Godziny ciszy",
+    "quietFrom": "Od",
+    "quietTo": "Do",
+    "quietNote": "W tych godzinach (Twoja strefa czasowa) nic nie wysyłamy.",
+    "save": "Zapisz powiadomienia",
+    "saved": "Zapisano.",
+    "failed": "Nie udało się zapisać."
+  },
+  "email": {
+    "footer": "Dostajesz tę wiadomość, bo masz konto i włączone to powiadomienie.",
+    "unsubscribe": "Nie wysyłaj mi tego więcej",
+    "streak": {
+      "subject": "Twoja seria: {days, plural, one {# dzień} few {# dni} other {# dni}}. Dziś jeszcze cel?",
+      "line1": "Masz serię {days, plural, one {# dnia} other {# dni}}. Dziś cel dnia jeszcze nie jest zrobiony.",
+      "line2": "Kilka minut wystarczy: jedno zadanie albo krótka powtórka.",
+      "cta": "Wróć do nauki"
+    },
+    "weekly": {
+      "subject": "Twój tydzień: {xp} XP",
+      "line1": "W zeszłym tygodniu: {xp} XP, cel dnia {goalDays} z 7 dni, rozwiązane zadania: {solved}.",
+      "line2": "Nowy tydzień, nowa liga. Powodzenia.",
+      "cta": "Zobacz swój dzień"
+    },
+    "league": {
+      "subject": "Liga {tier}: miejsce {rank} z {size}",
+      "line1": "Tydzień w lidze {tier} skończył się na miejscu {rank} z {size}.",
+      "promoted": "Awans do wyższej ligi.",
+      "stayed": "Zostajesz w tej samej lidze.",
+      "demoted": "Spadek do niższej ligi. W tym tygodniu można to odrobić.",
+      "cta": "Zobacz ligę"
+    }
+  }
+}

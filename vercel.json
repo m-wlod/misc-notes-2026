@@ -2,7 +2,17 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "crons": [
-    { "path": "/api/cron/leagues", "schedule": "30 0 * * *" },
-    { "path": "/api/cron/calibrate", "schedule": "0 3 * * *" }
+    {
+      "path": "/api/cron/leagues",
+      "schedule": "30 0 * * *"
+    },
+    {
+      "path": "/api/cron/calibrate",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/notify",
+      "schedule": "0 17 * * *"
+    }
   ]
 }

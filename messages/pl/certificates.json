@@ -1,0 +1,25 @@
+{
+  "title": "Certyfikaty",
+  "lessons": "Lekcje: {done} z {total}",
+  "mastery": "opanowanie {value} (potrzeba {min})",
+  "claim": "Odbierz certyfikat",
+  "claimFailed": "Nie udało się wystawić certyfikatu. Spróbuj jeszcze raz.",
+  "notYet": "Jeszcze nie",
+  "view": "Zobacz certyfikat",
+  "disclaimer": "Certyfikat potwierdza ukończenie kursu w tej aplikacji. Nie jest kwalifikacją zawodową ani licencją.",
+  "verify": {
+    "title": "Weryfikacja certyfikatu",
+    "valid": "Certyfikat jest ważny.",
+    "notFound": "Nie znaleźliśmy takiego certyfikatu.",
+    "notFoundNote": "Sprawdź, czy adres został skopiowany w całości.",
+    "name": "Osoba",
+    "track": "Ścieżka",
+    "date": "Wystawiony",
+    "pdf": "Pobierz PDF"
+  },
+  "pdf": {
+    "heading": "Certyfikat ukończenia",
+    "completed": "ukończył(a) ścieżkę",
+    "verify": "Weryfikacja"
+  }
+}

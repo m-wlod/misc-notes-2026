@@ -38,6 +38,8 @@ export const serverSchema = {
   // Email (Phase 3 SMTP via Supabase, Phase 15 app email)
   RESEND_API_KEY: optionalString,
   EMAIL_FROM: optionalString,
+  /** Signs one-click unsubscribe links (Phase 15). Without it, no email is sent. */
+  EMAIL_TOKEN_SECRET: optionalString,
 
   // Web push (Phase 15), cron auth (Phase 14)
   VAPID_PRIVATE_KEY: optionalString,

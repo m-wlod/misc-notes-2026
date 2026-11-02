@@ -1,0 +1,25 @@
+{
+  "title": "Certificates",
+  "lessons": "Lessons: {done} of {total}",
+  "mastery": "mastery {value} (needed {min})",
+  "claim": "Get the certificate",
+  "claimFailed": "The certificate couldn't be issued. Try again.",
+  "notYet": "Not yet",
+  "view": "View certificate",
+  "disclaimer": "The certificate confirms completing a course in this app. It is not a professional qualification or licence.",
+  "verify": {
+    "title": "Certificate check",
+    "valid": "The certificate is valid.",
+    "notFound": "We couldn't find that certificate.",
+    "notFoundNote": "Check that the whole address was copied.",
+    "name": "Learner",
+    "track": "Track",
+    "date": "Issued",
+    "pdf": "Download PDF"
+  },
+  "pdf": {
+    "heading": "Certificate of completion",
+    "completed": "has completed the track",
+    "verify": "Verify"
+  }
+}

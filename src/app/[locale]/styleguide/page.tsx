@@ -15,11 +15,13 @@ import { Badge, Callout, Kbd, Progress, Skeleton, Table, Td, Th } from "@/compon
 import { Link } from "@/components/ui/link";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
+import { CertificatesPanel } from "@/features/certificates/certificates-panel";
 import { renderText } from "@/features/exercises/render-text";
 import { AchievementsGrid } from "@/features/gamification/ui/achievements-grid";
 import { Dashboard } from "@/features/gamification/ui/dashboard";
 import { LeagueTable } from "@/features/gamification/ui/league-table";
 import { SkillRadar } from "@/features/gamification/ui/skill-radar";
+import { NotificationSettings } from "@/features/notify/notification-settings";
 import { ReviewSession } from "@/features/review/review-session";
 import { randomWalk } from "@/lib/math/rng";
 
@@ -422,6 +424,38 @@ function Styleguide() {
                   },
                 },
               ]}
+            />
+          </div>
+          <div data-specimen="certificates">
+            <CertificatesPanel
+              tracks={[
+                {
+                  id: "foundations",
+                  name: "Fundamenty",
+                  progress: { lessonsTotal: 6, lessonsDone: 6, mastery: 0.86 },
+                  certificateId: "0b9e7c1e-1d2a-4f5b-9c8d-1234567890ab",
+                },
+                {
+                  id: "probability",
+                  name: "Prawdopodobieństwo",
+                  progress: { lessonsTotal: 9, lessonsDone: 4, mastery: 0.55 },
+                  certificateId: null,
+                },
+              ]}
+            />
+          </div>
+          <div data-specimen="notifications">
+            <NotificationSettings
+              demo
+              vapidKey={null}
+              initial={{
+                streak: true,
+                weekly: false,
+                league: true,
+                push: false,
+                quietStart: "22:00",
+                quietEnd: "07:00",
+              }}
             />
           </div>
           <figure className="grid gap-2" data-specimen="share">
