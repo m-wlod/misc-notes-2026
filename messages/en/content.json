@@ -21,8 +21,7 @@
     "soon": "The interactive version is coming to the Lab."
   },
   "pythonCell": {
-    "label": "Python",
-    "soon": "Running code in the browser is coming soon."
+    "label": "Python"
   },
   "exerciseRef": {
     "label": "Exercise"

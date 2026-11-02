@@ -21,8 +21,7 @@
     "soon": "Interaktywna wersja pojawi się w Laboratorium."
   },
   "pythonCell": {
-    "label": "Python",
-    "soon": "Uruchamianie kodu w przeglądarce pojawi się wkrótce."
+    "label": "Python"
   },
   "exerciseRef": {
     "label": "Zadanie"

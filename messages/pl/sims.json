@@ -5,7 +5,10 @@
     "open": "Otwórz symulację",
     "lesson": "Lekcja: {title}",
     "captionStub": "Opis tej symulacji jest w przygotowaniu.",
-    "recordingTitle": "Tryb nagrywania (9:16)"
+    "recordingTitle": "Tryb nagrywania (9:16)",
+    "notebook": "Notatnik Pythona",
+    "notebookLead": "Python w przeglądarce, z przykładowymi danymi. Bez instalacji.",
+    "simulations": "Symulacje"
   },
   "computing": "Liczę…",
   "play": "Odtwórz",

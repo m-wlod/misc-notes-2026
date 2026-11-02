@@ -5,7 +5,10 @@
     "open": "Open simulation",
     "lesson": "Lesson: {title}",
     "captionStub": "The description of this simulation is being written.",
-    "recordingTitle": "Recording mode (9:16)"
+    "recordingTitle": "Recording mode (9:16)",
+    "notebook": "Python notebook",
+    "notebookLead": "Python in your browser, with sample data. Nothing to install.",
+    "simulations": "Simulations"
   },
   "computing": "Computing…",
   "play": "Play",

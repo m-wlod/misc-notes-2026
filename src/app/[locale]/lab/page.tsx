@@ -20,6 +20,13 @@ export default async function LabPage({ params }: PageProps<"/[locale]/lab">) {
     <div className="mx-auto max-w-6xl px-4 pt-12 pb-16 sm:px-6">
       <h1 className="mb-3 text-3xl">{t("lab.title")}</h1>
       <p className="mb-8 max-w-(--measure) text-base text-ink-muted">{t("lab.lead")}</p>
+      <div className="mb-10 rounded-md border border-rule-strong bg-surface px-5 py-4">
+        <h2 className="mb-1 text-xl">
+          <Link href="/lab/notebook">{t("lab.notebook")}</Link>
+        </h2>
+        <p className="text-base text-ink">{t("lab.notebookLead")}</p>
+      </div>
+      <h2 className="mb-4 text-xl">{t("lab.simulations")}</h2>
       <ul className="grid gap-4 sm:grid-cols-2">
         {SIMS.map((s) => (
           <li

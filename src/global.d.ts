@@ -13,6 +13,7 @@ import type nav from "../messages/pl/nav.json";
 import type notes from "../messages/pl/notes.json";
 import type onboarding from "../messages/pl/onboarding.json";
 import type placement from "../messages/pl/placement.json";
+import type python from "../messages/pl/python.json";
 import type reader from "../messages/pl/reader.json";
 import type sections from "../messages/pl/sections.json";
 import type sims from "../messages/pl/sims.json";
@@ -41,6 +42,7 @@ declare module "next-intl" {
       exercises: typeof exercises;
       interview: typeof interview;
       sims: typeof sims;
+      python: typeof python;
     };
     Formats: typeof formats;
   }
