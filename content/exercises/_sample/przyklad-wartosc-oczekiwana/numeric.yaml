@@ -1,0 +1,28 @@
+# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+id: przyklad-liczba
+type: numeric
+level: 1
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 1
+status: draft
+sample: true
+prompt:
+  pl: "Przykład: ile wynosi suma liczb ${a}$ i ${b}$?"
+  en: "Sample: what is the sum of ${a}$ and ${b}$?"
+params: { a: 2, b: 3 }
+answer: 5
+tolerance: 0
+variants:
+  - { params: { a: 4, b: 7 }, answer: 11 }
+  - { params: { a: 10, b: 15 }, answer: 25 }
+hints:
+  - pl: "Dodaj obie liczby."
+    en: "Add the two numbers."
+  - pl: "Wynik jest liczbą całkowitą."
+    en: "The result is a whole number."
+solution:
+  pl: "Dodajemy: ${a} + {b}$."
+  en: "Add them: ${a} + {b}$."
+verify: |
+  result = a + b

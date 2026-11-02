@@ -1,0 +1,20 @@
+# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+id: przyklad-otwarte
+type: open
+level: 2
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 1
+status: draft
+sample: true
+prompt:
+  pl: "Przykład: wyjaśnij własnymi słowami, czym jest średnia."
+  en: "Sample: explain in your own words what an average is."
+rubric:
+  - "Mentions adding the values and dividing by their count"
+hints:
+  - pl: "Pomyśl o dzieleniu sumy."
+    en: "Think about dividing a sum."
+solution:
+  pl: "Średnia to suma wartości podzielona przez ich liczbę."
+  en: "The average is the sum of the values divided by how many there are."

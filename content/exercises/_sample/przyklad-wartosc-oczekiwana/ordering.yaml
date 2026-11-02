@@ -1,0 +1,23 @@
+# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+id: przyklad-kolejnosc
+type: ordering
+level: 1
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 1
+status: draft
+sample: true
+prompt:
+  pl: "Przykład: ułóż liczby od najmniejszej do największej."
+  en: "Sample: put the numbers in order, smallest first."
+options:
+  - { id: a, pl: "1/2", en: "1/2" }
+  - { id: b, pl: "0,1", en: "0.1" }
+  - { id: c, pl: "3", en: "3" }
+answer: [b, a, c]
+hints:
+  - pl: "Zamień wszystko na ułamki dziesiętne."
+    en: "Turn everything into decimals."
+solution:
+  pl: "$0{,}1 < 0{,}5 < 3$."
+  en: "$0.1 < 0.5 < 3$."

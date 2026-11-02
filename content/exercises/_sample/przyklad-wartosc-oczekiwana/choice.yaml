@@ -1,0 +1,23 @@
+# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+id: przyklad-wybor
+type: choice
+level: 1
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 1
+status: draft
+sample: true
+prompt:
+  pl: "Przykład: która liczba jest parzysta?"
+  en: "Sample: which number is even?"
+options:
+  - { id: a, pl: "3", en: "3" }
+  - { id: b, pl: "4", en: "4" }
+  - { id: c, pl: "7", en: "7" }
+answer: b
+hints:
+  - pl: "Liczba parzysta dzieli się przez 2."
+    en: "An even number divides by 2."
+solution:
+  pl: 'Tylko $4 = 2 \cdot 2$ dzieli się przez 2.'
+  en: 'Only $4 = 2 \cdot 2$ divides by 2.'

@@ -29,7 +29,7 @@ describe("verifyExercises with real Python", { timeout: 60_000 }, () => {
   it("passes the valid set (including a seeded simulation and an expression)", () => {
     const result = verifyExercises(load("valid").exercises);
     expect(result.errors).toEqual([]);
-    expect(result.checked).toBe(3);
+    expect(result.checked).toBe(5); // 3 blocks, the sum has 2 variants
   });
 
   it.each([
@@ -37,6 +37,7 @@ describe("verifyExercises with real Python", { timeout: 60_000 }, () => {
     ["raises", /boom\.yaml: verify: python error: ZeroDivisionError/],
     ["unseeded", /sim\.yaml: verify: uses randomness but params has no "seed"/],
     ["timeout", /loop\.yaml: verify: timed out after 10 s/],
+    ["bad-variant", /sum\.yaml: verify \(variants\[1\]\): expected 3, got 2/],
   ])("%s fails with a readable message", (name, message) => {
     expect(verifyExercises(load(name).exercises).errors).toEqual([expect.stringMatching(message)]);
   });

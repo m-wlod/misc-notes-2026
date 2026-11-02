@@ -15,5 +15,8 @@ estimatedMinutes: 2
 status: draft
 answer: 5
 tolerance: 0
+variants:
+  - { params: { a: 10, b: 1 }, answer: 11 }
+  - { params: { a: -1 }, answer: 2 }
 verify: |
   result = a + b

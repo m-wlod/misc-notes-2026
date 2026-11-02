@@ -19,6 +19,7 @@ export const NAMESPACES = [
   "curriculum",
   "reader",
   "notes",
+  "exercises",
 ] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 

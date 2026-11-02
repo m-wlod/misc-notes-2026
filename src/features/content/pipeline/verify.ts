@@ -88,19 +88,35 @@ export function verifyExercises(
       errors.push(`${file}: verify: uses randomness but params has no "seed"`);
       continue;
     }
-    checked += 1;
-    const out = run(harness(exercise.verify, exercise.params));
-    if (!out.ok) {
-      errors.push(`${file}: verify: ${out.error}`);
-      continue;
+    // The base version, then every variant with its own params and answer.
+    const versions: { label: string; ex: Exercise }[] = [{ label: "", ex: exercise }];
+    if ("variants" in exercise) {
+      exercise.variants.forEach((v, i) => {
+        versions.push({
+          label: ` (variants[${String(i)}])`,
+          ex: {
+            ...exercise,
+            params: { ...exercise.params, ...v.params },
+            answer: v.answer,
+          } as Exercise,
+        });
+      });
     }
-    const line = out.stdout.split("\n").find((l) => l.startsWith(MARK));
-    if (!line) {
-      errors.push(`${file}: verify: produced no result`);
-      continue;
+    for (const { label, ex } of versions) {
+      checked += 1;
+      const out = run(harness(exercise.verify, ex.params));
+      if (!out.ok) {
+        errors.push(`${file}: verify${label}: ${out.error}`);
+        continue;
+      }
+      const line = out.stdout.split("\n").find((l) => l.startsWith(MARK));
+      if (!line) {
+        errors.push(`${file}: verify${label}: produced no result`);
+        continue;
+      }
+      const mismatch = compare(ex, JSON.parse(line.slice(MARK.length)) as unknown);
+      if (mismatch) errors.push(`${file}: verify${label}: ${mismatch}`);
     }
-    const mismatch = compare(exercise, JSON.parse(line.slice(MARK.length)) as unknown);
-    if (mismatch) errors.push(`${file}: verify: ${mismatch}`);
   }
   return { checked, errors };
 }

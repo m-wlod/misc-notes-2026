@@ -121,7 +121,21 @@ verify: |
   result = p - q
 ```
 
+Math in YAML: wrap text that contains a backslash (`\cdot`, `\frac`) in **single quotes** or a `|` block. In double quotes, YAML reads `\c` as an escape and the build fails.
+
 `verify` is **required** for `numeric`, `estimation`, `interactive` and `symbolic`. It receives `params` as variables and must assign `result`. `pnpm content:verify` runs it with real Python and compares it with `answer` within `tolerance`. Simulations must set `seed` in `params` and call `random.seed(seed)` (the check fails otherwise).
+
+**Variants** ("similar exercise"): list further versions with their own params and answer. Each one is checked by `content:verify`, and the learner moves through them with "Podobne zadanie" (N).
+
+```yaml
+params: { p: 0.6 }
+answer: 0.2
+variants:
+  - { params: { p: 0.55 }, answer: 0.1 }
+  - { params: { p: 0.7 }, answer: 0.4 }
+```
+
+Prompt placeholders `{p}` are filled per variant, locale-formatted (Polish decimal comma; inside math as `0{,}6`).
 
 ### Symbolic
 

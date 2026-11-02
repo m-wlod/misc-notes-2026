@@ -1,0 +1,21 @@
+# SAMPLE (Phase 8): demonstrates the exercise engine. Not course content.
+id: przyklad-wyrazenie
+type: symbolic
+level: 2
+topics: [przyklad]
+lessonIds: [przyklad-wartosc-oczekiwana]
+estimatedMinutes: 1
+status: draft
+sample: true
+prompt:
+  pl: "Przykład: zapisz pole kwadratu o boku $x + 1$ jako wyrażenie od $x$."
+  en: "Sample: write the area of a square with side $x + 1$ as an expression in $x$."
+answer: "(x+1)^2"
+hints:
+  - pl: "Pole kwadratu to bok do kwadratu."
+    en: "The area of a square is its side squared."
+solution:
+  pl: "$(x + 1)^2 = x^2 + 2x + 1$. Obie postacie są poprawne."
+  en: "$(x + 1)^2 = x^2 + 2x + 1$. Either form is correct."
+verify: |
+  result = "(x+1)^2"
