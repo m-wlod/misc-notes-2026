@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
 
+import { expect, test, type Page } from "./test";
 import { THEME_STORAGE_KEY } from "../src/config/theme";
 
 /** Phase 6b: highlights, notes and bookmarks (kept in this browser), and the video facade. */

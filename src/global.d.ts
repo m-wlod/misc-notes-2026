@@ -1,6 +1,7 @@
 import type { routing } from "./i18n/routing";
 import type account from "../messages/pl/account.json";
 import type auth from "../messages/pl/auth.json";
+import type certificates from "../messages/pl/certificates.json";
 import type challenge from "../messages/pl/challenge.json";
 import type common from "../messages/pl/common.json";
 import type content from "../messages/pl/content.json";
@@ -13,6 +14,7 @@ import type home from "../messages/pl/home.json";
 import type interview from "../messages/pl/interview.json";
 import type nav from "../messages/pl/nav.json";
 import type notes from "../messages/pl/notes.json";
+import type notify from "../messages/pl/notify.json";
 import type onboarding from "../messages/pl/onboarding.json";
 import type placement from "../messages/pl/placement.json";
 import type python from "../messages/pl/python.json";
@@ -49,6 +51,8 @@ declare module "next-intl" {
       gamification: typeof gamification;
       review: typeof review;
       challenge: typeof challenge;
+      certificates: typeof certificates;
+      notify: typeof notify;
     };
     Formats: typeof formats;
   }

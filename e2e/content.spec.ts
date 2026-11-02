@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
 
+import { expect, test } from "./test";
 import { DEPTH_STORAGE_KEY } from "../src/config/depth";
 import { THEME_STORAGE_KEY } from "../src/config/theme";
 

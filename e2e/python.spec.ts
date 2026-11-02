@@ -3,8 +3,8 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 
+import { expect, test, type BrowserContext, type Page } from "./test";
 import { THEME_STORAGE_KEY } from "../src/config/theme";
 
 /**

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 
 // A Polish browser. Accept-Language routing for other locales is covered in shell.spec.ts.
 test.use({ locale: "pl-PL" });

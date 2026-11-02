@@ -5,6 +5,8 @@ import { Suspense, type ReactNode } from "react";
 import { buttonClass } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/display";
 import { signOut } from "@/features/auth/actions";
+import { CertificatesPanel } from "@/features/certificates/certificates-panel";
+import { readCertificates, readTrackProgress } from "@/features/certificates/server";
 import { readAchievements, readRatings } from "@/features/gamification/server/read";
 import { AchievementsGrid } from "@/features/gamification/ui/achievements-grid";
 import { SkillRadar } from "@/features/gamification/ui/skill-radar";
@@ -12,6 +14,8 @@ import { Link, redirect } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { isSupabaseConfigured } from "@/lib/db/config";
 import { getSession } from "@/lib/db/session";
+
+import { curriculum } from "../../../../content/curriculum";
 
 export async function generateMetadata({
   params,
@@ -64,7 +68,13 @@ async function ProfileBody({ params }: { params: PageProps<"/[locale]/profile">[
   if (!profile) return null;
   if (!profile.onboarded_at) redirect({ href: "/onboarding", locale });
   const tG = await getTranslations("gamification");
-  const [ratings, owned] = await Promise.all([readRatings(session), readAchievements(session)]);
+  const tC = await getTranslations("certificates");
+  const [ratings, owned, progress, certs] = await Promise.all([
+    readRatings(session),
+    readAchievements(session),
+    readTrackProgress(session),
+    readCertificates(session),
+  ]);
 
   const level = (n: number | null) =>
     n ? `${String(n)} · ${tOn(`levels.${String(n) as "1"}.name`)}` : t("notSet");
@@ -113,6 +123,19 @@ async function ProfileBody({ params }: { params: PageProps<"/[locale]/profile">[
           {tG("profile.skills")}
         </h2>
         <SkillRadar ratings={[...ratings].map(([topic, rating]) => ({ topic, rating }))} />
+      </section>
+      <section aria-labelledby="certificates-title" className="grid gap-3">
+        <h2 id="certificates-title" className="text-xl">
+          {tC("title")}
+        </h2>
+        <CertificatesPanel
+          tracks={curriculum.map((tr) => ({
+            id: tr.id,
+            name: tr.name[locale === "en" ? "en" : "pl"],
+            progress: progress.get(tr.id) ?? { lessonsTotal: 0, lessonsDone: 0, mastery: null },
+            certificateId: certs.find((c) => c.track_id === tr.id)?.id ?? null,
+          }))}
+        />
       </section>
       <section aria-labelledby="achievements-title" className="grid gap-3">
         <h2 id="achievements-title" className="text-xl">

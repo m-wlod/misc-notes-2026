@@ -1,0 +1,56 @@
+{
+  "unsubscribe": {
+    "title": "Unsubscribe",
+    "working": "Switching off…",
+    "invalid": "This link is invalid or has expired. You can change notifications in settings.",
+    "done": "Done: we won't send “{kind}” emails.",
+    "undo": "Turn it back on",
+    "back": "Back on: “{kind}”.",
+    "settingsNote": "You can change every notification in your account settings.",
+    "kind": {
+      "streak": "streak reminder",
+      "weekly": "weekly summary",
+      "league": "league results"
+    }
+  },
+  "settings": {
+    "title": "Notifications",
+    "streak": "Email reminder when the streak is at risk",
+    "weekly": "Weekly summary (Monday)",
+    "league": "League results (Monday)",
+    "push": "Browser notifications (streak reminder)",
+    "pushUnavailable": "This browser doesn't support notifications, or they're off in this version of the app.",
+    "pushDenied": "Notifications are blocked in the browser settings.",
+    "quiet": "Quiet hours",
+    "quietFrom": "From",
+    "quietTo": "To",
+    "quietNote": "Nothing is sent during these hours (your time zone).",
+    "save": "Save notifications",
+    "saved": "Saved.",
+    "failed": "Couldn't save."
+  },
+  "email": {
+    "footer": "You're getting this because you have an account with this notification on.",
+    "unsubscribe": "Don't send me this again",
+    "streak": {
+      "subject": "Your streak: {days, plural, one {# day} other {# days}}. Goal today?",
+      "line1": "You have a {days, plural, one {#-day} other {#-day}} streak. Today's goal isn't done yet.",
+      "line2": "A few minutes is enough: one exercise or a short review.",
+      "cta": "Back to learning"
+    },
+    "weekly": {
+      "subject": "Your week: {xp} XP",
+      "line1": "Last week: {xp} XP, daily goal on {goalDays} of 7 days, exercises solved: {solved}.",
+      "line2": "New week, new league. Good luck.",
+      "cta": "See your day"
+    },
+    "league": {
+      "subject": "{tier} league: place {rank} of {size}",
+      "line1": "Your week in the {tier} league ended in place {rank} of {size}.",
+      "promoted": "You move up a league.",
+      "stayed": "You stay in the same league.",
+      "demoted": "You move down a league. This week you can win it back.",
+      "cta": "See the league"
+    }
+  }
+}
