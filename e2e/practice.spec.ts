@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
 
+import { expect, test, type Page } from "./test";
 import { THEME_STORAGE_KEY } from "../src/config/theme";
 
 /** Phase 8b: the practice hub (filters in the URL, level steps, lesson sets, next in set). */

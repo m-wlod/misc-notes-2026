@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
 
+import { expect, test, type Page } from "./test";
 import { THEME_STORAGE_KEY } from "../src/config/theme";
 
 // WCAG 2.1 A/AA plus axe best practices (landmarks, region, heading order): review M8.

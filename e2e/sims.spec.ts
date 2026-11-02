@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
 
+import { expect, test, type Page } from "./test";
 import { THEME_STORAGE_KEY } from "../src/config/theme";
 
 /**
