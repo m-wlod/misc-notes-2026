@@ -1,0 +1,29 @@
+{
+  "metaTitle": "Review",
+  "lead": "A few minutes a day: formulas, definitions and exercises you got wrong come back just as you start to forget them.",
+  "signedOut": "Review is for signed-in learners: the cards are kept on the account.",
+  "nothingDue": "Nothing to review today. Cards appear when you complete lessons and after wrong answers.",
+  "done": "Today's review is done.",
+  "summary": "{total, plural, one {# card} other {# cards}}, of which to relearn: {again}.",
+  "progress": "{n} of {total}",
+  "kind": {
+    "definition": "Definition",
+    "formula": "Formula",
+    "mistake": "Exercise you missed"
+  },
+  "formulaFront": "The key formula of “{lesson}”",
+  "mistakeSource": "an exercise that went wrong",
+  "show": "Show answer",
+  "solveAgain": "Solve it again",
+  "rate": "How well did you know it?",
+  "grade": {
+    "again": "Forgot",
+    "hard": "Hard",
+    "good": "Good",
+    "easy": "Easy"
+  },
+  "saveFailed": "The rating couldn't be saved. Try again.",
+  "keys": "Space shows the answer, keys 1–4 rate it.",
+  "dueToday": "{n, plural, one {# card} other {# cards}} due today",
+  "start": "Start review"
+}

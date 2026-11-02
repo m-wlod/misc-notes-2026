@@ -1,0 +1,14 @@
+{
+  "metaTitle": "Wyzwanie tygodnia",
+  "lead": "Co tydzień jedno trudniejsze, otwarte zadanie. Najlepsze rozwiązania pokażemy po terminie.",
+  "none": "W tym tygodniu nie ma jeszcze wyzwania.",
+  "deadline": "Termin: {date}",
+  "closed": "Termin minął.",
+  "solution": "Twoje rozwiązanie",
+  "submit": "Wyślij rozwiązanie",
+  "sent": "Wysłane. Po terminie najlepsze rozwiązania zostaną wyróżnione.",
+  "failed": "Nie udało się wysłać. Spróbuj jeszcze raz.",
+  "signedOut": "Rozwiązania mogą wysyłać zalogowani.",
+  "community": "Wyróżnianie najlepszych rozwiązań pojawi się razem ze społecznością.",
+  "tooShort": "Napisz co najmniej kilka zdań."
+}

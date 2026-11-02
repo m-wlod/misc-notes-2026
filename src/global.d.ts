@@ -1,6 +1,7 @@
 import type { routing } from "./i18n/routing";
 import type account from "../messages/pl/account.json";
 import type auth from "../messages/pl/auth.json";
+import type challenge from "../messages/pl/challenge.json";
 import type common from "../messages/pl/common.json";
 import type content from "../messages/pl/content.json";
 import type curriculum from "../messages/pl/curriculum.json";
@@ -16,6 +17,7 @@ import type onboarding from "../messages/pl/onboarding.json";
 import type placement from "../messages/pl/placement.json";
 import type python from "../messages/pl/python.json";
 import type reader from "../messages/pl/reader.json";
+import type review from "../messages/pl/review.json";
 import type sections from "../messages/pl/sections.json";
 import type sims from "../messages/pl/sims.json";
 import type { formats } from "./lib/i18n/format";
@@ -45,6 +47,8 @@ declare module "next-intl" {
       sims: typeof sims;
       python: typeof python;
       gamification: typeof gamification;
+      review: typeof review;
+      challenge: typeof challenge;
     };
     Formats: typeof formats;
   }

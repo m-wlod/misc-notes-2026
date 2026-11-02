@@ -15,10 +15,12 @@ import { Badge, Callout, Kbd, Progress, Skeleton, Table, Td, Th } from "@/compon
 import { Link } from "@/components/ui/link";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
+import { renderText } from "@/features/exercises/render-text";
 import { AchievementsGrid } from "@/features/gamification/ui/achievements-grid";
 import { Dashboard } from "@/features/gamification/ui/dashboard";
 import { LeagueTable } from "@/features/gamification/ui/league-table";
 import { SkillRadar } from "@/features/gamification/ui/skill-radar";
+import { ReviewSession } from "@/features/review/review-session";
 import { randomWalk } from "@/lib/math/rng";
 
 import { CelebrationDemo, FieldDemos, OverlayDemos, TabDemos } from "./demos";
@@ -370,6 +372,7 @@ function Styleguide() {
               nextLesson: null,
               recommended: { title: "Wartość oczekiwana rzutu kostką", level: 1, href: "#" },
               problem: null,
+              reviewDue: 7,
             }}
           />
           <LeagueTable
@@ -396,6 +399,44 @@ function Styleguide() {
           />
           <AchievementsGrid owned={new Set(["pierwszy-krok", "seria-3", "seria-7", "xp-100"])} />
           <CelebrationDemo />
+          <div className="grid gap-3" data-specimen="review">
+            <p className="font-sans text-xs text-ink-muted">Review card (demo: rates locally)</p>
+            <ReviewSession
+              demo
+              now="2026-11-02T18:00:00.000Z"
+              items={[
+                {
+                  cardId: "lesson:demo:def:wartosc-oczekiwana",
+                  kind: "definition",
+                  source: "Wartość oczekiwana",
+                  frontHtml: renderText("Wartość oczekiwana"),
+                  backHtml: renderText(
+                    "Średnia ważona prawdopodobieństwami: $E[X] = \\sum_i p_i x_i$.",
+                  ),
+                  href: null,
+                  next: {
+                    again: "2026-11-03T18:00:00.000Z",
+                    hard: "2026-11-04T18:00:00.000Z",
+                    good: "2026-11-05T18:00:00.000Z",
+                    easy: "2026-11-17T18:00:00.000Z",
+                  },
+                },
+              ]}
+            />
+          </div>
+          <figure className="grid gap-2" data-specimen="share">
+            {/* eslint-disable-next-line @next/next/no-img-element -- a generated PNG specimen */}
+            <img
+              src="/api/share/daily?d=2026-11-02&l=3&r=xxo&h=1&lang=pl&format=og"
+              alt="Karta wyniku zadania dnia: poziom 3, rozwiązane za trzecim razem, jedna podpowiedź"
+              width={600}
+              height={315}
+              className="h-auto w-full max-w-[600px] rounded-md border border-rule"
+            />
+            <figcaption className="font-sans text-xs text-ink-muted">
+              Share card (1200×630; the story format is 1080×1920)
+            </figcaption>
+          </figure>
         </div>
       </Section>
     </div>

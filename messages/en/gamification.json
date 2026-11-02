@@ -29,11 +29,11 @@
     "recommended": "An exercise for you",
     "noRecommendation": "Nothing new to recommend right now.",
     "review": "Review",
-    "reviewNote": "Review arrives in the next version.",
     "problemOfDay": "Problem of the day",
     "problemEmpty": "The problem of the day appears once the first exercises are published.",
     "today": "For today",
-    "level": "Level {level}"
+    "level": "Level {level}",
+    "reviewStart": "Start review"
   },
   "league": {
     "metaTitle": "League",
@@ -213,5 +213,27 @@
       "name": "Gambler's ruin",
       "description": "Run the martingale simulation with 1,000 players."
     }
+  },
+  "share": {
+    "title": "Problem of the day",
+    "level": "Level {level}",
+    "solved": "Solved on {attempts, selectordinal, one {the #st} two {the #nd} few {the #rd} other {the #th}} try",
+    "notSolved": "Not solved yet",
+    "hints": "{hints, plural, one {# hint} other {# hints}}",
+    "noSpoilers": "no spoilers",
+    "button": "Share result",
+    "download": "Download image",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "yourResult": "Your result",
+    "text": "Problem of the day, level {level}, {date}: {grid}"
+  },
+  "daily": {
+    "title": "Problems of the day",
+    "lead": "One problem per level, the same for everyone. Share your result without giving the answer away.",
+    "empty": "The problems of the day appear once the first exercises are published.",
+    "slot": "Level {level}",
+    "none": "Nothing at this level today.",
+    "solved": "Solved"
   }
 }

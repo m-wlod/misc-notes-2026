@@ -12,6 +12,7 @@ import { curriculum } from "./content/curriculum";
 import { rehypeNumbering } from "./src/features/content/rehype-numbering";
 import { termRefsIn, validateContent, validateCurriculum } from "./src/features/content/validate";
 import { validateExercises } from "./src/features/exercises/validate";
+import { lessonCards } from "./src/features/review/cards";
 import { buildSearchDocs } from "./src/features/search/docs";
 import { routing } from "./src/i18n/routing";
 
@@ -84,6 +85,8 @@ const lessons = defineCollection({
       hasDepth: /<Depth\b/.test(meta.content ?? ""),
       /** Body is just <Stub />: listed in the curriculum, shown as "in preparation". */
       isStub: /^\s*<Stub\s*\/>\s*$/.test(meta.content ?? ""),
+      /** Definitions and key formulas, as spaced-review cards (Phase 15). */
+      reviewCards: lessonCards(data.id, meta.content ?? ""),
       /** Plain text for the search index (headings, prose, math source). */
       text: (meta.plain ?? "").replaceAll(/\s+/g, " ").trim().slice(0, 4000),
     })),
@@ -121,6 +124,28 @@ const exercises = defineCollection({
     .transform((data, { meta }) => ({ data: data as unknown, file: fileOf(meta.path) })),
 });
 
+/**
+ * Weekly challenges (Phase 15): content/challenges/<yyyy-mm-dd>.yaml, named after the
+ * week's Monday (Warsaw). A harder, open problem; solutions are moderated (Phase 17).
+ */
+const challenges = defineCollection({
+  name: "Challenge",
+  pattern: "challenges/*.yaml",
+  schema: s
+    .object({
+      id,
+      /** The Monday of the challenge's week (league weeks, Europe/Warsaw). */
+      week: s.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      /** Solutions close at this instant (ISO, with offset). */
+      deadline: s.string().datetime({ offset: true }),
+      title: localized,
+      prompt: localized,
+      rubric: s.array(localized).min(1),
+      status: s.enum(["draft", "published"]),
+    })
+    .strict(),
+});
+
 export default defineConfig({
   root: process.env.CONTENT_ROOT ?? "content",
   strict: true,
@@ -130,7 +155,7 @@ export default defineConfig({
     base: "/static/",
     clean: true,
   },
-  collections: { lessons, glossary, exercises },
+  collections: { lessons, glossary, exercises, challenges },
   mdx: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [

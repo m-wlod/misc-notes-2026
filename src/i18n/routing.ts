@@ -34,6 +34,8 @@ export const routing = defineRouting({
     "/lab/sims/[id]": { pl: "/laboratorium/symulacje/[id]", en: "/lab/sims/[id]" },
     "/lab/notebook": { pl: "/laboratorium/notatnik", en: "/lab/notebook" },
     "/league": { pl: "/liga", en: "/league" },
+    "/review": { pl: "/powtorka", en: "/review" },
+    "/challenge": { pl: "/wyzwanie", en: "/challenge" },
     "/profile": { pl: "/profil", en: "/profile" },
     "/settings": { pl: "/ustawienia", en: "/settings" },
     "/about": { pl: "/o-projekcie", en: "/about" },

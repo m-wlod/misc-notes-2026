@@ -3,6 +3,9 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { lessonHref, lessonsInOrder } from "@/features/curriculum";
 import type { Exercise } from "@/features/exercises/schema";
+import { plainTitle } from "@/features/exercises/title";
+import { dueCount } from "@/features/review/schedule";
+import { readCards } from "@/features/review/server";
 import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { isSupabaseConfigured } from "@/lib/db/config";
@@ -24,18 +27,10 @@ import { SignedOutNextLesson } from "./signed-out-next";
  * everyone else the next lesson (from this browser's progress) and the problem of the
  * day. Request-time (the date and the session), so it sits inside <Suspense>.
  */
-const plain = (text: string) => {
-  const s = text
-    .replace(/\$\$?([^$]+)\$\$?/g, "$1")
-    .replace(/[`*_]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  return s.length > 90 ? `${s.slice(0, 88)}…` : s;
-};
 
 function exerciseLink(ex: Exercise, locale: Locale) {
   return {
-    title: plain(locale === "en" ? (ex.prompt.en ?? ex.prompt.pl) : ex.prompt.pl),
+    title: plainTitle(locale === "en" ? (ex.prompt.en ?? ex.prompt.pl) : ex.prompt.pl),
     level: ex.level,
     href: getPathname({
       href: { pathname: "/practice/[exercise]", params: { exercise: ex.id } },
@@ -72,10 +67,11 @@ export async function TodaySection() {
     );
   }
 
-  const [league, ratings, done] = await Promise.all([
+  const [league, ratings, done, cards] = await Promise.all([
     me.leagueOptOut ? Promise.resolve(null) : readLeague(session),
     readRatings(session),
     session.supabase.from("lesson_progress").select("lesson_id, status"),
+    readCards(session),
   ]);
   const status = new Map((done.data ?? []).map((r) => [r.lesson_id, r.status as string]));
   const next = nextLesson(order, (id) => status.get(id));
@@ -98,6 +94,7 @@ export async function TodaySection() {
     nextLesson: next ? { title: next.title, href: next.href } : null,
     recommended: rec ? exerciseLink(rec as Exercise, locale) : null,
     problem: problemLink,
+    reviewDue: dueCount(cards, new Date()),
   };
   return (
     <section aria-labelledby="today-title" className="mb-14">

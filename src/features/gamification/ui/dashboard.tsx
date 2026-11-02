@@ -21,6 +21,8 @@ export type DashboardData = {
   nextLesson: { title: string; href: Parameters<typeof Link>[0]["href"] } | null;
   recommended: { title: string; level: number; href: string } | null;
   problem: { title: string; level: number; href: string } | null;
+  /** Review cards due today (Phase 15). */
+  reviewDue: number;
 };
 
 function Card({ title, children, testId }: { title: string; children: ReactNode; testId: string }) {
@@ -108,8 +110,10 @@ export function Dashboard({ data }: { data: DashboardData }) {
         )}
       </Card>
       <Card title={t("review")} testId="review">
-        <p className="font-mono text-2xl text-ink">0</p>
-        <p className="font-sans text-xs text-ink-muted">{t("reviewNote")}</p>
+        <p className="font-mono text-2xl text-ink">{data.reviewDue}</p>
+        <Link href="/review" className="font-sans text-sm">
+          {t("reviewStart")} →
+        </Link>
       </Card>
       <ProblemOfDay problem={data.problem} />
     </div>

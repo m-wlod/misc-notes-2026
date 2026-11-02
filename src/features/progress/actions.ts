@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import type { Rewards } from "@/features/gamification/server/award";
 import { onLessonCompleted } from "@/features/gamification/server/hooks";
+import { addLessonCards } from "@/features/review/server";
 import { createAdminClient } from "@/lib/db/admin";
 import type { Json } from "@/lib/db/database.types";
 import { getSession } from "@/lib/db/session";
@@ -103,5 +104,6 @@ export async function completeLesson(
     { onConflict: "user_id,lesson_id" },
   );
   if (error) return { ok: false, rewards: null };
+  await addLessonCards(session, parsed.data.lessonId);
   return { ok: true, rewards: await onLessonCompleted(session.user.id, parsed.data.lessonId) };
 }

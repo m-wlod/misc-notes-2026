@@ -14,7 +14,10 @@ import { listExercises } from "@/features/exercises/data";
 import { toQuery, parseFilters, type Filters } from "@/features/exercises/filter";
 import { FiltersForm, PracticeList, type ListItem } from "@/features/exercises/practice-list";
 import { lessonTitle, practiceSet } from "@/features/exercises/practice-set";
+import { plainTitle } from "@/features/exercises/title";
 import { publicView } from "@/features/exercises/view";
+import { problemsOfTheDay } from "@/features/gamification/server/read";
+import { DailyProblems, type DailyItem } from "@/features/gamification/ui/daily-share";
 import { getPathname, Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { cx } from "@/lib/cx";
@@ -60,9 +63,27 @@ async function Hub({
   const filters = parseFilters(await searchParams);
   const base = getPathname({ href: "/practice", locale });
 
+  const today = await problemsOfTheDay(new Date(), internal);
+  const dailyItems: DailyItem[] = [...today.byLevel.entries()].map(([level, ex]) => ({
+    level,
+    id: ex.id,
+    title: plainTitle(locale === "en" ? (ex.prompt.en ?? ex.prompt.pl) : ex.prompt.pl),
+    href: getPathname({
+      href: { pathname: "/practice/[exercise]", params: { exercise: ex.id } },
+      locale,
+    }),
+    sample: ex.sample,
+  }));
+  const daily = <DailyProblems day={today.day} items={dailyItems} />;
+
   const available = listExercises(internal);
   if (available.length === 0)
-    return <p className="max-w-(--measure) text-base">{t("hub.empty")}</p>;
+    return (
+      <>
+        {daily}
+        <p className="max-w-(--measure) text-base">{t("hub.empty")}</p>
+      </>
+    );
 
   const set = practiceSet(filters, internal);
   const query = toQuery(filters);
@@ -92,6 +113,7 @@ async function Hub({
 
   return (
     <div className="grid gap-8">
+      {daily}
       <nav aria-label={t("hub.levels")}>
         <ol className="flex flex-wrap gap-2 font-sans text-sm">
           {[undefined, 1, 2, 3, 4, 5].map((level) => {

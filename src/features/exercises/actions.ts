@@ -7,6 +7,7 @@ import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import type { Rewards } from "@/features/gamification/server/award";
 import { onExerciseGraded } from "@/features/gamification/server/hooks";
+import { addMistakeCard } from "@/features/review/server";
 import { createAdminClient } from "@/lib/db/admin";
 import { getSession } from "@/lib/db/session";
 
@@ -109,6 +110,7 @@ export async function submitAttempt(
       time_ms: parsed.data.timeMs,
       source: "app",
     });
+    if (graded.score < 1) await addMistakeCard(who.userId, ex.id);
     rewards = await onExerciseGraded(who.userId, ex, {
       score: graded.score,
       hintsUsed: parsed.data.hintsUsed,

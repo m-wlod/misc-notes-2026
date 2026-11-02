@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/display";
 import { OpenPanel } from "@/features/ai-grading/open-panel";
 import { celebrate } from "@/features/gamification/celebrate";
+import {
+  DAILY_KEY,
+  dailyKey,
+  withAttempt as withDailyAttempt,
+} from "@/features/gamification/daily";
+import { DailyShare } from "@/features/gamification/ui/daily-share";
+import { store } from "@/features/reader/storage";
 import { cx } from "@/lib/cx";
 
 import { getHint, revealSolution, submitAttempt } from "./actions";
@@ -53,6 +60,7 @@ export function ExerciseCard({
   similarHref,
   nextHref,
   aiAvailable = false,
+  daily = null,
 }: {
   view: PublicExercise;
   /** The next variant of this exercise. */
@@ -61,6 +69,8 @@ export function ExerciseCard({
   nextHref: string | null;
   /** AI grading of open answers is on (a key and accounts exist; Phase 10). */
   aiAvailable?: boolean;
+  /** This exercise is today's problem of the day for its level (Phase 15). */
+  daily?: { day: string; level: number } | null;
 }) {
   const t = useTranslations("exercises");
   const locale = useLocale();
@@ -132,11 +142,20 @@ export function ExerciseCard({
         }
         setResult({ result: res.result, score: res.score, feedback: res.feedback });
         recordAttempt({ exerciseId: view.id, score: res.score, answer: sub });
+        recordDaily(res.result === "correct");
         celebrate(res.rewards);
       } catch {
         setFailure("network");
       }
     });
+  };
+
+  /** Problem of the day: one mark per graded attempt, kept in this browser. */
+  const recordDaily = (correct: boolean) => {
+    if (!daily) return;
+    store(DAILY_KEY, (raw) =>
+      withDailyAttempt(raw, dailyKey(daily.day, daily.level), view.id, correct, hints.length),
+    );
   };
 
   const checkRef = useRef(check);
@@ -251,6 +270,7 @@ export function ExerciseCard({
               setFailure(null);
               setResult({ result: g.result, score: g.score });
               recordAttempt({ exerciseId: view.id, score: g.score, answer: g.answer });
+              recordDaily(g.result === "correct");
             }}
           />
         </div>
@@ -399,6 +419,8 @@ export function ExerciseCard({
           ) : null}
         </div>
       ) : null}
+
+      {daily ? <DailyShare day={daily.day} level={daily.level} /> : null}
 
       {solution !== null ? (
         <section aria-label={t("solution")} className="mt-5 border-t border-rule pt-4">

@@ -24,6 +24,8 @@ export const NAMESPACES = [
   "sims",
   "python",
   "gamification",
+  "review",
+  "challenge",
 ] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 

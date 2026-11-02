@@ -1,9 +1,19 @@
 import { describe, expect, it } from "vitest";
 
+import { currentChallenge } from "@/features/challenge/current";
 import { mulberry32 } from "@/lib/math/rng";
 
 import { ACHIEVEMENTS, EMPTY_FACTS, newAchievements, type Facts } from "./achievements";
 import { LEAGUE, STREAK, XP } from "./config";
+import {
+  dailyKey,
+  grid,
+  MAX_ATTEMPTS,
+  parseDaily,
+  shareParams,
+  solved,
+  withAttempt as withDailyAttempt,
+} from "./daily";
 import { addDays, daysBetween, leagueWeek, localDate, mondayOf, weekday } from "./days";
 import { joinGroup, rankGroup, rollWeek, splitIntoGroups, tierAfter, type Member } from "./league";
 import { difficulty, expectedScore, recommend, updateRating } from "./rating";
@@ -487,5 +497,64 @@ describe("dashboard helpers", () => {
     expect(goalShare(10, 50)).toBe(0.2);
     expect(goalShare(80, 50)).toBe(1);
     expect(goalShare(5, 0)).toBe(1);
+  });
+});
+
+describe("problem of the day results", () => {
+  const key = dailyKey("2026-11-02", 3);
+
+  it("records attempts until solved, then stops; keeps the most hints used", () => {
+    let raw: string | null = null;
+    raw = withDailyAttempt(raw, key, "e1", false, 0);
+    raw = withDailyAttempt(raw, key, "e1", false, 1);
+    raw = withDailyAttempt(raw, key, "e1", true, 1);
+    raw = withDailyAttempt(raw, key, "e1", false, 3); // after solving: ignored
+    const r = parseDaily(raw).days[key];
+    expect(r).toEqual({ exerciseId: "e1", marks: ["x", "x", "o"], hints: 1 });
+    expect(grid(r?.marks ?? [])).toBe("🟥🟥🟩");
+    expect(solved(r)).toBe(true);
+  });
+
+  it("caps attempts and survives bad storage", () => {
+    let raw: string | null = "{not json";
+    for (let i = 0; i < 15; i++) raw = withDailyAttempt(raw, key, "e1", false, 0);
+    expect(parseDaily(raw).days[key]?.marks).toHaveLength(MAX_ATTEMPTS);
+    expect(parseDaily('{"version":2}')).toEqual({ version: 1, days: {} });
+  });
+
+  it("share parameters are strict", () => {
+    expect(shareParams.safeParse({ d: "2026-11-02", l: "3", r: "xxo", h: "1" }).success).toBe(true);
+    for (const bad of [
+      { d: "2026-11-02", l: "6", r: "o", h: "0" },
+      { d: "02.11.2026", l: "3", r: "o", h: "0" },
+      { d: "2026-11-02", l: "3", r: "xox<script>", h: "0" },
+      { d: "2026-11-02", l: "3", r: "", h: "0" },
+      { d: "2026-11-02", l: "3", r: "o", h: "0", format: "poster" },
+    ]) {
+      expect(shareParams.safeParse(bad).success).toBe(false);
+    }
+    expect(shareParams.parse({ d: "2026-11-02", l: "3", r: "o", h: "0" })).toMatchObject({
+      lang: "pl",
+      format: "og",
+    });
+  });
+});
+
+describe("weekly challenge", () => {
+  const c = (week: string, status: "draft" | "published" = "published") => ({
+    id: `c-${week}`,
+    week,
+    status,
+    deadline: `${addDays(week, 6)}T22:00:00Z`,
+  });
+  it("this week's published challenge, open until its deadline", () => {
+    const all = [c("2026-10-26"), c("2026-11-02"), c("2026-11-09", "draft")];
+    expect(currentChallenge(all, new Date("2026-11-04T12:00:00Z"))).toMatchObject({
+      id: "c-2026-11-02",
+      open: true,
+    });
+    expect(currentChallenge(all, new Date("2026-11-08T22:30:00Z"))?.open).toBe(false);
+    expect(currentChallenge(all, new Date("2026-11-10T12:00:00Z"))).toBeNull(); // draft
+    expect(currentChallenge([], new Date())).toBeNull();
   });
 });
