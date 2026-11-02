@@ -26,6 +26,7 @@ export function renderFrame(
   t: number,
   c: Palette,
   fmt: (v: number, f: AxisFormat | undefined) => string,
+  label: (key: string) => string,
   text: ExportText,
   opts: { recording: boolean; width?: number; height?: number },
 ): HTMLCanvasElement {
@@ -60,7 +61,7 @@ export function renderFrame(
   ctx.rect(plot.left, plot.top, plot.width, plot.height);
   ctx.clip();
   def.draw(ctx, data, 0, t, plot, c, params);
-  def.overlay?.(ctx, data, t, plot, c, params);
+  def.overlay?.(ctx, data, t, plot, c, params, label);
   ctx.restore();
   ctx.restore();
 

@@ -38,7 +38,15 @@
     "y": "y",
     "samples": "number of samples",
     "estimate": "estimate of π",
-    "price_option": "option price"
+    "price_option": "option price",
+    "rounds": "round",
+    "bankroll": "bankroll",
+    "ruined": "players ruined",
+    "bets": "bet",
+    "wealth": "wealth (start 1)",
+    "years": "year",
+    "winRate": "win rate",
+    "rewardRisk": "reward to risk (RR)"
   },
   "options": {
     "coin": "coin (0/1)",
@@ -51,7 +59,9 @@
     "pi": "the number π",
     "call": "call option price",
     "points": "points",
-    "convergence": "convergence"
+    "convergence": "convergence",
+    "ruin": "share ruined",
+    "paths": "players' bankrolls"
   },
   "coin-walk": {
     "title": "Coin flip or chart pattern?",
@@ -101,5 +111,54 @@
       "r": "Interest rate r"
     },
     "summary": "After {count} samples: estimate {estimate}, true value {truth}, error {error}, 95% margin ±{margin}."
+  },
+  "martingale": {
+    "title": "Martingale: doubling the bet",
+    "short": "A thousand players double their bet after every loss. Most win a little for a long time, while the share of ruined players rises every round.",
+    "params": {
+      "bankroll": "Starting bankroll",
+      "bet": "Base bet",
+      "p": "Chance of winning",
+      "players": "Number of players",
+      "rounds": "Number of rounds",
+      "view": "View"
+    },
+    "summary": "Round {round} of {rounds}: {ruined}% of players are ruined. Average bankroll {mean} (start {start})."
+  },
+  "kelly": {
+    "title": "Kelly criterion",
+    "short": "The same bets played with half, full and double the Kelly stake. Betting too much grows slower, and can even lose despite an edge.",
+    "params": {
+      "p": "Chance of winning",
+      "b": "Payout per 1 staked (b)",
+      "bets": "Number of bets",
+      "runs": "Number of runs"
+    },
+    "summary": "Bet {bet} of {bets}. Kelly stakes {kelly}% of capital. Typical wealth (geometric average): ½ Kelly {half}, Kelly {full}, 2× Kelly {double}. Theoretical growth per bet: {gHalf}%, {gFull}%, {gDouble}%."
+  },
+  "vol-drag": {
+    "title": "Volatility drag",
+    "short": "With the same average yearly return, the typical investor ends up far below the average. Volatility makes the difference.",
+    "params": {
+      "mu": "Average yearly return μ",
+      "sigma": "Volatility σ",
+      "years": "Number of years",
+      "paths": "Number of investors"
+    },
+    "labels": {
+      "mean": "mean",
+      "median": "median"
+    },
+    "summary": "Year {year} of {years}: mean wealth {mean}, typical (median) {median}. The average return is {mu}% a year; compounded it is about {geo}%."
+  },
+  "ev-heatmap": {
+    "title": "Expected value map",
+    "short": "Win rate, reward to risk and costs together. Blue cells make money, orange ones lose it, and the line is break-even.",
+    "params": {
+      "fees": "Costs per trade (R)",
+      "p": "Your win rate",
+      "rr": "Your reward to risk (RR)"
+    },
+    "summary": "Win rate {p}%, reward to risk {rr}, costs {fees} R: expected value {ev} R per trade. At this RR you need to win at least {breakEven}% of trades."
   }
 }

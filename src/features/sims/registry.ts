@@ -1,14 +1,27 @@
 import { coinWalk } from "./defs/coin-walk";
+import { evHeatmap } from "./defs/ev-heatmap";
 import { gbm } from "./defs/gbm";
+import { kelly } from "./defs/kelly";
 import { llnClt } from "./defs/lln-clt";
+import { martingale } from "./defs/martingale";
 import { monteCarlo } from "./defs/monte-carlo";
+import { volDrag } from "./defs/vol-drag";
 import type { SimDef } from "./types";
 
 /**
  * Every simulation, in the order the Lab lists them (Phase 12). Pure definitions: the
  * worker imports this too, so nothing here touches the DOM at import time.
  */
-export const SIMS: readonly SimDef[] = [coinWalk, llnClt, gbm, monteCarlo];
+export const SIMS: readonly SimDef[] = [
+  coinWalk,
+  llnClt,
+  gbm,
+  monteCarlo,
+  martingale,
+  kelly,
+  volDrag,
+  evHeatmap,
+];
 
 export const SIM_IDS = SIMS.map((s) => s.id);
 export const simById = (id: string) => SIMS.find((s) => s.id === id);

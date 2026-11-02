@@ -120,10 +120,14 @@ test("the toggle works from the keyboard", async ({ page }) => {
 test("stored depth applies before first paint (no flash)", async ({ page }) => {
   await page.addInitScript((key) => {
     window.localStorage.setItem(key, "formal");
-    requestAnimationFrame(() => {
+    // When the first content (header or main) is inserted, the depth must be set.
+    new MutationObserver((_, observer) => {
+      // The first real content (header or main): it must already be themed.
+      if (!document.querySelector("header, main")) return;
+      observer.disconnect();
       (window as unknown as { firstFrameDepth: string | null }).firstFrameDepth =
         document.documentElement.getAttribute("data-depth");
-    });
+    }).observe(document, { childList: true, subtree: true });
   }, DEPTH_STORAGE_KEY);
   await page.goto(SAMPLE);
   await page.waitForFunction(() => "firstFrameDepth" in window);

@@ -3,9 +3,13 @@ import { describe, expect, it } from "vitest";
 import { bsPrice } from "@/lib/math/black-scholes";
 
 import { coinWalk } from "./defs/coin-walk";
+import { ev, evHeatmap } from "./defs/ev-heatmap";
 import { expected, gbm } from "./defs/gbm";
+import { growthRate, kelly, kellyOptimum } from "./defs/kelly";
 import { llnClt } from "./defs/lln-clt";
+import { martingale } from "./defs/martingale";
 import { monteCarlo } from "./defs/monte-carlo";
+import { volDrag } from "./defs/vol-drag";
 import { clampParam, defaults, parseState, stateQuery } from "./params";
 import { SIMS, simBySlug } from "./registry";
 
@@ -51,7 +55,8 @@ describe("simulations are deterministic per seed", () => {
     const p = defaults(s.params);
     const a = s.compute(p, 11);
     expect(s.compute(p, 11)).toEqual(a);
-    expect(s.compute(p, 12)).not.toEqual(a);
+    // A still picture (the EV map) doesn't use the seed.
+    if (!s.static) expect(s.compute(p, 12)).not.toEqual(a);
     expect(a.T).toBeGreaterThan(0);
     expect(Object.keys(s.summary(a, a.T, p)).length).toBeGreaterThan(0);
   });
@@ -101,5 +106,51 @@ describe("the maths behind each simulation", () => {
     expect(Math.abs((call.estimate[19_999] ?? 0) - call.truth)).toBeLessThan(
       ((1.96 * call.sd) / Math.sqrt(20_000)) * 1.5,
     );
+  });
+});
+
+describe("12b simulations", () => {
+  it("martingale: ruin only grows, and an unfair game drains the average bankroll", () => {
+    const p = { ...defaults(martingale.params), players: 500, rounds: 500 };
+    const d = martingale.compute(p, 2);
+    for (let i = 1; i <= d.T; i++)
+      expect(d.ruined[i] ?? 0).toBeGreaterThanOrEqual(d.ruined[i - 1] ?? 0);
+    expect(d.ruined[d.T]).toBeGreaterThan(0.05);
+    expect(d.mean[d.T]).toBeLessThan(d.bankroll);
+  });
+
+  it("Kelly: f* = p − q/b, and the growth rate peaks there", () => {
+    expect(kellyOptimum(0.55, 1)).toBeCloseTo(0.1, 12);
+    expect(kellyOptimum(0.6, 2)).toBeCloseTo(0.4, 12);
+    expect(kellyOptimum(0.4, 1)).toBe(0);
+    const g = (f: number) => growthRate(f, 0.55, 1);
+    expect(g(0.1)).toBeGreaterThan(g(0.05));
+    expect(g(0.1)).toBeGreaterThan(g(0.15));
+    expect(g(0.2)).toBeCloseTo(0, 2); // twice Kelly at even money: about no growth
+    const d = kelly.compute({ p: 0.55, b: 1, bets: 1000, runs: 300 }, 8);
+    const s = kelly.summary(d, d.T, {});
+    expect(Number(s.full)).toBeGreaterThan(Number(s.double));
+    expect(Number(s.full)).toBeGreaterThan(Number(s.half));
+  });
+
+  it("volatility drag: the median compounds near μ − σ²/2 and trails the mean", () => {
+    const p = { mu: 0.07, sigma: 0.35, years: 30, paths: 2000 };
+    const d = volDrag.compute(p, 13);
+    const s = volDrag.summary(d, d.T, p);
+    // Shown to one decimal: 7% − 6.125% = 0.875% → 0.9.
+    expect(Number(s.geo)).toBe(Math.round((0.07 - 0.35 ** 2 / 2) * 1000) / 10);
+    expect(Number(s.median)).toBeLessThan(Number(s.mean));
+    // Median growth per year within a couple of points of the geometric estimate.
+    const yearly = Number(s.median) ** (1 / 30) - 1;
+    expect(Math.abs(yearly - (0.07 - 0.35 ** 2 / 2))).toBeLessThan(0.02);
+  });
+
+  it("EV map: EV = p·RR − (1 − p) − fees, break-even at p = (1 + fees)/(1 + RR)", () => {
+    expect(ev(0.5, 1, 0)).toBe(0);
+    expect(ev(0.45, 1.5, 0.05)).toBeCloseTo(0.075, 12);
+    const d = evHeatmap.compute({ fees: 0.1, p: 0.5, rr: 1 }, 0);
+    expect(d.T).toBe(1);
+    expect(evHeatmap.summary(d, 1, {})).toMatchObject({ ev: -0.1, breakEven: 55 });
+    expect(evHeatmap.static).toBe(true);
   });
 });

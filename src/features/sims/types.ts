@@ -34,9 +34,12 @@ export type Palette = {
   grid: string;
   bg: string;
   surface: string;
+  /** Categorical series (blue, orange, aqua); also the diverging poles (1 and 2). */
+  series: [string, string, string];
 };
 
-export type AxisFormat = "int" | "num" | "pct" | "money";
+/** `log10`: the value is log10(x); ticks are labelled with x. */
+export type AxisFormat = "int" | "num" | "pct" | "money" | "log10";
 export type View = {
   x: [number, number];
   y: [number, number];
@@ -57,6 +60,8 @@ export interface SimDef<D extends SimData = SimData> {
   params: Readonly<Record<string, ParamSpec>>;
   /** Run `compute` in the Web Worker (heavy data). */
   worker?: boolean;
+  /** A still picture (no animation): shown complete, without playback controls. */
+  static?: boolean;
   /** Seconds the whole animation takes at 1× speed. */
   seconds?: number;
   compute(p: Params, seed: number): D;
@@ -72,7 +77,16 @@ export interface SimDef<D extends SimData = SimData> {
     p: Params,
   ): void;
   /** Redrawn every frame on top (cheap: histograms, markers, current values). */
-  overlay?(ctx: CanvasRenderingContext2D, d: D, t: number, plot: Plot, c: Palette, p: Params): void;
+  overlay?(
+    ctx: CanvasRenderingContext2D,
+    d: D,
+    t: number,
+    plot: Plot,
+    c: Palette,
+    p: Params,
+    /** Localised text for `sims.<id>.labels.<key>` (direct labels on the chart). */
+    label: (key: string) => string,
+  ): void;
   /** Values for the `sims.<id>.summary` message at frame t (the accessible description). */
   summary(d: D, t: number, p: Params): Record<string, number | string>;
 }

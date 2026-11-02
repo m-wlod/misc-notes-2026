@@ -94,11 +94,16 @@ test("select highlights the active option with the focus colour", async ({ page 
 test("stored dark theme applies before first paint (no flash)", async ({ page }) => {
   await page.addInitScript((key) => {
     window.localStorage.setItem(key, "dark");
-    // Runs before any page script: record the theme the first frame is painted with.
-    requestAnimationFrame(() => {
+    // Record the theme when the first content (header or main) is inserted: it must be
+    // themed already. (A first-animation-frame check is flaky under load: that frame can
+    // come before the document has any content, or before the theme script has arrived.)
+    new MutationObserver((_, observer) => {
+      // The first real content (header or main): it must already be themed.
+      if (!document.querySelector("header, main")) return;
+      observer.disconnect();
       (window as unknown as { firstFrameTheme: string | null }).firstFrameTheme =
         document.documentElement.getAttribute("data-theme");
-    });
+    }).observe(document, { childList: true, subtree: true });
   }, THEME_STORAGE_KEY);
   await page.goto("/pl/styleguide");
   await page.waitForFunction(() => "firstFrameTheme" in window);

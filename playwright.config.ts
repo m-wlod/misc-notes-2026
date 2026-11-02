@@ -11,7 +11,9 @@ export default defineConfig({
   reporter: isCI ? [["github"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: `http://localhost:${String(PORT)}`,
-    trace: "on-first-retry",
+    // Keep the trace of every failed attempt (the first one has the error; a passing
+    // retry hides it). See docs/PROGRESS.md, known issue on client re-renders.
+    trace: "retain-on-failure",
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },

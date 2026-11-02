@@ -38,7 +38,15 @@
     "y": "y",
     "samples": "liczba prób",
     "estimate": "oszacowanie π",
-    "price_option": "cena opcji"
+    "price_option": "cena opcji",
+    "rounds": "runda",
+    "bankroll": "stan konta",
+    "ruined": "zbankrutowani gracze",
+    "bets": "zakład",
+    "wealth": "majątek (start 1)",
+    "years": "rok",
+    "winRate": "skuteczność (odsetek wygranych)",
+    "rewardRisk": "zysk do ryzyka (RR)"
   },
   "options": {
     "coin": "moneta (0/1)",
@@ -51,7 +59,9 @@
     "pi": "liczba π",
     "call": "cena opcji call",
     "points": "punkty",
-    "convergence": "zbieżność"
+    "convergence": "zbieżność",
+    "ruin": "odsetek bankructw",
+    "paths": "stan konta graczy"
   },
   "coin-walk": {
     "title": "Rzut monetą czy formacja?",
@@ -101,5 +111,54 @@
       "r": "Stopa procentowa r"
     },
     "summary": "Po {count} próbach: oszacowanie {estimate}, prawdziwa wartość {truth}, błąd {error}, margines 95% ±{margin}."
+  },
+  "martingale": {
+    "title": "Martyngał: podwajanie stawki",
+    "short": "Tysiąc graczy podwaja stawkę po każdej przegranej. Większość długo wygrywa po trochu, a odsetek bankructw rośnie z każdą rundą.",
+    "params": {
+      "bankroll": "Kapitał na start",
+      "bet": "Stawka podstawowa",
+      "p": "Szansa wygranej",
+      "players": "Liczba graczy",
+      "rounds": "Liczba rund",
+      "view": "Widok"
+    },
+    "summary": "Runda {round} z {rounds}: zbankrutowało {ruined}% graczy. Średni stan konta {mean} (start {start})."
+  },
+  "kelly": {
+    "title": "Kryterium Kelly'ego",
+    "short": "Te same zakłady grane z połową stawki Kelly'ego, pełną i podwójną. Za duża stawka rośnie wolniej, a nawet traci mimo przewagi.",
+    "params": {
+      "p": "Szansa wygranej",
+      "b": "Wypłata za 1 zł stawki (b)",
+      "bets": "Liczba zakładów",
+      "runs": "Liczba przebiegów"
+    },
+    "summary": "Zakład {bet} z {bets}. Kelly stawia {kelly}% kapitału. Typowy kapitał (średnia geometryczna): ½ Kelly {half}, Kelly {full}, 2× Kelly {double}. Teoretyczny wzrost na zakład: {gHalf}%, {gFull}%, {gDouble}%."
+  },
+  "vol-drag": {
+    "title": "Zmienność zjada zyski",
+    "short": "Przy tej samej średniej rocznej stopie zwrotu typowy inwestor kończy dużo niżej niż średnia. Różnicę robi zmienność.",
+    "params": {
+      "mu": "Średni roczny zwrot μ",
+      "sigma": "Zmienność σ",
+      "years": "Liczba lat",
+      "paths": "Liczba inwestorów"
+    },
+    "labels": {
+      "mean": "średnia",
+      "median": "mediana"
+    },
+    "summary": "Rok {year} z {years}: średni majątek {mean}, typowy (mediana) {median}. Średni zwrot to {mu}% rocznie, a składany około {geo}%."
+  },
+  "ev-heatmap": {
+    "title": "Mapa wartości oczekiwanej",
+    "short": "Skuteczność, stosunek zysku do ryzyka i koszty razem. Niebieskie pola zarabiają, pomarańczowe tracą, linia to próg rentowności.",
+    "params": {
+      "fees": "Koszty na transakcję (R)",
+      "p": "Twoja skuteczność",
+      "rr": "Twój zysk do ryzyka (RR)"
+    },
+    "summary": "Skuteczność {p}%, zysk do ryzyka {rr}, koszty {fees} R: wartość oczekiwana {ev} R na transakcję. Przy tym RR trzeba wygrywać co najmniej {breakEven}% transakcji."
   }
 }
