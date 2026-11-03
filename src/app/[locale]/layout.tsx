@@ -11,6 +11,7 @@ import { DEPTH_SCRIPT } from "@/config/depth";
 import { resolveSiteUrl } from "@/config/runtime";
 import { siteConfig } from "@/config/site";
 import { env } from "@/env";
+import { OG_SIZE, ogUrl } from "@/features/seo/og";
 import { routing } from "@/i18n/routing";
 
 import { mono, sans, serif } from "./fonts";
@@ -27,11 +28,14 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
     metadataBase: resolveSiteUrl(env),
     title: { template: `%s · ${siteConfig.name}`, default: siteConfig.name },
     description: t("siteDescription"),
+    // The site card; pages with their own preview (lessons, videos, …) replace it.
     openGraph: {
       siteName: siteConfig.name,
       locale: locale === "pl" ? "pl_PL" : "en_GB",
       type: "website",
+      images: [{ url: ogUrl("page", "home", locale), ...OG_SIZE, alt: siteConfig.name }],
     },
+    twitter: { card: "summary_large_image", images: [ogUrl("page", "home", locale)] },
   };
 }
 

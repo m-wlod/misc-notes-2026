@@ -18,6 +18,9 @@ import { Checker } from "@/features/debunk/checkers/checker";
 import { allSlugs, entryBySlug, slugsOf } from "@/features/debunk/entries";
 import { CorrectionForm, FinishTracker } from "@/features/debunk/forms";
 import { VerdictBadge } from "@/features/debunk/verdict-badge";
+import { JsonLd } from "@/features/seo/json-ld";
+import { faqPage } from "@/features/seo/jsonld";
+import { absolute } from "@/features/seo/site";
 import { getPathname, Link } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 
@@ -36,6 +39,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: e.claim,
     description: e.summary,
+    // Drafts and labelled samples (internal deployments only) stay out of search engines.
+    ...(e.status === "published" && !e.sample ? {} : { robots: { index: false, follow: true } }),
     alternates: alternatesForPaths(locale, (l) =>
       getPathname({
         href: { pathname: "/debunk/[slug]", params: { slug: slugs[l] ?? slugs.pl ?? slug } },
@@ -43,9 +48,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       }),
     ),
     openGraph: {
+      type: "article",
+      title: e.claim,
+      description: e.summary,
       images: [
         { url: `/api/share/debunk?id=${e.id}&lang=${locale}&format=og`, width: 1200, height: 630 },
       ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: e.claim,
+      description: e.summary,
+      images: [`/api/share/debunk?id=${e.id}&lang=${locale}&format=og`],
     },
   };
 }
@@ -91,11 +105,20 @@ async function Entry({ params, searchParams }: Props) {
   }
 
   const nodes = lessonNodes(locale);
+  const structured = faqPage({
+    url: absolute(
+      getPathname({ href: { pathname: "/debunk/[slug]", params: { slug: e.slug } }, locale }),
+    ),
+    locale,
+    question: e.claim,
+    answer: `${t(`verdict.${e.verdict}`)}. ${e.summary}`,
+  });
   return (
     <article
       data-debunk-entry={e.id}
       className="mx-auto max-w-(--measure) px-4 pt-12 pb-16 sm:px-0"
     >
+      <JsonLd data={structured} />
       <p className="mb-4 font-sans text-sm">
         <Link href="/debunk">{t("entry.back")}</Link>
       </p>

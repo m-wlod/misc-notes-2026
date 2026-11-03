@@ -3,10 +3,14 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { alternatesForPaths } from "@/components/shell/section-page";
-import { findTrack, getCurriculum, titlesFor, trackSlugs } from "@/features/curriculum";
+import { findTrack, getCurriculum, lessonHref, titlesFor, trackSlugs } from "@/features/curriculum";
 import { LessonPath } from "@/features/curriculum/lesson-path";
 import { ModuleProgress } from "@/features/curriculum/module-progress";
 import { UnitMeta } from "@/features/curriculum/views";
+import { JsonLd } from "@/features/seo/json-ld";
+import { course } from "@/features/seo/jsonld";
+import { ogMeta } from "@/features/seo/og";
+import { absolute, publisher } from "@/features/seo/site";
 import { getPathname, Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 
@@ -36,15 +40,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: alternatesForPaths(locale, (l) =>
       getPathname({ href: trackHref(slugs?.[l] ?? track.slug), locale: l }),
     ),
+    ...ogMeta({
+      kind: "track",
+      id: track.id,
+      locale,
+      title: track.name,
+      description: track.description,
+    }),
   };
 }
 
 export default async function TrackPage({ params }: Props) {
   const { locale, track } = await resolve(params);
   const t = await getTranslations("curriculum");
+  const structured = course({
+    name: track.name,
+    description: track.description,
+    url: absolute(getPathname({ href: trackHref(track.slug), locale })),
+    locale,
+    provider: await publisher(locale),
+    lessons: track.modules.flatMap((m) =>
+      m.lessons.map((l) => ({
+        name: l.title,
+        url: absolute(getPathname({ href: lessonHref(l), locale })),
+      })),
+    ),
+  });
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-12 pb-16 sm:px-6">
+      <JsonLd data={structured} />
       <p className="mb-6 font-sans text-sm">
         <Link href="/learn" className="text-accent-text underline underline-offset-2">
           ← {t("allTracks")}

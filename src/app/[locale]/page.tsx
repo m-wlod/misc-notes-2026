@@ -10,14 +10,19 @@ import { buttonClass } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/display";
 import { LANDING } from "@/config/landing";
 import { isStyleguideEnabled } from "@/config/runtime";
+import { siteConfig } from "@/config/site";
 import { env } from "@/env";
 import { getExercise, listExercises } from "@/features/exercises/data";
 import { ExerciseCard } from "@/features/exercises/exercise-card";
 import { publicView } from "@/features/exercises/view";
 import { TodaySection } from "@/features/gamification/ui/today-section";
+import { JsonLd } from "@/features/seo/json-ld";
+import { website } from "@/features/seo/jsonld";
+import { ogMeta } from "@/features/seo/og";
+import { absolute } from "@/features/seo/site";
 import { Simulation } from "@/features/sims/embed";
 import { listVideos, pickText } from "@/features/videos/entries";
-import { Link } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]">): Promise<Metadata> {
@@ -27,6 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]">): Prom
     title: { absolute: t("metaTitle") },
     description: t("lead"),
     alternates: alternatesFor("/", locale),
+    ...ogMeta({ kind: "page", id: "home", locale, title: t("metaTitle"), description: t("lead") }),
   };
 }
 
@@ -41,8 +47,15 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const locale = (await params).locale as Locale;
   const t = await getTranslations("home");
   const tAll = await getTranslations();
+  const structured = website({
+    name: siteConfig.name,
+    url: absolute(getPathname({ href: "/", locale })),
+    locale,
+    description: t("lead"),
+  });
   return (
     <div className="mx-auto grid max-w-6xl gap-16 px-4 pt-16 pb-16 sm:px-6">
+      <JsonLd data={structured} />
       <header className="grid gap-5">
         <h1 className="max-w-3xl text-3xl sm:text-4xl">{t("title")}</h1>
         <p className="max-w-(--measure) font-serif text-reading">{t("lead")}</p>

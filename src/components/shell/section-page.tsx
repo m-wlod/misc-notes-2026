@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { resolveSiteUrl } from "@/config/runtime";
 import { env } from "@/env";
+import { ogMeta } from "@/features/seo/og";
 import { getPathname } from "@/i18n/navigation";
 import { routing, type StaticPathname, type Locale } from "@/i18n/routing";
 import { localeAlternates } from "@/lib/i18n/seo";
@@ -64,6 +65,13 @@ export function sectionPage(key: SectionKey) {
       title: t(`${key}.title`),
       description: t(`${key}.description`),
       alternates: alternatesFor(href, locale),
+      ...ogMeta({
+        kind: "page",
+        id: key,
+        locale,
+        title: t(`${key}.title`),
+        description: t(`${key}.description`),
+      }),
     };
   }
 
