@@ -89,7 +89,15 @@ test("the exercise thread stays locked until the reader reveals the solution", a
   const d = discussion(page);
   await expect(d).toHaveAttribute("data-discussion", "locked");
   await expect(page.getByText(EXERCISE_POST)).toHaveCount(0);
+  // A wrong answer is recorded but doesn't open the thread; revealing the solution does.
+  const answer = page.getByLabel("Twoja odpowiedź");
+  await answer.fill("6");
+  await answer.press("Enter");
+  await expect(page.getByText("Jeszcze nie.")).toBeVisible();
+  await d.getByRole("button", { name: /Pokaż dyskusję/ }).click();
+  await expect(d).toHaveAttribute("data-discussion", "locked");
   await page.getByRole("button", { name: "Pokaż rozwiązanie" }).click();
+  await expect(page.getByRole("region", { name: "Rozwiązanie" })).toBeVisible();
   await d.getByRole("button", { name: /Pokaż dyskusję/ }).click();
   await expect(d).toHaveAttribute("data-discussion", "open");
   await expect(d.getByText(EXERCISE_POST)).toBeVisible();
