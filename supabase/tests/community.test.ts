@@ -27,7 +27,7 @@ beforeAll(async () => {
   const seed = await admin()
     .from("exercise_attempts")
     .insert([
-      { user_id: author.id, exercise_id: EX, answer: {}, score: 1, grader: "auto" },
+      { user_id: author.id, exercise_id: EX, answer: {}, score: 1, grader: "auto", source: "app" },
       {
         user_id: importer.id,
         exercise_id: EX,
