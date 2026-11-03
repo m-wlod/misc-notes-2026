@@ -9,13 +9,16 @@ import { canAccess, NAV, sectionPath } from "../src/features/admin/access";
  * - a learner (and a moderator, on admin-only sections) gets 403 on every admin page
  *   and API route;
  * - the dashboard shows the same numbers as a direct count;
- * - role changes and data exports work and are audited.
+ * - role changes and data exports work and are audited;
+ * - an AI-grading dispute is upheld end to end (score, XP, audit) (18b);
+ * - content status and exercise analytics open for reviewers and show the database's numbers.
  */
 test.describe.configure({ mode: "serial" });
 
 let boss: User | undefined;
 let mod: User | undefined;
 let learner: User | undefined;
+let reviewer: User | undefined;
 const opened: Page[] = [];
 
 async function pageAs(browser: Browser, user: User) {
@@ -34,6 +37,7 @@ test.beforeAll(async () => {
   boss = await createUser("boss", "admin");
   mod = await createUser("mod", "moderator");
   learner = await createUser("learner");
+  reviewer = await createUser("reviewer", "reviewer");
   const { error } = await admin()
     .from("exercise_attempts")
     .insert(
@@ -51,9 +55,9 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   for (const p of opened) await p.context().close();
-  const actors = [boss, mod].flatMap((u) => (u ? [u.id] : []));
+  const actors = [boss, mod, reviewer].flatMap((u) => (u ? [u.id] : []));
   await admin().from("audit_log").delete().in("actor_id", actors);
-  await deleteUsers([boss, mod, learner]);
+  await deleteUsers([boss, mod, learner, reviewer]);
 });
 
 test("403 on every admin page and API for a learner; moderators only where allowed", async ({
@@ -67,8 +71,8 @@ test("403 on every admin page and API for a learner; moderators only where allow
     for (const section of NAV) {
       const res = await page.request.get(`/pl${sectionPath(section)}`, { maxRedirects: 0 });
       const label = `${roles.join() || "learner"} ${section}`;
-      // Allowed sections pass the proxy (some are only built in 18b/18c).
-      if (canAccess(roles, section)) expect(res.status(), label).not.toBe(403);
+      // Admin-only sections built in 18c are 403 for everyone here anyway.
+      if (canAccess(roles, section)) expect(res.status(), label).toBe(200);
       else expect(res.status(), label).toBe(403);
     }
     const api = await page.request.get(`/api/admin/users/${(learner as User).id}/export`);
@@ -119,4 +123,98 @@ test("an admin grants a role and downloads a user's data; both are audited", asy
     { action: "role.grant", target: `user:${id}` },
     { action: "user.export", target: `user:${id}` },
   ]);
+});
+
+test("a moderator upholds an AI-grading dispute: new score, XP and an audit row", async ({
+  browser,
+}) => {
+  const db = admin();
+  const id = (learner as User).id;
+  const feedback = {
+    score: 2,
+    verdict: "partial",
+    rubricItems: [],
+    feedback: "Brakuje uzasadnienia.",
+    misconceptions: [],
+    nextStep: "Dopisz uzasadnienie.",
+  };
+  const { data: attempt, error } = await db
+    .from("exercise_attempts")
+    .insert({
+      user_id: id,
+      exercise_id: "przyklad-otwarte",
+      answer: { kind: "text", value: "Moja pełna odpowiedź z uzasadnieniem." },
+      score: 0.5,
+      grader: "ai",
+      feedback,
+    })
+    .select("id")
+    .single();
+  if (error) throw error;
+  const { data: dispute, error: disputeError } = await db
+    .from("grading_disputes")
+    .insert({ user_id: id, attempt_id: attempt.id, reason: "Uzasadnienie jest w drugim zdaniu." })
+    .select("id")
+    .single();
+  if (disputeError) throw disputeError;
+
+  const page = await pageAs(browser, mod as User);
+  await page.goto("/pl/admin/kolejki");
+  await expect(page.locator("[data-queue='disputes'] [data-count]")).not.toHaveText("0");
+  await page.goto("/pl/admin/spory");
+  const item = page.locator(`[data-dispute='${String(dispute.id)}']`);
+  await expect(item).toContainText("Uzasadnienie jest w drugim zdaniu.");
+  await expect(item).toContainText("Brakuje uzasadnienia.");
+  await item.getByLabel("Nowa ocena").selectOption("4");
+  await item.getByRole("button", { name: "Uznaj" }).click();
+  // Level 2, no hints, not a first try: 2 × 10 XP.
+  await expect(item.getByRole("status")).toHaveText("Uznano, przyznano 20 XP.");
+
+  const [{ data: after }, { data: resolved }, { data: xp }, { data: log }] = await Promise.all([
+    db.from("exercise_attempts").select("score").eq("id", attempt.id).single(),
+    db.from("grading_disputes").select("status, resolved_by").eq("id", dispute.id).single(),
+    db
+      .from("xp_events")
+      .select("amount, reason")
+      .eq("idempotency_key", `${id}:exercise:przyklad-otwarte`),
+    db
+      .from("audit_log")
+      .select("action, target, details")
+      .eq("actor_id", (mod as User).id)
+      .eq("action", "dispute.approved"),
+  ]);
+  expect(after?.score).toBe(1);
+  expect(resolved).toEqual({ status: "approved", resolved_by: (mod as User).id });
+  expect(xp).toEqual([{ amount: 20, reason: "exercise" }]);
+  expect(log).toEqual([
+    {
+      action: "dispute.approved",
+      target: `dispute:${String(dispute.id)}`,
+      details: {
+        attempt: attempt.id,
+        exercise: "przyklad-otwarte",
+        before: 0.5,
+        after: 1,
+        xp: 20,
+      },
+    },
+  ]);
+});
+
+test("a reviewer sees content status and an exercise's analytics from the database", async ({
+  browser,
+}) => {
+  const page = await pageAs(browser, reviewer as User);
+  await page.goto("/pl/admin/tresci?typ=exercise");
+  await expect(page.locator("[data-content='exercise:przyklad-liczba']")).toBeVisible();
+  await expect(page.locator("[data-content^='lesson:']")).toHaveCount(0);
+
+  const { count } = await admin()
+    .from("exercise_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("exercise_id", "przyklad-liczba");
+  await page.goto("/pl/admin/zadania/przyklad-liczba");
+  await expect(page.locator("[data-stat='attempts']")).toHaveText(String(count));
+  // Not an admin: the dashboard and users stay closed.
+  expect((await page.request.get("/pl/admin", { maxRedirects: 0 })).status()).toBe(403);
 });

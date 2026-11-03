@@ -619,7 +619,10 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "admin_export_user":
+            "admin_exercise_analytics":
+{ Args: { "ex": string }; Returns: Json
+                           },
+"admin_export_user":
 { Args: { "target": string }; Returns: Json
                            },
 "admin_find_users":

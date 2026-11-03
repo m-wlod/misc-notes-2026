@@ -9,6 +9,7 @@ import { createCssVariablesTheme } from "shiki";
 import { defineCollection, defineConfig, s } from "velite";
 
 import { curriculum } from "./content/curriculum";
+import { countTodos } from "./src/features/admin/content-status";
 import { rehypeNumbering } from "./src/features/content/rehype-numbering";
 import { termRefsIn, validateContent, validateCurriculum } from "./src/features/content/validate";
 import { validateDebunk } from "./src/features/debunk/validate";
@@ -217,9 +218,19 @@ export default defineConfig({
       [rehypeShiki, { theme: codeTheme, langs: ["python", "typescript", "bash", "text"] }],
     ],
   },
-  /** Search indexes (public/search/<locale>.json), loaded by the search dialog on demand. */
-  complete: ({ lessons, glossary }) => {
+  /**
+   * Search indexes (public/search/<locale>.json), loaded by the search dialog on demand,
+   * and the `TODO(verify)` counts.
+   */
+  complete: ({ lessons, glossary, exercises: exerciseFiles, debunk: entries }) => {
     if (process.env.CONTENT_ROOT) return;
+    // `TODO(verify)` markers per source file, for the admin content status (Phase 18b).
+    const todos: Record<string, number> = {};
+    for (const { file } of [...lessons, ...exerciseFiles, ...entries]) {
+      const n = countTodos(readFileSync(file, "utf8"));
+      if (n > 0) todos[file] = n;
+    }
+    writeFileSync(".velite/content-todos.json", JSON.stringify(todos));
     const paths = {
       learn: routing.pathnames["/learn"],
       glossary: routing.pathnames["/glossary"],
