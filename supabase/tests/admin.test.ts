@@ -425,3 +425,40 @@ describe("AI costs, settings and cron runs (Phase 18c)", () => {
     await db.from("cron_runs").delete().eq("job", "calibrate");
   });
 });
+
+describe("campaign counter (Phase 19)", () => {
+  const visit = { src: "e2e-src", med: "link-in-bio", camp: "test", path: "/pl/v/przyklad" };
+
+  it("only the server can count; each call adds one to today's row", async () => {
+    for (const c of [anon(), (u1 as TestUser).client, (boss as TestUser).client]) {
+      const r = await c.rpc("record_utm_visit", visit);
+      expect(r.error).not.toBeNull();
+    }
+    const db = admin();
+    for (let i = 0; i < 2; i++) {
+      const r = await db.rpc("record_utm_visit", visit);
+      expect(r.error).toBeNull();
+    }
+    const { data } = await db
+      .from("utm_visits")
+      .select("medium, campaign, landing_path, visits")
+      .eq("source", "e2e-src");
+    expect(data).toEqual([
+      { medium: "link-in-bio", campaign: "test", landing_path: "/pl/v/przyklad", visits: 2 },
+    ]);
+    const bad = await db.rpc("record_utm_visit", { ...visit, src: "Bad Source!" });
+    expect(bad.error).not.toBeNull();
+  });
+
+  it("the totals are admin only", async () => {
+    const range = { from_day: "2020-01-01", to_day: "2100-01-01" };
+    for (const c of [anon(), (u1 as TestUser).client, (mod as TestUser).client]) {
+      const r = await c.rpc("admin_utm", range);
+      expect(r.error).not.toBeNull();
+    }
+    const { data, error } = await (boss as TestUser).client.rpc("admin_utm", range);
+    expect(error).toBeNull();
+    expect(data?.find((r) => r.source === "e2e-src")).toMatchObject({ visits: 2 });
+    await admin().from("utm_visits").delete().eq("source", "e2e-src");
+  });
+});

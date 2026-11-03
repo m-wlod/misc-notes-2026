@@ -31,6 +31,8 @@ export const NAMESPACES = [
   "debunk",
   "community",
   "admin",
+  "videos",
+  "links",
 ] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 

@@ -259,6 +259,29 @@ status: draft
 - **Verdicts:** `false` when the maths contradicts it outright; `misleading` when it's technically true but implies something false (a win rate without payoffs); `true-but-irrelevant` when true but doesn't help you make money; `depends` when it holds only under conditions most readers won't have (say which).
 - The page adds "Zgłoś poprawkę" (suggest a correction) and the share card automatically; corrections and reader-submitted claims go to the moderated queue (`/admin/debunk`), never straight to the site.
 
+## 6b. Video landing pages
+
+One file per published TikTok/YouTube video: `content/videos/<id>.yaml`. It becomes the page `/v/<slug>` (the same in both languages; `/v/<slug>` without a language redirects), which is the link for the bio and the pinned comment. `content/videos/przyklad.yaml` is a labelled sample of the format.
+
+```yaml
+id: kelly-half # never changes
+slug: kelly # short: /v/kelly
+status: draft # published when the video is live
+published: "2026-11-10" # the video's date; newest first on the landing and /links
+title: { pl: "Dlaczego połowa Kelly'ego", en: "Why half Kelly" }
+urls:
+  tiktok: https://www.tiktok.com/@…/video/1234567890123456789
+  youtube: https://www.youtube.com/watch?v=… # either or both; YouTube plays first
+formula: "f^{*} = p - rac{1 - p}{b}" # LaTeX, checked with KaTeX at build
+formulaCaption: { pl: "…", en: "…" }
+simulation: kelly # a simulation id from the Lab
+exercises: [id-1, id-2, id-3] # exactly three exercise ids
+nextLesson: kelly-criterion # a lesson id
+debunk: win-rate-myth # optional: a Debunk Lab entry id
+```
+
+The build fails with `file: field: reason` if a link isn't a TikTok/YouTube video, the formula doesn't render, or any id doesn't exist. The page shows the video only after a click (nothing loads from YouTube or TikTok before that). The same rules as everywhere apply to the formula and caption: never invent maths; mark doubts `TODO(verify)`.
+
 ## 7. Citations
 
 `sources` in the frontmatter: `book` as "Author, Title" (edition if it matters), `chapter`, `page`. Exercises adapted from a book carry `source` the same way. Video links go in `relatedVideos` (title + URL).

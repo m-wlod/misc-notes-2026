@@ -15,6 +15,7 @@ import type gamification from "../messages/pl/gamification.json";
 import type glossary from "../messages/pl/glossary.json";
 import type home from "../messages/pl/home.json";
 import type interview from "../messages/pl/interview.json";
+import type links from "../messages/pl/links.json";
 import type nav from "../messages/pl/nav.json";
 import type notes from "../messages/pl/notes.json";
 import type notify from "../messages/pl/notify.json";
@@ -25,6 +26,7 @@ import type reader from "../messages/pl/reader.json";
 import type review from "../messages/pl/review.json";
 import type sections from "../messages/pl/sections.json";
 import type sims from "../messages/pl/sims.json";
+import type videos from "../messages/pl/videos.json";
 import type { formats } from "./lib/i18n/format";
 
 // Type-safe next-intl: keys and locales are checked at compile time.
@@ -59,6 +61,8 @@ declare module "next-intl" {
       debunk: typeof debunk;
       community: typeof community;
       admin: typeof admin;
+      videos: typeof videos;
+      links: typeof links;
     };
     Formats: typeof formats;
   }

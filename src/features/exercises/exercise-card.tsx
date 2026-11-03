@@ -61,6 +61,7 @@ export function ExerciseCard({
   nextHref,
   aiAvailable = false,
   daily = null,
+  embedded = false,
 }: {
   view: PublicExercise;
   /** The next variant of this exercise. */
@@ -71,6 +72,8 @@ export function ExerciseCard({
   aiAvailable?: boolean;
   /** This exercise is today's problem of the day for its level (Phase 15). */
   daily?: { day: string; level: number } | null;
+  /** Shown inside another page (landing, video page): its hidden title is an h3, not the page's h1. */
+  embedded?: boolean;
 }) {
   const t = useTranslations("exercises");
   const locale = useLocale();
@@ -230,9 +233,15 @@ export function ExerciseCard({
       className="max-w-(--measure) rounded-md border border-rule-strong bg-surface px-5 py-5 sm:px-6"
     >
       <header className="mb-4 flex flex-wrap items-center gap-2 font-sans text-xs text-ink-muted">
-        <h1 id={`${name}-title`} className="sr-only">
-          {t("exercise")}
-        </h1>
+        {embedded ? (
+          <h3 id={`${name}-title`} className="sr-only">
+            {t("exercise")}
+          </h3>
+        ) : (
+          <h1 id={`${name}-title`} className="sr-only">
+            {t("exercise")}
+          </h1>
+        )}
         <Badge>{t("level", { level: view.level })}</Badge>
         <span>{t(`types.${view.type}`)}</span>
         <span className="num">{t("minutes", { minutes: view.estimatedMinutes })}</span>

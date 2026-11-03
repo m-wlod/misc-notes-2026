@@ -1,7 +1,16 @@
 {
-  "metaTitle": "Matematyka tradingu bez guru",
-  "title": "Matematyka, której guru nie liczą",
+  "metaTitle": "Matematyka tradingu bez guru — za darmo",
+  "title": "Matematyka, której guru nie znają — za darmo",
   "lead": "Prawdopodobieństwo, statystyka i finanse ilościowe, wyjaśnione po ludzku i po podręcznikowemu, z symulacjami i zadaniami na pięciu poziomach.",
-  "status": "Aplikacja jest w budowie. Nie ma jeszcze lekcji ani kont; poniżej widać, co powstaje i w jakiej kolejności.",
-  "sectionsHeading": "Co tu będzie"
+  "status": "Aplikacja jest w budowie. Lekcje dopiero powstają, a konta jeszcze nie działają; poniżej widać, co już jest i co powstaje.",
+  "ctaLearn": "Zacznij od lekcji",
+  "simTitle": "Rzuć monetą tysiąc razy",
+  "simNote": "To nie obrazek, tylko działająca symulacja. Zmień parametry i zobacz, ile „formacji” powstaje z czystego przypadku.",
+  "tryTitle": "Zadanie na minutę",
+  "tryNote": "Bez zakładania konta. Wynik zapisze się tylko w tej przeglądarce.",
+  "videosTitle": "Najnowsze wideo",
+  "aboutTitle": "Dlaczego za darmo",
+  "aboutBody": "Ten projekt nie sprzedaje kursów, sygnałów ani „strategii”. Uczy matematyki, która pozwala samodzielnie ocenić takie oferty: wartości oczekiwanej, wariancji, zarządzania ryzykiem i tego, co naprawdę mówią wyniki z przeszłości. Nie ma tu opinii zadowolonych klientów ani liczników użytkowników, bo nie ma czego udowadniać marketingiem.",
+  "aboutMore": "Więcej o projekcie",
+  "sectionsHeading": "Co tu znajdziesz"
 }

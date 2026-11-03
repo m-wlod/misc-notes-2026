@@ -1,7 +1,16 @@
 {
-  "metaTitle": "Trading maths without the gurus",
-  "title": "The maths the gurus don’t do",
+  "metaTitle": "Trading maths without the gurus — free",
+  "title": "The maths the gurus don’t know — free",
   "lead": "Probability, statistics and quantitative finance, explained in plain words and in textbook form, with simulations and exercises at five levels.",
-  "status": "The app is being built. There are no lessons or accounts yet; below is what is coming and in what order.",
-  "sectionsHeading": "What will be here"
+  "status": "The app is being built. Lessons are still being written and accounts aren’t switched on yet; below is what exists and what is coming.",
+  "ctaLearn": "Start with a lesson",
+  "simTitle": "Flip a coin a thousand times",
+  "simNote": "Not a picture but a running simulation. Change the settings and see how many “patterns” appear from pure chance.",
+  "tryTitle": "A one-minute exercise",
+  "tryNote": "No account needed. Your result is kept in this browser only.",
+  "videosTitle": "Latest videos",
+  "aboutTitle": "Why it’s free",
+  "aboutBody": "This project sells no courses, signals or “strategies”. It teaches the maths you need to judge such offers yourself: expected value, variance, risk management and what past results really say. There are no testimonials or user counters here, because there is nothing to prove with marketing.",
+  "aboutMore": "More about the project",
+  "sectionsHeading": "What you’ll find here"
 }

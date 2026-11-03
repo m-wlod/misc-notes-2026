@@ -16,6 +16,8 @@ import { validateDebunk } from "./src/features/debunk/validate";
 import { validateExercises } from "./src/features/exercises/validate";
 import { lessonCards } from "./src/features/review/cards";
 import { buildSearchDocs } from "./src/features/search/docs";
+import { SIM_IDS } from "./src/features/sims/registry";
+import { validateVideos } from "./src/features/videos/validate";
 import { routing } from "./src/i18n/routing";
 
 /**
@@ -198,6 +200,43 @@ const debunk = defineCollection({
     .transform((data, { meta }) => ({ ...data, file: fileOf(meta.path) })),
 });
 
+/**
+ * Video landing pages (Phase 19): content/videos/<id>.yaml, one per TikTok/YouTube video,
+ * both languages in the file. The page /v/<slug> shows the embed, the key formula, the
+ * matching simulation, three exercises and the next lesson. Rules in CONTENT_GUIDE.md.
+ */
+const optionalEn = s.object({ pl: s.string().min(1), en: s.string().min(1).optional() }).strict();
+const videos = defineCollection({
+  name: "Video",
+  pattern: "videos/*.yaml",
+  schema: s
+    .object({
+      id,
+      /** The short link: /v/<slug> (link in bio, pinned comments). Same in both locales. */
+      slug: s
+        .string()
+        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+        .min(2)
+        .max(40),
+      status: s.enum(["draft", "review", "published"]),
+      sample: s.boolean().default(false),
+      published: s.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      title: optionalEn,
+      urls: s
+        .object({ tiktok: s.string().url().optional(), youtube: s.string().url().optional() })
+        .strict(),
+      /** LaTeX, display style. */
+      formula: s.string().min(1),
+      formulaCaption: optionalEn,
+      simulation: id,
+      exercises: s.array(id),
+      nextLesson: id,
+      debunk: id.optional(),
+    })
+    .strict()
+    .transform((data, { meta }) => ({ ...data, file: fileOf(meta.path) })),
+});
+
 export default defineConfig({
   root: process.env.CONTENT_ROOT ?? "content",
   strict: true,
@@ -207,7 +246,7 @@ export default defineConfig({
     base: "/static/",
     clean: true,
   },
-  collections: { lessons, glossary, exercises, challenges, debunk },
+  collections: { lessons, glossary, exercises, challenges, debunk, videos },
   mdx: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [
@@ -222,11 +261,11 @@ export default defineConfig({
    * Search indexes (public/search/<locale>.json), loaded by the search dialog on demand,
    * and the `TODO(verify)` counts.
    */
-  complete: ({ lessons, glossary, exercises: exerciseFiles, debunk: entries }) => {
+  complete: ({ lessons, glossary, exercises: exerciseFiles, debunk: entries, videos: clips }) => {
     if (process.env.CONTENT_ROOT) return;
     // `TODO(verify)` markers per source file, for the admin content status (Phase 18b).
     const todos: Record<string, number> = {};
-    for (const { file } of [...lessons, ...exerciseFiles, ...entries]) {
+    for (const { file } of [...lessons, ...exerciseFiles, ...entries, ...clips]) {
       const n = countTodos(readFileSync(file, "utf8"));
       if (n > 0) todos[file] = n;
     }
@@ -245,7 +284,7 @@ export default defineConfig({
       writeFileSync(`public/search/${locale}.json`, JSON.stringify(docs));
     }
   },
-  prepare: ({ lessons, glossary, exercises: exerciseFiles, debunk: entries }) => {
+  prepare: ({ lessons, glossary, exercises: exerciseFiles, debunk: entries, videos: clips }) => {
     const errors = lessons.flatMap((l) => {
       const folder = /(?:^|\/)(pl|en)\/tracks\//.exec(l.file)?.[1];
       return folder && folder !== l.locale
@@ -255,6 +294,18 @@ export default defineConfig({
     errors.push(...validateContent(lessons, glossary));
     errors.push(...validateExercises(exerciseFiles, lessons));
     errors.push(...validateDebunk(entries, new Set(lessons.map((l) => l.id))));
+    errors.push(
+      ...validateVideos(clips, {
+        sims: new Set(SIM_IDS),
+        exercises: new Set(
+          exerciseFiles
+            .map((f) => (f.data as { id?: unknown }).id)
+            .filter((v) => typeof v === "string"),
+        ),
+        lessons: new Set(lessons.map((l) => l.id)),
+        debunk: new Set(entries.map((e) => e.id)),
+      }),
+    );
     const outline = curriculumOutline();
     if (outline !== null) errors.push(...validateCurriculum(outline, lessons));
     if (errors.length > 0) {

@@ -1,0 +1,12 @@
+{
+  "description": "{title}: the formula, a simulation and three exercises to solve yourself.",
+  "sample": "Sample (not a real video)",
+  "clip": "Video",
+  "formula": "The formula from the video",
+  "simulation": "Try it yourself",
+  "exercises": "Three exercises",
+  "exercisesNote": "No account needed. Answers are checked straight away.",
+  "next": "What next",
+  "lesson": "Lesson: {title}",
+  "debunk": "Debunk Lab: “{claim}”"
+}

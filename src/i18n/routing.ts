@@ -30,6 +30,8 @@ export const routing = defineRouting({
     "/interview/[type]": { pl: "/rozmowa/[type]", en: "/interview/[type]" },
     "/debunk": "/debunk",
     "/debunk/[slug]": "/debunk/[slug]",
+    "/v/[slug]": "/v/[slug]",
+    "/links": "/links",
     "/admin": "/admin",
     "/admin/uzytkownicy": "/admin/uzytkownicy",
     "/admin/uzytkownicy/[id]": "/admin/uzytkownicy/[id]",
