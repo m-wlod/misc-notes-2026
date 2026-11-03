@@ -71,7 +71,7 @@ test("403 on every admin page and API for a learner; moderators only where allow
     for (const section of NAV) {
       const res = await page.request.get(`/pl${sectionPath(section)}`, { maxRedirects: 0 });
       const label = `${roles.join() || "learner"} ${section}`;
-      // Admin-only sections built in 18c are 403 for everyone here anyway.
+      // Every section exists now: allowed ones load, the rest are a 403.
       if (canAccess(roles, section)) expect(res.status(), label).toBe(200);
       else expect(res.status(), label).toBe(403);
     }

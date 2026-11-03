@@ -341,3 +341,87 @@ describe("grading disputes (Phase 18b)", () => {
     expect(after?.status).toBe("pending");
   });
 });
+
+describe("AI costs, settings and cron runs (Phase 18c)", () => {
+  beforeAll(async () => {
+    const usage = (u: TestUser, at: string, cost: number, exercise: string | null) => ({
+      user_id: u.id,
+      exercise_id: exercise,
+      model: "test-model",
+      tokens_in: 100,
+      tokens_out: 50,
+      cost_usd: cost,
+      created_at: at,
+    });
+    const { error } = await admin()
+      .from("ai_grading_usage")
+      .insert([
+        usage(u1 as TestUser, "2020-02-03T23:30:00Z", 0.01, "ex-a"),
+        usage(u1 as TestUser, "2020-02-04T00:30:00Z", 0.02, "ex-a"),
+        usage(u2 as TestUser, "2020-02-04T10:00:00Z", 0.05, "ex-b"),
+        usage(u2 as TestUser, "2020-02-04T11:00:00Z", 0.001, null),
+      ]);
+    if (error) throw error;
+  });
+
+  it("costs are admin only", async () => {
+    for (const c of [anon(), (u1 as TestUser).client, (mod as TestUser).client]) {
+      const r = await c.rpc("admin_ai_costs", { from_day: "2020-02-03", to_day: "2020-02-04" });
+      expect(r.error).not.toBeNull();
+      expect(r.data).toBeNull();
+    }
+  });
+
+  it("per UTC day, per user and per exercise match the seeded rows", async () => {
+    const { data, error } = await (boss as TestUser).client.rpc("admin_ai_costs", {
+      from_day: "2020-02-03",
+      to_day: "2020-02-05",
+    });
+    expect(error).toBeNull();
+    const costs = data as {
+      days: { day: string; calls: number; cost: number }[];
+      users: { user_id: string; calls: number; cost: number }[];
+      exercises: { exercise_id: string | null; calls: number; cost: number }[];
+    };
+    expect(costs.days).toEqual([
+      { day: "2020-02-03", calls: 1, cost: 0.01 },
+      { day: "2020-02-04", calls: 3, cost: 0.071 },
+      { day: "2020-02-05", calls: 0, cost: 0 },
+    ]);
+    expect(costs.users.map((u) => [u.user_id, u.calls, u.cost])).toEqual([
+      [(u2 as TestUser).id, 2, 0.051],
+      [(u1 as TestUser).id, 2, 0.03],
+    ]);
+    expect(costs.exercises).toEqual([
+      { exercise_id: "ex-b", calls: 1, cost: 0.05 },
+      { exercise_id: "ex-a", calls: 2, cost: 0.03 },
+      { exercise_id: null, calls: 1, cost: 0.001 },
+    ]);
+  });
+
+  it("settings and cron runs: admins read, nobody writes through the API, learners see nothing", async () => {
+    const db = admin();
+    await db.from("app_settings").upsert({ key: "ai", value: { dailyBudgetUsd: 3 } });
+    await db.from("cron_runs").insert({ job: "calibrate", ok: true });
+    for (const table of ["app_settings", "cron_runs"] as const) {
+      const { data: hidden } = await (u1 as TestUser).client.from(table).select("*");
+      expect(hidden).toEqual([]);
+      const { data: modView } = await (mod as TestUser).client.from(table).select("*");
+      expect(modView).toEqual([]);
+      const { data: seen } = await (boss as TestUser).client.from(table).select("*");
+      expect((seen ?? []).length).toBeGreaterThan(0);
+    }
+    const write = await (boss as TestUser).client
+      .from("app_settings")
+      .upsert({ key: "ai", value: { dailyBudgetUsd: 1000 } });
+    expect(write.error).not.toBeNull();
+    const run = await (boss as TestUser).client.from("cron_runs").insert({ job: "notify" });
+    expect(run.error).not.toBeNull();
+    const learnerFlag = await (u1 as TestUser).client
+      .from("feature_flags")
+      .insert({ key: "sneaky", enabled: true });
+    expect(learnerFlag.error).not.toBeNull();
+    await db.from("app_settings").delete().eq("key", "ai");
+    await db.from("cron_runs").delete().eq("job", "calibrate");
+  });
+});

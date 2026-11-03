@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import type { KV } from "@/lib/kv/store";
 
 /**
@@ -65,4 +67,27 @@ export async function recordUse(
     kv.incr(k.ip, 1, DAY),
     kv.incr(k.spend, costUsd, DAY),
   ]);
+}
+
+/**
+ * Budget and quotas an admin set in the panel (Phase 18c), stored as JSON in
+ * `app_settings`. Any field missing or invalid keeps the env default, so a bad row can
+ * never switch the kill-switch off by accident.
+ */
+export const aiSettingsSchema = z.object({
+  dailyBudgetUsd: z.number().min(0).max(10_000),
+  userDailyQuota: z.number().int().min(0).max(10_000),
+  ipDailyLimit: z.number().int().min(0).max(100_000),
+});
+export type AiSettings = z.infer<typeof aiSettingsSchema>;
+
+export function withSettings(base: QuotaConfig, stored: unknown): QuotaConfig {
+  const parsed = aiSettingsSchema.partial().safeParse(stored);
+  if (!parsed.success) return base;
+  const { dailyBudgetUsd, userDailyQuota, ipDailyLimit } = parsed.data;
+  return {
+    dailyBudgetUsd: dailyBudgetUsd ?? base.dailyBudgetUsd,
+    userDailyQuota: userDailyQuota ?? base.userDailyQuota,
+    ipDailyLimit: ipDailyLimit ?? base.ipDailyLimit,
+  };
 }

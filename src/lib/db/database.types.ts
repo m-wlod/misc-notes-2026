@@ -39,14 +39,14 @@ export type Database = {
                   ]
                 },"ai_grading_usage": {
                   Row: {
-                    "cost_usd": number,"created_at": string,"id": number,"model": string,"tokens_in": number,"tokens_out": number,"user_id": string
+                    "cost_usd": number,"created_at": string,"exercise_id": string | null,"id": number,"model": string,"tokens_in": number,"tokens_out": number,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "cost_usd": number,"created_at"?: string,"id"?: never,"model": string,"tokens_in": number,"tokens_out": number,"user_id": string
+                    "cost_usd": number,"created_at"?: string,"exercise_id"?: string | null,"id"?: never,"model": string,"tokens_in": number,"tokens_out": number,"user_id": string
                   }
                   Update: {
-                    "cost_usd"?: number,"created_at"?: string,"id"?: never,"model"?: string,"tokens_in"?: number,"tokens_out"?: number,"user_id"?: string
+                    "cost_usd"?: number,"created_at"?: string,"exercise_id"?: string | null,"id"?: never,"model"?: string,"tokens_in"?: number,"tokens_out"?: number,"user_id"?: string
                   }
                   Relationships: [
                     
@@ -61,6 +61,20 @@ export type Database = {
                   }
                   Update: {
                     "body_en"?: string,"body_pl"?: string,"created_at"?: string,"created_by"?: string | null,"ends_at"?: string | null,"id"?: never,"starts_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"app_settings": {
+                  Row: {
+                    "key": string,"updated_at": string,"updated_by": string | null,"value": NonNullable<Json>
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "key": string,"updated_at"?: string,"updated_by"?: string | null,"value": NonNullable<Json>
+                  }
+                  Update: {
+                    "key"?: string,"updated_at"?: string,"updated_by"?: string | null,"value"?: NonNullable<Json>
                   }
                   Relationships: [
                     
@@ -165,6 +179,20 @@ isOneToOne: false
                   }
                   Update: {
                     "body"?: string,"content_id"?: string,"content_type"?: string,"created_at"?: string,"id"?: never,"resolved_at"?: string | null,"resolved_by"?: string | null,"status"?: Database["public"]['Enums']["moderation_status"],"user_id"?: string | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"cron_runs": {
+                  Row: {
+                    "details": Json | null,"finished_at": string | null,"id": number,"job": string,"ok": boolean | null,"started_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "details"?: Json | null,"finished_at"?: string | null,"id"?: never,"job": string,"ok"?: boolean | null,"started_at"?: string
+                  }
+                  Update: {
+                    "details"?: Json | null,"finished_at"?: string | null,"id"?: never,"job"?: string,"ok"?: boolean | null,"started_at"?: string
                   }
                   Relationships: [
                     
@@ -619,7 +647,10 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "admin_exercise_analytics":
+            "admin_ai_costs":
+{ Args: { "from_day": string,"to_day": string }; Returns: Json
+                           },
+"admin_exercise_analytics":
 { Args: { "ex": string }; Returns: Json
                            },
 "admin_export_user":
