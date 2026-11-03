@@ -76,5 +76,79 @@
     "manyWalks": "300 losowych wykresów",
     "studyResult": "{signals} sygnałów, trafność {hitRate}, średni wynik {ret}",
     "conclusion": "Sygnały pojawiają się nawet tam, gdzie z definicji nie ma czego przewidywać, a ich trafność krąży wokół rzutu monetą. Sam fakt, że wskaźnik coś „pokazuje”, nie jest dowodem przewagi."
+  },
+  "index": {
+    "title": "Debunk Lab",
+    "lead": "Popularne hasła o tradingu i kursach, sprawdzone rachunkiem. Każdy wpis ma kalkulator, w którym możesz podstawić własne liczby.",
+    "filters": "Filtry",
+    "category": "Kategoria",
+    "verdict": "Werdykt",
+    "all": "Wszystkie",
+    "apply": "Pokaż",
+    "clear": "Wyczyść filtry",
+    "empty": "Wpisy pojawią się wkrótce.",
+    "none": "Brak wpisów dla tych filtrów.",
+    "count": "{n, plural, one {# wpis} few {# wpisy} other {# wpisów}}",
+    "sample": "przykład"
+  },
+  "category": {
+    "indicators": "Wskaźniki",
+    "money-management": "Zarządzanie kapitałem",
+    "course-economics": "Ekonomia kursów i MLM",
+    "signals": "Sygnały",
+    "secret-strategy": "„Tajna strategia”",
+    "fibonacci-elliott": "Fibonacci i Elliott",
+    "martingale-grid": "Martyngał i boty siatkowe",
+    "backtests": "Backtesty"
+  },
+  "verdict": {
+    "false": "Fałsz",
+    "misleading": "Wprowadza w błąd",
+    "true-but-irrelevant": "Prawda, ale bez znaczenia",
+    "depends": "To zależy"
+  },
+  "entry": {
+    "claim": "Hasło",
+    "verdictLabel": "Werdykt",
+    "related": "Powiązane lekcje",
+    "video": "Film",
+    "sources": "Gdzie pada to hasło",
+    "archived": "kopia archiwalna",
+    "noSources": "Hasło sformułowane ogólnie; nie przypisujemy go konkretnej osobie.",
+    "fallback": "Ten wpis nie ma jeszcze tłumaczenia; pokazujemy wersję polską.",
+    "share": "Udostępnij",
+    "shareImage": "Obraz do udostępnienia",
+    "recording": "Tryb nagrywania (9:16)",
+    "back": "Wszystkie wpisy",
+    "principle": "Sprawdzamy hasła i metody, nie ludzi."
+  },
+  "correction": {
+    "open": "Zgłoś poprawkę",
+    "label": "Co jest nie tak i jak to poprawić?",
+    "send": "Wyślij zgłoszenie",
+    "sent": "Dziękujemy. Sprawdzimy to."
+  },
+  "submit": {
+    "title": "Zgłoś hasło do sprawdzenia",
+    "lead": "Widzisz obietnicę, która brzmi zbyt dobrze? Opisz ją ogólnie (bez nazwisk). Każde zgłoszenie czyta człowiek, nic nie publikujemy bez sprawdzenia.",
+    "claim": "Hasło",
+    "source": "Gdzie je widziałeś (link, opcjonalnie)",
+    "send": "Wyślij",
+    "sent": "Dziękujemy. Zgłoszenie trafiło do kolejki."
+  },
+  "errors": {
+    "invalid": "Sprawdź pola: hasło musi mieć co najmniej 10 znaków, a link zaczynać się od http.",
+    "rate-limited": "Za dużo zgłoszeń naraz. Spróbuj za minutę.",
+    "unavailable": "Zgłoszenia ruszą razem z kontami w tej wersji aplikacji.",
+    "failed": "Nie udało się wysłać. Spróbuj jeszcze raz."
+  },
+  "admin": {
+    "title": "Kolejka Debunk Lab",
+    "submissions": "Zgłoszone hasła",
+    "corrections": "Zgłoszone poprawki",
+    "empty": "Pusto.",
+    "approve": "Przyjmij",
+    "reject": "Odrzuć",
+    "entry": "Wpis"
   }
 }

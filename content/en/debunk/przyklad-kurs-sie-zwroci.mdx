@@ -1,0 +1,31 @@
+---
+id: przyklad-kurs-sie-zwroci
+slug: sample-course-pays-for-itself
+locale: en
+claim: "Sample: the course pays for itself if you refer three people"
+category: course-economics
+verdict: misleading
+summary: "A SAMPLE entry showing the Debunk Lab format. A model where everyone must bring new people soon runs out of people."
+checker: mlm
+relatedLessons: []
+status: draft
+sample: true
+---
+
+<TheMath>
+
+<Depth level="easy">
+If everyone must bring three people, the "floors" grow: 3, 9, 27, 81… After a dozen or so floors you need more people than live in Poland. Most participants are always on the bottom floor, with nobody left to invite.
+</Depth>
+
+<Depth level="formal">
+Level $n$ holds $r^n$ people and the whole scheme up to level $n$ holds $\sum_{i=0}^{n} r^i = \frac{r^{n+1}-1}{r-1}$. The bottom level's share tends to $\frac{r-1}{r}$: about two thirds for $r = 3$.
+</Depth>
+
+</TheMath>
+
+<Checker id="mlm" />
+
+<WhatToDoInstead>
+Judge a course by what it teaches and what can be checked, not by a promise that referrals will pay for it.
+</WhatToDoInstead>

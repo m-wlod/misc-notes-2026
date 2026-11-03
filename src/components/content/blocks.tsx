@@ -264,6 +264,31 @@ export async function PythonCell({ children }: Children) {
   );
 }
 
+/** Debunk Lab entry: the maths behind the verdict (Phase 16). */
+export async function TheMath({ children }: Children) {
+  const t = await getTranslations("content");
+  return (
+    <section data-block="the-math" className="my-8">
+      <h2 className="mb-4 font-serif text-xl text-ink">{t("theMath")}</h2>
+      <div className="[&>:last-child]:mb-0">{children}</div>
+    </section>
+  );
+}
+
+/** Debunk Lab entry: what to do instead (Phase 16). */
+export async function WhatToDoInstead({ children }: Children) {
+  const t = await getTranslations("content");
+  return (
+    <section
+      data-block="instead"
+      className="my-8 rounded-md border border-rule-strong bg-surface px-5 py-4"
+    >
+      <h2 className="mb-3 font-serif text-xl text-ink">{t("whatInstead")}</h2>
+      <div className="[&>:last-child]:mb-0">{children}</div>
+    </section>
+  );
+}
+
 /** Link to a practice exercise (its page decides visibility: published, or internal). */
 export async function ExerciseRef({ id, title }: { id: string; title?: string }) {
   const t = await getTranslations("content");

@@ -218,6 +218,47 @@ po 15 zł wartość oczekiwana wynosi $0{,}9 \cdot 1 - 0{,}1 \cdot 15 = -0{,}6$ 
 - The body proves it wrong with numbers, then says what is true instead.
 - `debunk` names the matching Debunk Lab entry (Phase 16).
 
+## 6a. Debunk Lab entries
+
+File: `content/pl/debunk/<id>.mdx` (English: `content/en/debunk/<id>.mdx`, same `id`, its own `slug`). The two `przyklad-*` files are labelled samples of the format.
+
+```mdx
+---
+id: win-rate-myth              # never changes; GuruMyth's `debunk` points here
+slug: 90-procent-skutecznosci
+locale: pl
+claim: "90% skuteczności to pewny zysk"   # generic, how people actually say it
+category: money-management      # indicators | money-management | course-economics | signals |
+                                # secret-strategy | fibonacci-elliott | martingale-grid | backtests
+verdict: misleading             # false | misleading | true-but-irrelevant | depends
+summary: One or two sentences: the answer, without the maths.
+checker: ev                     # ev | luck | mlm | indicators (or embed a <Simulation>)
+relatedLessons: [kelly-criterion]
+relatedVideo: { title: "…", url: "https://…" }
+sources:                        # where the claim is made publicly
+  - { title: "…", url: "https://…", date: 2026-10-01, archive: "https://web.archive.org/…" }
+status: draft
+---
+
+<TheMath>
+  <Depth level="easy">…intuition with numbers…</Depth>
+  <Depth level="formal">…the formula and the worked case…</Depth>
+</TheMath>
+
+<Checker id="ev" />
+
+<WhatToDoInstead>…the honest alternative…</WhatToDoInstead>
+```
+
+**Rules (non-negotiable):**
+
+- **Claims and methods, never people.** No names of private individuals, channels or courses in the claim, the text or the summary. A public figure's public claim may be cited as a source, not attacked.
+- **Cite public claims with a date and an archived copy** (`archive` is required by the schema; claims get edited and deleted).
+- **No allegations** of fraud, scams or crime. We show the arithmetic; readers draw conclusions.
+- **Every entry gets a tool**: a checker (`<Checker id="…" />`, optional `preset` values) or a simulation the reader can change.
+- **Verdicts:** `false` when the maths contradicts it outright; `misleading` when it's technically true but implies something false (a win rate without payoffs); `true-but-irrelevant` when true but doesn't help you make money; `depends` when it holds only under conditions most readers won't have (say which).
+- The page adds "Zgłoś poprawkę" (suggest a correction) and the share card automatically; corrections and reader-submitted claims go to the moderated queue (`/admin/debunk`), never straight to the site.
+
 ## 7. Citations
 
 `sources` in the frontmatter: `book` as "Author, Title" (edition if it matters), `chapter`, `page`. Exercises adapted from a book carry `source` the same way. Video links go in `relatedVideos` (title + URL).

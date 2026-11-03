@@ -1,0 +1,31 @@
+---
+id: przyklad-skutecznosc
+slug: sample-90-percent-win-rate
+locale: en
+claim: "Sample: a 90% win rate means sure profit"
+category: money-management
+verdict: misleading
+summary: "A SAMPLE entry showing the Debunk Lab format. A win rate without the sizes of wins and losses says nothing about the result."
+checker: ev
+relatedLessons: [przyklad-wartosc-oczekiwana]
+status: draft
+sample: true
+---
+
+<TheMath>
+
+<Depth level="easy">
+What counts is the average result of one trade, not how often you win. If you win 10 in 9 trades out of 10 and lose 100 in the tenth, you lose on average.
+</Depth>
+
+<Depth level="formal">
+The expected value of a trade is $\mathbb{E} = p\,W - (1-p)\,L - c$. With $p = 0.9$, $W = 10$, $L = 100$, $c = 1$ it is $\mathbb{E} = -2$. Break-even is $p^* = \frac{L + c}{W + L} \approx 0.918$.
+</Depth>
+
+</TheMath>
+
+<Checker id="ev" />
+
+<WhatToDoInstead>
+Ask for the average win, the average loss and the costs, not just the win rate. Work out the expected value before trusting a percentage.
+</WhatToDoInstead>

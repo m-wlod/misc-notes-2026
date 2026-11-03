@@ -55,5 +55,7 @@
     "easy": "Po ludzku",
     "formal": "Podręcznik"
   },
-  "stub": "Ta lekcja jest w przygotowaniu. Jej miejsce w programie, poziom i wymagania są już ustalone."
+  "stub": "Ta lekcja jest w przygotowaniu. Jej miejsce w programie, poziom i wymagania są już ustalone.",
+  "theMath": "Matematyka",
+  "whatInstead": "Co zrobić zamiast tego"
 }

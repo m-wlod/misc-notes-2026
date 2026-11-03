@@ -1,0 +1,31 @@
+---
+id: przyklad-skutecznosc
+slug: przyklad-90-procent-skutecznosci
+locale: pl
+claim: "Przykład: 90% skuteczności to pewny zysk"
+category: money-management
+verdict: misleading
+summary: "PRZYKŁADOWY wpis, pokazuje format Debunk Lab. Skuteczność bez wielkości zysków i strat nic nie mówi o wyniku."
+checker: ev
+relatedLessons: [przyklad-wartosc-oczekiwana]
+status: draft
+sample: true
+---
+
+<TheMath>
+
+<Depth level="easy">
+Liczy się średni wynik jednej transakcji, a nie to, jak często wygrywasz. Jeśli wygrywasz 10 zł w 9 przypadkach na 10, a w dziesiątym tracisz 100 zł, to średnio tracisz.
+</Depth>
+
+<Depth level="formal">
+Wartość oczekiwana transakcji to $\mathbb{E} = p\,W - (1-p)\,L - c$. Dla $p = 0{,}9$, $W = 10$, $L = 100$, $c = 1$ wychodzi $\mathbb{E} = -2$. Próg zera to $p^* = \frac{L + c}{W + L} \approx 0{,}918$.
+</Depth>
+
+</TheMath>
+
+<Checker id="ev" />
+
+<WhatToDoInstead>
+Pytaj o średni zysk, średnią stratę i koszty, nie tylko o skuteczność. Policz wartość oczekiwaną, zanim zaufasz liczbie procent.
+</WhatToDoInstead>
