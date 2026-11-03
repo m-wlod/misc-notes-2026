@@ -11,6 +11,9 @@ if (process.argv.includes("dev") && !process.env.VELITE_STARTED) {
 }
 
 const nextConfig: NextConfig = {
+  // The signed-in e2e suite (scripts/e2e-db.ts) builds against the local database into
+  // its own folder, so it never replaces the regular build.
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
