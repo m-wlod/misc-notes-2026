@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site";
 import { AnnouncementBanner } from "@/features/announcements/banner";
 import { Celebration } from "@/features/gamification/celebration";
 import { readMe } from "@/features/gamification/server/read";
+import { UtmBeacon } from "@/features/utm/beacon";
 import { Link } from "@/i18n/navigation";
 import { isSupabaseConfigured } from "@/lib/db/config";
 import { getSession } from "@/lib/db/session";
@@ -33,6 +34,7 @@ export async function AppShell({ children }: { children: ReactNode }) {
       <Footer />
       <BottomNav />
       <Celebration />
+      <UtmBeacon />
     </>
   );
 }

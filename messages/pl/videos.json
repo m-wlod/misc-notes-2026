@@ -1,0 +1,12 @@
+{
+  "description": "{title}: wzór, symulacja i trzy zadania do samodzielnego rozwiązania.",
+  "sample": "Przykład (nie prawdziwe wideo)",
+  "clip": "Wideo",
+  "formula": "Wzór z wideo",
+  "simulation": "Sprawdź sam",
+  "exercises": "Trzy zadania",
+  "exercisesNote": "Bez zakładania konta. Odpowiedzi sprawdzamy od razu.",
+  "next": "Co dalej",
+  "lesson": "Lekcja: {title}",
+  "debunk": "Debunk Lab: „{claim}”"
+}

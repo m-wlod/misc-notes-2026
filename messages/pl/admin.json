@@ -38,7 +38,14 @@
     "size": "Liczba",
     "week": "Tydz. {n}",
     "empty": "Brak danych w tym zakresie.",
-    "error": "Nie udało się wczytać danych."
+    "error": "Nie udało się wczytać danych.",
+    "campaigns": "Wejścia z kampanii",
+    "campaignsNote": "Wejścia z linków z parametrami utm (TikTok, YouTube, link w bio), zliczane dziennie. Bez ciasteczek i bez danych osób.",
+    "source": "Źródło",
+    "medium": "Medium",
+    "campaign": "Kampania",
+    "landing": "Strona wejścia",
+    "visits": "Wejścia"
   },
   "users": {
     "title": "Użytkownicy",

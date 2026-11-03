@@ -49,9 +49,10 @@ async function Dashboard({ searchParams }: Pick<Props, "searchParams">) {
   const t = await getTranslations("admin.dashboard");
   const format = await getFormatter();
   const range = parseRange(await searchParams, new Date());
-  const [metrics, retention] = await Promise.all([
+  const [metrics, retention, campaigns] = await Promise.all([
     session.supabase.rpc("admin_metrics", { from_day: range.from, to_day: range.to }),
     session.supabase.rpc("admin_retention", { weeks: RETENTION_WEEKS }),
+    session.supabase.rpc("admin_utm", { from_day: range.from, to_day: range.to }),
   ]);
   if (metrics.error || retention.error) {
     return <p role="alert">{t("error")}</p>;
@@ -171,6 +172,42 @@ async function Dashboard({ searchParams }: Pick<Props, "searchParams">) {
                       {s === null ? "" : pct(s)}
                     </Td>
                   ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </section>
+
+      <section aria-labelledby="campaigns-h" className="grid gap-3">
+        <h2 id="campaigns-h" className="text-xl">
+          {t("campaigns")}
+        </h2>
+        <p className="max-w-(--measure) font-sans text-sm text-ink-muted">{t("campaignsNote")}</p>
+        {(campaigns.data ?? []).length === 0 ? (
+          <p className="text-ink-muted">{campaigns.error ? t("error") : t("empty")}</p>
+        ) : (
+          <Table label={t("campaigns")}>
+            <thead>
+              <tr>
+                <Th>{t("source")}</Th>
+                <Th>{t("medium")}</Th>
+                <Th>{t("campaign")}</Th>
+                <Th>{t("landing")}</Th>
+                <Th numeric>{t("visits")}</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {(campaigns.data ?? []).map((c) => (
+                <tr
+                  key={`${c.source}|${c.medium}|${c.campaign}|${c.landing_path}`}
+                  data-campaign={`${c.source}|${c.medium}|${c.campaign}|${c.landing_path}`}
+                >
+                  <Td>{c.source}</Td>
+                  <Td>{c.medium}</Td>
+                  <Td>{c.campaign}</Td>
+                  <Td>{c.landing_path}</Td>
+                  <Td numeric>{n(c.visits)}</Td>
                 </tr>
               ))}
             </tbody>

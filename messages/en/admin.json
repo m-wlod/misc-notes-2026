@@ -38,7 +38,14 @@
     "size": "Size",
     "week": "Wk {n}",
     "empty": "No data in this range.",
-    "error": "Couldn't load the data."
+    "error": "Couldn't load the data.",
+    "campaigns": "Campaign visits",
+    "campaignsNote": "Landings from links with utm parameters (TikTok, YouTube, link in bio), counted per day. No cookies and no personal data.",
+    "source": "Source",
+    "medium": "Medium",
+    "campaign": "Campaign",
+    "landing": "Landing page",
+    "visits": "Visits"
   },
   "users": {
     "title": "Users",

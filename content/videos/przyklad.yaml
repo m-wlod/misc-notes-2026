@@ -1,0 +1,23 @@
+# Labelled sample (Phase 19): shows the /v/<slug> page on internal deployments only.
+# Not a real video: the links point at no published clip. Replace with real files.
+id: przyklad
+slug: przyklad
+status: draft
+sample: true
+published: "2026-11-03"
+title:
+  pl: "Przykład: dlaczego połowa Kelly'ego"
+  en: "Sample: why half Kelly"
+urls:
+  youtube: "https://www.youtube.com/watch?v=PRZYKLAD-01"
+formula: 'f^{*} = p - \frac{1 - p}{b}'
+formulaCaption:
+  pl: "Przykładowy wzór: ułamek kapitału przy wygranej z prawdopodobieństwem p i wypłacie b."
+  en: "Sample formula: the share of capital to bet with win probability p and payout b."
+simulation: kelly
+exercises:
+  - przyklad-liczba
+  - przyklad-wybor
+  - przyklad-szacowanie
+nextLesson: expected-value
+debunk: przyklad-skutecznosc

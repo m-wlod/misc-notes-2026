@@ -218,3 +218,22 @@ test("a reviewer sees content status and an exercise's analytics from the databa
   // Not an admin: the dashboard and users stay closed.
   expect((await page.request.get("/pl/admin", { maxRedirects: 0 })).status()).toBe(403);
 });
+
+test("a campaign landing shows in the dashboard's campaign table (Phase 19)", async ({
+  browser,
+}) => {
+  const source = `e2e-${String(Date.now() % 1_000_000)}`;
+  const visitor = await (await browser.newContext()).newPage();
+  opened.push(visitor);
+  const counted = visitor.waitForResponse((r) => r.url().endsWith("/api/utm"));
+  await visitor.goto(`/pl/laboratorium?utm_source=${source}&utm_medium=video&utm_campaign=kelly`);
+  expect((await counted).status()).toBe(204);
+  try {
+    const page = await pageAs(browser, boss as User);
+    await page.goto("/pl/admin");
+    const row = page.locator(`tr[data-campaign='${source}|video|kelly|/pl/laboratorium']`);
+    await expect(row.locator("td").last()).toHaveText("1");
+  } finally {
+    await admin().from("utm_visits").delete().eq("source", source);
+  }
+});

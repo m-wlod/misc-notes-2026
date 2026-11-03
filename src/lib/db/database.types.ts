@@ -599,6 +599,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"utm_visits": {
+                  Row: {
+                    "campaign": string,"day": string,"landing_path": string,"medium": string,"source": string,"visits": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "campaign"?: string,"day": string,"landing_path": string,"medium"?: string,"source": string,"visits"?: number
+                  }
+                  Update: {
+                    "campaign"?: string,"day"?: string,"landing_path"?: string,"medium"?: string,"source"?: string,"visits"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"votes": {
                   Row: {
                     "created_at": string,"target_id": number,"target_type": string,"user_id": string,"value": number
@@ -671,6 +685,11 @@ isOneToOne: false
               "active": number,"cohort": string,"size": number,"week": number
             }[]
                            },
+"admin_utm":
+{ Args: { "from_day": string,"to_day": string }; Returns: {
+              "campaign": string,"landing_path": string,"medium": string,"source": string,"visits": number
+            }[]
+                           },
 "discussion_unlocked":
 { Args: { "exercise_id": string }; Returns: boolean
                            },
@@ -688,6 +707,9 @@ isOneToOne: false
                            },
 "is_staff":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"record_utm_visit":
+{ Args: { "camp": string,"med": string,"path": string,"src": string }; Returns: undefined
                            },
 "reputation":
 { Args: { "uid": string }; Returns: number

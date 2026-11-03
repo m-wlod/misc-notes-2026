@@ -1,0 +1,11 @@
+{
+  "title": "Linki",
+  "description": "Wszystkie linki w jednym miejscu: lekcje, wideo, Debunk Lab i laboratorium.",
+  "tagline": "Matematyka, której guru nie znają — za darmo.",
+  "home": "Strona główna",
+  "video": "Wideo: {title}",
+  "learn": "Lekcje",
+  "debunk": "Debunk Lab: sprawdź obietnice guru",
+  "lab": "Laboratorium: symulacje",
+  "practice": "Zadania do przećwiczenia"
+}
