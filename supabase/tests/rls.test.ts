@@ -254,7 +254,8 @@ const PUBLIC_CATALOG: Record<string, Row> = {
   feature_flags: { key: "probe", enabled: true },
   announcements: { body_pl: "x", body_en: "x" },
 };
-const STAFF_ONLY = ["audit_log", "bans"];
+/** Readable by staff or admins only, written only by server code (Phases 17–18). */
+const STAFF_ONLY = ["audit_log", "bans", "app_settings", "cron_runs"];
 /** RLS on and no policies at all: deny everything to anon and authenticated. */
 const SERVER_ONLY = ["newsletter_subscribers"];
 
@@ -441,12 +442,32 @@ describe("anonymous visitors", () => {
 
   it("cannot touch server-only and staff-only tables", async () => {
     await admin().from("audit_log").insert({ action: "probe", actor_id: A.id });
+    const { data: run } = await admin()
+      .from("cron_runs")
+      .insert({ job: "notify" })
+      .select("id")
+      .single();
+    await admin()
+      .from("app_settings")
+      .upsert({ key: "ai", value: { dailyBudgetUsd: 1 } });
     for (const table of [...SERVER_ONLY, ...STAFF_ONLY]) {
       for (const client of [anon(), A.client]) {
         const { data } = await untyped(client).from(table).select("*");
         expect(data ?? [], `read ${table}`).toEqual([]);
       }
     }
+    for (const [table, row] of [
+      ["app_settings", { key: "ai", value: { dailyBudgetUsd: 1000 } }],
+      ["cron_runs", { job: "notify" }],
+    ] as const) {
+      const { error: writeError } = await untyped(A.client).from(table).insert(row);
+      expect(writeError?.code, `write ${table}`).toBe(RLS_DENIED);
+    }
+    await admin()
+      .from("cron_runs")
+      .delete()
+      .eq("id", run?.id ?? 0);
+    await admin().from("app_settings").delete().eq("key", "ai");
     const { error } = await untyped(anon())
       .from("newsletter_subscribers")
       .insert({ email: "x@test.local" });
