@@ -26,7 +26,8 @@ export function exerciseXp({
 /** The daily goal in XP for a goal set in minutes. */
 export const goalXp = (minutes: number) => Math.max(1, Math.round(minutes)) * XP.perGoalMinute;
 
-export type XpReason = "exercise" | "lesson" | "interview" | "daily_goal" | "streak_repair";
+export type XpReason =
+  "exercise" | "lesson" | "interview" | "daily_goal" | "streak_repair" | "correction";
 
 export const xpKey = {
   /** One award per exercise, whichever variant was solved: no grinding through variants. */
@@ -35,4 +36,6 @@ export const xpKey = {
   interview: (sessionId: string) => `interview:${sessionId}`,
   goal: (day: LocalDate) => `goal:${day}`,
   repair: (day: LocalDate) => `repair:${day}`,
+  /** An accepted content error report (Phase 17), once per report. */
+  correction: (reportId: number) => `correction:${String(reportId)}`,
 };

@@ -212,6 +212,10 @@
     "ruina-gracza": {
       "name": "Gambler's ruin",
       "description": "Run the martingale simulation with 1,000 players."
+    },
+    "korektor": {
+      "name": "Proofreader",
+      "description": "Report a content error that gets accepted."
     }
   },
   "share": {

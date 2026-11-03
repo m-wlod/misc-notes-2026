@@ -164,10 +164,25 @@ export async function revealSolution(
     })
     .safeParse(input);
   if (!parsed.success) return { ok: false, reason: "invalid" };
-  if (!(await exerciseLimiter.hit((await caller()).key)))
-    return { ok: false, reason: "rate-limited" };
+  const who = await caller();
+  if (!(await exerciseLimiter.hit(who.key))) return { ok: false, reason: "rate-limited" };
   const ex = getExercise(parsed.data.exerciseId, internal());
   if (!ex?.solution) return { ok: false, reason: "not-found" };
+  if (who.userId) {
+    // Recorded on the account (Phase 17): revealing the solution opens the exercise's
+    // discussion (the spoiler gate counts it). Score 0: a reveal is not a solve.
+    await createAdminClient()
+      ?.from("exercise_attempts")
+      .insert({
+        user_id: who.userId,
+        exercise_id: ex.id,
+        variant_seed: parsed.data.variant,
+        answer: { revealed: true },
+        score: 0,
+        grader: "self",
+        source: "app",
+      });
+  }
   // From the page: next-intl's request locale isn't available inside server actions.
   const lang = parsed.data.locale;
   const text = lang === "en" ? (ex.solution.en ?? ex.solution.pl) : ex.solution.pl;

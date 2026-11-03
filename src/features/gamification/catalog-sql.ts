@@ -8,7 +8,11 @@ import pl from "../../../messages/pl/gamification.json";
  * writes it to the migration below; a unit test fails when code or messages change
  * without regenerating it. Upserts, so it's safe to apply over the local seed.
  */
-export const CATALOG_MIGRATION = "supabase/migrations/20261102120000_gamification_catalog.sql";
+/**
+ * The latest catalog migration. A changed catalog gets a new file (applied migrations are
+ * never edited); upserts make each file safe to run after the earlier ones.
+ */
+export const CATALOG_MIGRATION = "supabase/migrations/20261103120100_gamification_catalog.sql";
 
 const q = (s: string) => `'${s.replaceAll("'", "''")}'`;
 

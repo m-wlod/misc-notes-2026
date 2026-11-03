@@ -27,6 +27,8 @@ export type Facts = {
   maxRating: number;
   kellyFirstTry: boolean;
   debunkFinished: number;
+  /** Content error reports a moderator accepted (Phase 17). */
+  corrections: number;
   /** Browser-claimed achievement ids. */
   claims: readonly string[];
 };
@@ -53,6 +55,7 @@ export const EMPTY_FACTS: Facts = {
   maxRating: 0,
   kellyFirstTry: false,
   debunkFinished: 0,
+  corrections: 0,
   claims: [],
 };
 
@@ -122,6 +125,7 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   { id: "kelly", rule: (f) => f.kellyFirstTry },
   { id: "anty-guru", rule: (f) => f.debunkFinished >= 10 },
   { id: "ruina-gracza", rule: claimed("ruina-gracza"), client: true },
+  { id: "korektor", rule: (f) => f.corrections >= 1 },
 ];
 
 export const achievementById = (id: string) => ACHIEVEMENTS.find((a) => a.id === id);
