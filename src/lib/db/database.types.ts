@@ -646,7 +646,7 @@ isOneToOne: false
             }[]
                            },
 "vote_totals":
-{ Args: { "ids": number[],"target_type": string }; Returns: {
+{ Args: { "ids": (number)[],"target_type": string }; Returns: {
               "target_id": number,"total": number
             }[]
                            }
