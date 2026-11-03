@@ -66,6 +66,99 @@
     "failed": "That didn't work.",
     "self": "You can't remove your own admin role."
   },
+  "queues": {
+    "title": "Moderation queues",
+    "reports": "Reported posts",
+    "comments": "Held comments",
+    "solutions": "Held solutions",
+    "corrections": "Content errors",
+    "claims": "Submitted claims (Debunk)",
+    "debunkCorrections": "Debunk Lab corrections",
+    "disputes": "AI grading disputes"
+  },
+  "disputes": {
+    "title": "AI grading disputes",
+    "empty": "No open disputes.",
+    "score": "AI score: {points}/4",
+    "reason": "Why it was reported",
+    "answer": "Answer",
+    "feedback": "AI feedback",
+    "newScore": "New score",
+    "uphold": "Uphold",
+    "reject": "Reject",
+    "upheld": "Upheld.",
+    "upheldXp": "Upheld, {xp} XP awarded.",
+    "rejected": "Rejected.",
+    "failed": "That didn't work. Refresh the page and try again."
+  },
+  "content": {
+    "title": "Content status",
+    "summary": {
+      "draft": "Drafts",
+      "review": "In review",
+      "published": "Published",
+      "missingEn": "No EN version",
+      "todos": "TODO(verify)",
+      "flagged": "Calibration flags"
+    },
+    "filter": {
+      "kind": "Type",
+      "status": "Status",
+      "track": "Track",
+      "all": "all",
+      "attention": "Needs attention only",
+      "apply": "Filter"
+    },
+    "kind": {
+      "lesson": "lesson",
+      "exercise": "exercise",
+      "debunk": "Debunk"
+    },
+    "status": {
+      "draft": "draft",
+      "review": "review",
+      "published": "published"
+    },
+    "col": {
+      "kind": "Type",
+      "id": "Id",
+      "title": "Title",
+      "status": "Status",
+      "en": "EN",
+      "todos": "TODO(verify)",
+      "calibration": "Calibration"
+    },
+    "missing": "missing",
+    "ok": "yes",
+    "shown": "Showing {shown} of {total}.",
+    "calibration": {
+      "too-easy": "too easy",
+      "too-hard": "too hard"
+    }
+  },
+  "exercises": {
+    "title": "Exercises",
+    "note": "Numbers from the nightly calibration. An exercise's own page is computed live.",
+    "id": "Id",
+    "type": "Type",
+    "level": "Level",
+    "status": "Status",
+    "attempts": "Attempts",
+    "successRate": "Success rate",
+    "back": "All exercises",
+    "error": "Couldn't load the statistics.",
+    "users": "People",
+    "medianTime": "Median time",
+    "meanHints": "Mean hints",
+    "seconds": "{s} s",
+    "wrong": "Most common wrong answers",
+    "noWrong": "No wrong answers.",
+    "answer": "Answer",
+    "count": "Times",
+    "mistake": "mistakes[]",
+    "listed": "already covered",
+    "addMistake": "Add to mistakes[]"
+  },
   "roles": {
     "admin": "admin",
     "moderator": "moderator",

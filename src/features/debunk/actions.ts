@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 
+import { audit, staffFor } from "@/features/admin/server";
 import { exerciseLimiter } from "@/features/exercises/limiter";
 import { gamificationStore } from "@/features/gamification/server/index";
 import { createAdminClient } from "@/lib/db/admin";
@@ -130,29 +131,37 @@ export async function finishEntry(input: unknown): Promise<{ ok: boolean }> {
   return { ok: true };
 }
 
-/** Staff resolve a queue item (RLS "staff resolve" policy does the authorisation). */
+/**
+ * Staff resolve a submitted claim (Phase 16; audited since Phase 18). Corrections go
+ * through `resolveCorrection` in community moderation, which also awards XP.
+ */
 export async function resolveItem(input: unknown): Promise<{ ok: boolean }> {
   const parsed = z
     .object({
-      table: z.enum(["debunk_submissions", "content_error_reports"]),
+      table: z.literal("debunk_submissions"),
       id: z.number().int().positive(),
       status: z.enum(["approved", "rejected"]),
     })
     .safeParse(input);
-  if (!parsed.success || !isSupabaseConfigured()) return { ok: false };
-  const session = await getSession();
-  if (!session) return { ok: false };
-  const { table, id, status } = parsed.data;
-  const now = new Date().toISOString();
-  const { error } =
-    table === "debunk_submissions"
-      ? await session.supabase
-          .from(table)
-          .update({ status, reviewed_by: session.user.id })
-          .eq("id", id)
-      : await session.supabase
-          .from(table)
-          .update({ status, resolved_by: session.user.id, resolved_at: now })
-          .eq("id", id);
-  return { ok: !error };
+  if (!parsed.success) return { ok: false };
+  const who = await staffFor("debunk");
+  if (!who) return { ok: false };
+  const { id, status } = parsed.data;
+  const { data: before } = await who.admin
+    .from("debunk_submissions")
+    .select("status")
+    .eq("id", id)
+    .maybeSingle();
+  if (!before) return { ok: false };
+  const { error } = await who.admin
+    .from("debunk_submissions")
+    .update({ status, reviewed_by: who.actor })
+    .eq("id", id);
+  if (error) return { ok: false };
+  return {
+    ok: await audit(who.admin, who.actor, `debunk.${status}`, `debunk_submission:${String(id)}`, {
+      before: before.status,
+      after: status,
+    }),
+  };
 }

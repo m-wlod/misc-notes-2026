@@ -66,6 +66,99 @@
     "failed": "Nie udało się.",
     "self": "Nie możesz odebrać sobie roli administratora."
   },
+  "queues": {
+    "title": "Kolejki moderacji",
+    "reports": "Zgłoszenia wpisów",
+    "comments": "Wstrzymane komentarze",
+    "solutions": "Wstrzymane rozwiązania",
+    "corrections": "Błędy w treściach",
+    "claims": "Zgłoszone tezy (Debunk)",
+    "debunkCorrections": "Poprawki do Debunk Lab",
+    "disputes": "Spory o ocenę AI"
+  },
+  "disputes": {
+    "title": "Spory o ocenę AI",
+    "empty": "Brak otwartych sporów.",
+    "score": "ocena AI: {points}/4",
+    "reason": "Uzasadnienie zgłoszenia",
+    "answer": "Odpowiedź",
+    "feedback": "Informacja zwrotna AI",
+    "newScore": "Nowa ocena",
+    "uphold": "Uznaj",
+    "reject": "Odrzuć",
+    "upheld": "Uznano.",
+    "upheldXp": "Uznano, przyznano {xp} XP.",
+    "rejected": "Odrzucono.",
+    "failed": "Nie udało się. Odśwież stronę i spróbuj ponownie."
+  },
+  "content": {
+    "title": "Stan treści",
+    "summary": {
+      "draft": "Szkice",
+      "review": "Do recenzji",
+      "published": "Opublikowane",
+      "missingEn": "Bez wersji EN",
+      "todos": "TODO(verify)",
+      "flagged": "Flagi kalibracji"
+    },
+    "filter": {
+      "kind": "Rodzaj",
+      "status": "Status",
+      "track": "Ścieżka",
+      "all": "wszystkie",
+      "attention": "Tylko wymagające uwagi",
+      "apply": "Filtruj"
+    },
+    "kind": {
+      "lesson": "lekcja",
+      "exercise": "zadanie",
+      "debunk": "Debunk"
+    },
+    "status": {
+      "draft": "szkic",
+      "review": "recenzja",
+      "published": "opublikowane"
+    },
+    "col": {
+      "kind": "Rodzaj",
+      "id": "Id",
+      "title": "Tytuł",
+      "status": "Status",
+      "en": "EN",
+      "todos": "TODO(verify)",
+      "calibration": "Kalibracja"
+    },
+    "missing": "brak",
+    "ok": "jest",
+    "shown": "Pokazano {shown} z {total}.",
+    "calibration": {
+      "too-easy": "za łatwe",
+      "too-hard": "za trudne"
+    }
+  },
+  "exercises": {
+    "title": "Zadania",
+    "note": "Liczby z nocnej kalibracji. Szczegóły zadania liczone są na bieżąco.",
+    "id": "Id",
+    "type": "Typ",
+    "level": "Poziom",
+    "status": "Status",
+    "attempts": "Próby",
+    "successRate": "Skuteczność",
+    "back": "Wszystkie zadania",
+    "error": "Nie udało się wczytać statystyk.",
+    "users": "Osoby",
+    "medianTime": "Mediana czasu",
+    "meanHints": "Średnio podpowiedzi",
+    "seconds": "{s} s",
+    "wrong": "Najczęstsze błędne odpowiedzi",
+    "noWrong": "Brak błędnych odpowiedzi.",
+    "answer": "Odpowiedź",
+    "count": "Ile razy",
+    "mistake": "mistakes[]",
+    "listed": "już opisana",
+    "addMistake": "Dodaj do mistakes[]"
+  },
   "roles": {
     "admin": "administrator",
     "moderator": "moderator",

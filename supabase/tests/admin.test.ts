@@ -215,3 +215,129 @@ describe("users", () => {
     expect(error).not.toBeNull();
   });
 });
+
+describe("exercise analytics (Phase 18b)", () => {
+  let reviewer: TestUser | undefined;
+  const EX = "admin-analytics";
+
+  beforeAll(async () => {
+    reviewer = await createUser("admin-reviewer");
+    const db = admin();
+    await db.from("user_roles").insert({ user_id: reviewer.id, role: "reviewer" });
+    const row = (
+      u: TestUser,
+      answer: Record<string, string | boolean>,
+      score: number,
+      time: number | null,
+      hints: number,
+    ) => ({
+      user_id: u.id,
+      exercise_id: EX,
+      answer,
+      score,
+      grader: "auto" as const,
+      time_ms: time,
+      hints_used: hints,
+    });
+    const { error } = await db
+      .from("exercise_attempts")
+      .insert([
+        row(u1 as TestUser, { kind: "text", value: "6" }, 1, 10_000, 0),
+        row(u1 as TestUser, { kind: "text", value: " 5 " }, 0, 20_000, 1),
+        row(u2 as TestUser, { kind: "text", value: "5" }, 0, 30_000, 2),
+        row(u2 as TestUser, { kind: "text", value: "5" }, 0, null, 0),
+        row(u3 as TestUser, { kind: "text", value: "Dwa  Razy" }, 0, 40_000, 0),
+        row(u3 as TestUser, { revealed: true }, 0, null, 0),
+      ]);
+    if (error) throw error;
+  });
+
+  afterAll(async () => {
+    await deleteUser(reviewer);
+  });
+
+  it("is refused to anonymous visitors and learners, open to all staff", async () => {
+    for (const c of [anon(), (u1 as TestUser).client]) {
+      const r = await c.rpc("admin_exercise_analytics", { ex: EX });
+      expect(r.error).not.toBeNull();
+      expect(r.data).toBeNull();
+    }
+    for (const u of [boss, mod, reviewer]) {
+      const r = await (u as TestUser).client.rpc("admin_exercise_analytics", { ex: EX });
+      expect(r.error).toBeNull();
+    }
+  });
+
+  it("matches a hand count: success rate, median time, hints and normalised wrong answers", async () => {
+    const { data } = await (reviewer as TestUser).client.rpc("admin_exercise_analytics", {
+      ex: EX,
+    });
+    expect(data).toEqual({
+      attempts: 6,
+      users: 3,
+      success_rate: 0.1667,
+      // Timed attempts: 10, 20, 30, 40 s; the lower median (percentile_disc).
+      median_time_ms: 20_000,
+      mean_hints: 0.5,
+      wrong: [
+        { answer: { kind: "text", value: "5" }, count: 3 },
+        { answer: { kind: "text", value: "dwa razy" }, count: 1 },
+      ],
+    });
+  });
+
+  it("an exercise nobody tried has zero attempts and no rates", async () => {
+    const { data } = await (boss as TestUser).client.rpc("admin_exercise_analytics", {
+      ex: "nobody-tried-this",
+    });
+    expect(data).toEqual({
+      attempts: 0,
+      users: 0,
+      success_rate: null,
+      median_time_ms: null,
+      mean_hints: null,
+      wrong: [],
+    });
+  });
+});
+
+describe("grading disputes (Phase 18b)", () => {
+  it("a learner disputes their own attempt, never someone else's, and can't resolve it", async () => {
+    const db = admin();
+    const { data: own } = await db
+      .from("exercise_attempts")
+      .select("id")
+      .eq("user_id", (u1 as TestUser).id)
+      .limit(1)
+      .single();
+    const { data: other } = await db
+      .from("exercise_attempts")
+      .select("id")
+      .eq("user_id", (u2 as TestUser).id)
+      .limit(1)
+      .single();
+    const c = (u1 as TestUser).client;
+    const mine = await c
+      .from("grading_disputes")
+      .insert({ user_id: (u1 as TestUser).id, attempt_id: own?.id ?? 0, reason: "Za nisko" })
+      .select("id")
+      .single();
+    expect(mine.error).toBeNull();
+    const theirs = await c
+      .from("grading_disputes")
+      .insert({ user_id: (u1 as TestUser).id, attempt_id: other?.id ?? 0, reason: "x" });
+    expect(theirs.error).not.toBeNull();
+    const resolved = await c
+      .from("grading_disputes")
+      .update({ status: "approved" })
+      .eq("id", mine.data?.id ?? 0)
+      .select("id");
+    expect(resolved.data ?? []).toEqual([]);
+    const { data: after } = await db
+      .from("grading_disputes")
+      .select("status")
+      .eq("id", mine.data?.id ?? 0)
+      .single();
+    expect(after?.status).toBe("pending");
+  });
+});

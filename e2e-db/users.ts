@@ -27,7 +27,10 @@ export const admin = () =>
 
 export type User = { id: string; email: string; password: string };
 
-export async function createUser(label: string, role?: "moderator" | "admin"): Promise<User> {
+export async function createUser(
+  label: string,
+  role?: "moderator" | "admin" | "reviewer",
+): Promise<User> {
   const email = `e2e-${label}-${randomUUID().slice(0, 8)}@test.local`;
   const password = `pw-${randomUUID()}`;
   const db = admin();
