@@ -6,6 +6,7 @@ import type challenge from "../messages/pl/challenge.json";
 import type common from "../messages/pl/common.json";
 import type content from "../messages/pl/content.json";
 import type curriculum from "../messages/pl/curriculum.json";
+import type debunk from "../messages/pl/debunk.json";
 import type errors from "../messages/pl/errors.json";
 import type exercises from "../messages/pl/exercises.json";
 import type gamification from "../messages/pl/gamification.json";
@@ -53,6 +54,7 @@ declare module "next-intl" {
       challenge: typeof challenge;
       certificates: typeof certificates;
       notify: typeof notify;
+      debunk: typeof debunk;
     };
     Formats: typeof formats;
   }

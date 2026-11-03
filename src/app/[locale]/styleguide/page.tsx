@@ -16,6 +16,8 @@ import { Link } from "@/components/ui/link";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import { CertificatesPanel } from "@/features/certificates/certificates-panel";
+import { Checker } from "@/features/debunk/checkers/checker";
+import { CHECKER_IDS } from "@/features/debunk/checkers/ids";
 import { renderText } from "@/features/exercises/render-text";
 import { AchievementsGrid } from "@/features/gamification/ui/achievements-grid";
 import { Dashboard } from "@/features/gamification/ui/dashboard";
@@ -358,6 +360,17 @@ function Styleguide() {
             ))}
           </tbody>
         </Table>
+      </Section>
+
+      <Section id="checkers" title="Debunk Lab claim checkers">
+        <div className="grid gap-10">
+          {CHECKER_IDS.map((id) => (
+            <div key={id} data-specimen={`checker-${id}`}>
+              <p className="mb-2 font-sans text-xs text-ink-muted">{id}</p>
+              <Checker id={id} />
+            </div>
+          ))}
+        </div>
       </Section>
 
       <Section id="gamification" title="Gamification (sample data)">
