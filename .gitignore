@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next-db/
 /out/
 
 # production
@@ -44,6 +45,7 @@ next-env.d.ts
 # playwright
 /test-results/
 /playwright-report/
+/playwright-report-db/
 /blob-report/
 /playwright/.cache/
 

@@ -82,9 +82,10 @@ jobs:
           retention-days: 7
 
   db:
-    # Migrations, RLS and account tests against a real local Supabase stack.
+    # Migrations, RLS and account tests against a real local Supabase stack, then the
+    # signed-in end-to-end flows against a build pointed at it.
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
 
@@ -119,3 +120,30 @@ jobs:
           }
 
       - run: pnpm test:db
+
+      # Signed-in end-to-end flows (Phase 17c): a build pointed at this stack.
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        id: pw-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+      - if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      - run: pnpm test:e2e:db
+
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-db
+          path: |
+            playwright-report-db/
+            test-results/
+          retention-days: 7
