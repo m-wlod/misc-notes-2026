@@ -123,7 +123,7 @@ async function Queue() {
         {(corrections.data ?? []).length === 0 ? empty : null}
         <ul className="grid gap-3">
           {(corrections.data ?? []).map((c) => (
-            <li key={c.id} className={itemClass}>
+            <li key={c.id} data-correction={c.id} className={itemClass}>
               <p className="font-sans text-xs text-ink-muted">
                 {t("target")}: {c.content_type}/{c.content_id} · {date(c.created_at)}
               </p>

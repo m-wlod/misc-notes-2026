@@ -1,8 +1,9 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense, type ReactNode } from "react";
 
 import { StatTicker } from "@/components/content/data";
 import { siteConfig } from "@/config/site";
+import { AnnouncementBanner } from "@/features/announcements/banner";
 import { Celebration } from "@/features/gamification/celebration";
 import { readMe } from "@/features/gamification/server/read";
 import { Link } from "@/i18n/navigation";
@@ -16,6 +17,7 @@ import { BottomNav, PrimaryNav } from "./nav-links";
 
 export async function AppShell({ children }: { children: ReactNode }) {
   const t = await getTranslations("common");
+  const locale = await getLocale();
   return (
     <>
       <a
@@ -24,6 +26,7 @@ export async function AppShell({ children }: { children: ReactNode }) {
       >
         {t("skipToContent")}
       </a>
+      <AnnouncementBanner locale={locale} />
       <TopBar />
       <main id="content" tabIndex={-1} className="outline-none">
         {children}

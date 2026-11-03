@@ -3,6 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { env } from "@/env";
+import { recordRun } from "@/features/admin/cron-runs";
 import { rollFinishedWeeks } from "@/features/gamification/server/roll";
 import { supabaseStore } from "@/features/gamification/server/supabase-store";
 import { createAdminClient } from "@/lib/db/admin";
@@ -26,10 +27,12 @@ export async function GET(request: NextRequest) {
   }
   const admin = createAdminClient();
   if (!admin) return NextResponse.json({ error: "not configured" }, { status: 503 });
-  try {
-    const rolled = await rollFinishedWeeks(supabaseStore(admin));
-    return NextResponse.json({ rolled }, { headers: { "Cache-Control": "no-store" } });
-  } catch {
-    return NextResponse.json({ error: "roll failed" }, { status: 500 });
-  }
+  return recordRun(admin, "leagues", async () => {
+    try {
+      const rolled = await rollFinishedWeeks(supabaseStore(admin));
+      return NextResponse.json({ rolled }, { headers: { "Cache-Control": "no-store" } });
+    } catch {
+      return NextResponse.json({ error: "roll failed" }, { status: 500 });
+    }
+  });
 }

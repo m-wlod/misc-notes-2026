@@ -14,7 +14,7 @@ import { sharedKV } from "@/lib/kv/shared";
 import type { KV } from "@/lib/kv/store";
 
 import { cacheKey, getCached, setCached } from "./cache";
-import { checkQuota, recordUse, type QuotaConfig } from "./quota";
+import { checkQuota, recordUse, withSettings, type QuotaConfig } from "./quota";
 
 /**
  * AI grading of one open answer (Phase 10), shared by the route and its tests:
@@ -35,11 +35,20 @@ export function aiAvailable(): boolean {
   );
 }
 
-export const quotaConfig = (): QuotaConfig => ({
+/** The env defaults; an admin can override them in the panel (`app_settings`, Phase 18c). */
+export const envQuotaConfig = (): QuotaConfig => ({
   userDailyQuota: env.AI_USER_DAILY_QUOTA,
   ipDailyLimit: env.AI_IP_DAILY_LIMIT,
   dailyBudgetUsd: env.AI_DAILY_BUDGET_USD,
 });
+
+export async function quotaConfig(): Promise<QuotaConfig> {
+  const base = envQuotaConfig();
+  const admin = createAdminClient();
+  if (!admin) return base;
+  const { data } = await admin.from("app_settings").select("value").eq("key", "ai").maybeSingle();
+  return withSettings(base, data?.value);
+}
 
 export const graderModelId = () => env.AI_GRADER_MODEL ?? DEFAULT_GRADER_MODEL;
 
@@ -63,7 +72,13 @@ export type ServiceResult =
 
 /** Where usage and graded attempts go. Default: the database (secret-key client). */
 export interface GradingLog {
-  usage(entry: { userId: string; model: string; usage: Usage; costUsd: number }): Promise<void>;
+  usage(entry: {
+    userId: string;
+    exerciseId: string;
+    model: string;
+    usage: Usage;
+    costUsd: number;
+  }): Promise<void>;
   attempt(entry: {
     userId: string;
     exerciseId: string;
@@ -74,11 +89,12 @@ export interface GradingLog {
 }
 
 export const databaseLog: GradingLog = {
-  async usage({ userId, model, usage, costUsd }) {
+  async usage({ userId, exerciseId, model, usage, costUsd }) {
     await createAdminClient()
       ?.from("ai_grading_usage")
       .insert({
         user_id: userId,
+        exercise_id: exerciseId,
         model,
         tokens_in:
           usage.input_tokens +
@@ -139,7 +155,11 @@ export async function gradeOpenAnswer(
   if (hit)
     return { ok: true, grade: hit, cached: true, remaining: null, attemptId: await store(hit) };
 
-  const quota = await checkQuota(kv, deps.config ?? quotaConfig(), { userId, ip, now: deps.now });
+  const quota = await checkQuota(kv, deps.config ?? (await quotaConfig()), {
+    userId,
+    ip,
+    now: deps.now,
+  });
   if (!quota.ok) return { ok: false, reason: quota.reason };
 
   const { params } = variantOf(ex, version);
@@ -155,7 +175,13 @@ export async function gradeOpenAnswer(
   );
   // Every model call costs money, also the ones that fell back.
   await recordUse(kv, { userId, ip, costUsd: outcome.costUsd, now: deps.now });
-  await log.usage({ userId, model: model.id, usage: outcome.usage, costUsd: outcome.costUsd });
+  await log.usage({
+    userId,
+    exerciseId: ex.id,
+    model: model.id,
+    usage: outcome.usage,
+    costUsd: outcome.costUsd,
+  });
   if (!outcome.ok) return { ok: false, reason: "fallback" };
   await setCached(kv, key, outcome.grade);
   return {

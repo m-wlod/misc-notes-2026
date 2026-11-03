@@ -3,6 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { env } from "@/env";
+import { recordRun } from "@/features/admin/cron-runs";
 import { allExercises } from "@/features/exercises/data";
 import { calibrate, flags, type AttemptRow } from "@/features/grading/calibrate";
 import { createAdminClient } from "@/lib/db/admin";
@@ -28,38 +29,39 @@ export async function GET(request: NextRequest) {
   }
   const admin = createAdminClient();
   if (!admin) return NextResponse.json({ error: "not configured" }, { status: 503 });
+  return recordRun(admin, "calibrate", async () => {
+    const rows: AttemptRow[] = [];
+    for (let from = 0; ; from += PAGE) {
+      const { data, error } = await admin
+        .from("exercise_attempts")
+        .select("exercise_id, score, time_ms")
+        .order("id")
+        .range(from, from + PAGE - 1);
+      if (error) return NextResponse.json({ error: "read failed" }, { status: 500 });
+      rows.push(
+        ...data.map((r) => ({ exerciseId: r.exercise_id, score: r.score, timeMs: r.time_ms })),
+      );
+      if (data.length < PAGE) break;
+    }
 
-  const rows: AttemptRow[] = [];
-  for (let from = 0; ; from += PAGE) {
-    const { data, error } = await admin
-      .from("exercise_attempts")
-      .select("exercise_id, score, time_ms")
-      .order("id")
-      .range(from, from + PAGE - 1);
-    if (error) return NextResponse.json({ error: "read failed" }, { status: 500 });
-    rows.push(
-      ...data.map((r) => ({ exerciseId: r.exercise_id, score: r.score, timeMs: r.time_ms })),
+    const stats = calibrate(rows);
+    if (stats.length > 0) {
+      const { error } = await admin.from("exercise_stats").upsert(
+        stats.map((s) => ({
+          exercise_id: s.exerciseId,
+          attempts: s.attempts,
+          success_rate: s.successRate,
+          median_time_ms: s.medianTimeMs,
+          updated_at: new Date().toISOString(),
+        })),
+      );
+      if (error) return NextResponse.json({ error: "write failed" }, { status: 500 });
+    }
+
+    const levels = new Map(allExercises().map((e) => [e.id, e.level]));
+    return NextResponse.json(
+      { exercises: stats.length, flags: flags(stats, (id) => levels.get(id)) },
+      { headers: { "Cache-Control": "no-store" } },
     );
-    if (data.length < PAGE) break;
-  }
-
-  const stats = calibrate(rows);
-  if (stats.length > 0) {
-    const { error } = await admin.from("exercise_stats").upsert(
-      stats.map((s) => ({
-        exercise_id: s.exerciseId,
-        attempts: s.attempts,
-        success_rate: s.successRate,
-        median_time_ms: s.medianTimeMs,
-        updated_at: new Date().toISOString(),
-      })),
-    );
-    if (error) return NextResponse.json({ error: "write failed" }, { status: 500 });
-  }
-
-  const levels = new Map(allExercises().map((e) => [e.id, e.level]));
-  return NextResponse.json(
-    { exercises: stats.length, flags: flags(stats, (id) => levels.get(id)) },
-    { headers: { "Cache-Control": "no-store" } },
-  );
+  });
 }

@@ -53,7 +53,11 @@ async function Queue() {
         {(claims.data ?? []).length === 0 ? <p className="text-ink-muted">{t("empty")}</p> : null}
         <ul className="grid gap-3">
           {(claims.data ?? []).map((c) => (
-            <li key={c.id} className="grid gap-2 rounded-md border border-rule px-4 py-3">
+            <li
+              key={c.id}
+              data-claim={c.id}
+              className="grid gap-2 rounded-md border border-rule px-4 py-3"
+            >
               <p className="font-serif text-reading">{c.claim}</p>
               <p className="font-sans text-xs text-ink-muted">
                 {date(c.created_at)}

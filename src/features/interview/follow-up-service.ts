@@ -44,7 +44,11 @@ export async function followUpQuestion(
   const model = deps.model === undefined ? followUpModel() : deps.model;
   if (!model) return { ok: false, reason: "not-configured" };
   const kv = deps.kv ?? sharedKV();
-  const quota = await checkQuota(kv, deps.config ?? quotaConfig(), { userId, ip, now: deps.now });
+  const quota = await checkQuota(kv, deps.config ?? (await quotaConfig()), {
+    userId,
+    ip,
+    now: deps.now,
+  });
   if (!quota.ok) return { ok: false, reason: quota.reason };
 
   const prompt = lang === "en" ? (ex.prompt.en ?? ex.prompt.pl) : ex.prompt.pl;
@@ -55,6 +59,7 @@ export async function followUpQuestion(
   await recordUse(kv, { userId, ip, costUsd: out.costUsd, now: deps.now });
   await (deps.log ?? databaseLog).usage({
     userId,
+    exerciseId: ex.id,
     model: model.id,
     usage: out.usage,
     costUsd: out.costUsd,

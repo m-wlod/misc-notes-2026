@@ -44,5 +44,9 @@
     "tiktok": "TikTok",
     "youtube": "YouTube",
     "discord": "Discord"
+  },
+  "announcement": {
+    "label": "Announcement",
+    "dismiss": "Dismiss announcement"
   }
 }
