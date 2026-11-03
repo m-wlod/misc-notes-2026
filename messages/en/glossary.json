@@ -7,5 +7,6 @@
   "sample": "sample",
   "sampleNote": "Terms marked “sample” are placeholders and will be replaced with reviewed content.",
   "inGlossary": "See in the glossary",
-  "letters": "Letters"
+  "letters": "Letters",
+  "lessonLink": "Lesson: {title}"
 }

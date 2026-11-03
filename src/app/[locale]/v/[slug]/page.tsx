@@ -18,6 +18,10 @@ import { listEntries } from "@/features/debunk/entries";
 import { getExercise } from "@/features/exercises/data";
 import { ExerciseCard } from "@/features/exercises/exercise-card";
 import { publicView } from "@/features/exercises/view";
+import { JsonLd } from "@/features/seo/json-ld";
+import { plainText, quiz } from "@/features/seo/jsonld";
+import { ogMeta } from "@/features/seo/og";
+import { absolute } from "@/features/seo/site";
 import { Simulation } from "@/features/sims/embed";
 import { simById } from "@/features/sims/registry";
 import { allVideoSlugs, pickText, videoBySlug, videoUrl } from "@/features/videos/entries";
@@ -43,6 +47,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       getPathname({ href: { pathname: "/v/[slug]", params: { slug } }, locale: l }),
     ),
     ...(v.status === "published" ? {} : { robots: { index: false, follow: true } }),
+    ...ogMeta({
+      kind: "video",
+      id: v.id,
+      locale,
+      title: pickText(v.title, locale),
+      description: t("description", { title: pickText(v.title, locale) }),
+      type: "article",
+    }),
   };
 }
 
@@ -83,6 +95,14 @@ async function VideoLanding({ params }: Pick<Props, "params">) {
   const entry = debunkId
     ? (listEntries(locale, internal).find((e) => e.id === debunkId) ?? null)
     : null;
+  const structured = quiz({
+    name: title,
+    url: absolute(
+      getPathname({ href: { pathname: "/v/[slug]", params: { slug: v.slug } }, locale }),
+    ),
+    locale,
+    questions: exercises.map((e) => plainText(e.promptHtml)),
+  });
   const formula = katex.renderToString(v.formula, {
     displayMode: true,
     output: "htmlAndMathml",
@@ -91,6 +111,7 @@ async function VideoLanding({ params }: Pick<Props, "params">) {
 
   return (
     <article data-video={v.id} className="mx-auto grid max-w-4xl gap-10 px-4 pt-10 pb-16 sm:px-6">
+      <JsonLd data={structured} />
       <header className="grid gap-3">
         {v.sample ? (
           <p className="font-sans text-xs tracking-wide text-ink-muted uppercase">{t("sample")}</p>

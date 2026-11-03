@@ -67,6 +67,13 @@ export function GlossarySearch({
                       {entry.sample ? <Badge>{t("sample")}</Badge> : null}
                     </dt>
                     <dd className="mt-1 text-base text-ink-muted">{entry.definition}</dd>
+                    {entry.lesson ? (
+                      <dd className="mt-1 font-sans text-sm" data-term-lesson={entry.id}>
+                        <a href={entry.lesson.href}>
+                          {t("lessonLink", { title: entry.lesson.title })}
+                        </a>
+                      </dd>
+                    ) : null}
                   </div>
                 ))}
               </dl>

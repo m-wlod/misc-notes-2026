@@ -190,11 +190,19 @@ for (const theme of ["light", "dark"] as const) {
   });
 }
 
-test("robots.txt and sitemap.xml list localised URLs", async ({ request }) => {
+test("robots.txt lists one sitemap per language, each with localised URLs", async ({ request }) => {
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Disallow: /pl/styleguide");
-  const sitemap = await (await request.get("/sitemap.xml")).text();
-  expect(sitemap).toMatch(/<loc>https?:\/\/[^<]+\/pl\/nauka<\/loc>/);
-  expect(sitemap).toMatch(/<loc>https?:\/\/[^<]+\/en\/learn<\/loc>/);
-  expect(sitemap).toContain('hreflang="en"');
+  expect(robots).toMatch(/Sitemap: https?:\/\/[^\s]+\/sitemap\/pl\.xml/);
+  expect(robots).toMatch(/Sitemap: https?:\/\/[^\s]+\/sitemap\/en\.xml/);
+  const pl = await (await request.get("/sitemap/pl.xml")).text();
+  expect(pl).toMatch(/<loc>https?:\/\/[^<]+\/pl\/nauka<\/loc>/);
+  expect(pl).not.toMatch(/<loc>https?:\/\/[^<]+\/en\//);
+  expect(pl).toContain('hreflang="en"');
+  // Simulations are public and indexable; drafts and samples never are.
+  expect(pl).toMatch(/<loc>https?:\/\/[^<]+\/pl\/laboratorium\/symulacje\/[a-z-]+<\/loc>/);
+  expect(pl).not.toContain("przyklad");
+  const en = await (await request.get("/sitemap/en.xml")).text();
+  expect(en).toMatch(/<loc>https?:\/\/[^<]+\/en\/learn<\/loc>/);
+  expect(en).not.toMatch(/<loc>https?:\/\/[^<]+\/pl\//);
 });

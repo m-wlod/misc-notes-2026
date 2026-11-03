@@ -12,6 +12,8 @@ export type GlossaryEntry = {
   otherName: string;
   definition: string;
   sample: boolean;
+  /** The lesson that teaches the term (Phase 19b internal linking). */
+  lesson?: { href: string; title: string } | undefined;
 };
 
 export { fold } from "@/lib/text/fold";

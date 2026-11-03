@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { alternatesForPaths } from "@/components/shell/section-page";
 import { Skeleton } from "@/components/ui/display";
 import { lessonHref, lessonNodes } from "@/features/curriculum";
+import { ogMeta } from "@/features/seo/og";
 import { DEFAULT_SEED, parseState } from "@/features/sims/params";
 import { SimPlayer } from "@/features/sims/player";
 import { SIMS, simBySlug } from "@/features/sims/registry";
@@ -30,6 +31,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: alternatesForPaths(locale, (l) =>
       getPathname({ href: { pathname: "/lab/sims/[id]", params: { id: def.slug[l] } }, locale: l }),
     ),
+    ...ogMeta({
+      kind: "sim",
+      id: def.id,
+      locale,
+      title: t(`${def.id}.title` as "coin-walk.title"),
+      description: t(`${def.id}.short` as "coin-walk.short"),
+    }),
   };
 }
 

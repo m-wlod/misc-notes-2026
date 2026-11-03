@@ -7,5 +7,6 @@
   "sample": "przykład",
   "sampleNote": "Pojęcia oznaczone jako „przykład” są tymczasowe i zostaną zastąpione sprawdzoną treścią.",
   "inGlossary": "Zobacz w słowniczku",
-  "letters": "Litery"
+  "letters": "Litery",
+  "lessonLink": "Lekcja: {title}"
 }

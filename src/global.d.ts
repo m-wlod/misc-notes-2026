@@ -25,6 +25,7 @@ import type python from "../messages/pl/python.json";
 import type reader from "../messages/pl/reader.json";
 import type review from "../messages/pl/review.json";
 import type sections from "../messages/pl/sections.json";
+import type seo from "../messages/pl/seo.json";
 import type sims from "../messages/pl/sims.json";
 import type videos from "../messages/pl/videos.json";
 import type { formats } from "./lib/i18n/format";
@@ -63,6 +64,7 @@ declare module "next-intl" {
       admin: typeof admin;
       videos: typeof videos;
       links: typeof links;
+      seo: typeof seo;
     };
     Formats: typeof formats;
   }

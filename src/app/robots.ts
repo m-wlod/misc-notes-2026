@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { resolveSiteUrl } from "@/config/runtime";
 import { env } from "@/env";
+import { routing } from "@/i18n/routing";
 
 export default function robots(): MetadataRoute.Robots {
   const base = resolveSiteUrl(env);
@@ -11,6 +12,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/pl/styleguide", "/en/styleguide", "/pl/dev/", "/en/dev/"],
     },
-    sitemap: new URL("/sitemap.xml", base).href,
+    // One sitemap per language (Phase 19b).
+    sitemap: routing.locales.map((l) => new URL(`/sitemap/${l}.xml`, base).href),
   };
 }
