@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site";
 import { AnnouncementBanner } from "@/features/announcements/banner";
 import { Celebration } from "@/features/gamification/celebration";
 import { readMe } from "@/features/gamification/server/read";
+import { NewsletterForm } from "@/features/newsletter/form";
 import { UtmBeacon } from "@/features/utm/beacon";
 import { Link } from "@/i18n/navigation";
 import { isSupabaseConfigured } from "@/lib/db/config";
@@ -114,6 +115,7 @@ async function Footer() {
         <div className="grid content-start gap-3">
           <p className="font-sans text-sm font-semibold">{siteConfig.name}</p>
           <p className="text-sm text-ink-muted">{t("common.disclaimer")}</p>
+          <NewsletterForm compact />
         </div>
         <FooterList heading={t("nav.about")}>
           {MORE_NAV.map(({ key, href }) => (

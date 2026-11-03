@@ -411,6 +411,26 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"newsletter_sends": {
+                  Row: {
+                    "sent_at": string,"subscriber_id": number,"week": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "sent_at"?: string,"subscriber_id": number,"week": string
+                  }
+                  Update: {
+                    "sent_at"?: string,"subscriber_id"?: number,"week"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "newsletter_sends_subscriber_id_fkey"
+      columns: ["subscriber_id"]
+isOneToOne: false
+      referencedRelation: "newsletter_subscribers"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"newsletter_subscribers": {
                   Row: {
                     "confirm_token": string,"confirmed_at": string | null,"created_at": string,"email": string,"id": number,"locale": string,"unsubscribed_at": string | null

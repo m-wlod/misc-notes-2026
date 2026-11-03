@@ -16,6 +16,7 @@ import { getExercise, listExercises } from "@/features/exercises/data";
 import { ExerciseCard } from "@/features/exercises/exercise-card";
 import { publicView } from "@/features/exercises/view";
 import { TodaySection } from "@/features/gamification/ui/today-section";
+import { NewsletterForm } from "@/features/newsletter/form";
 import { JsonLd } from "@/features/seo/json-ld";
 import { website } from "@/features/seo/jsonld";
 import { ogMeta } from "@/features/seo/og";
@@ -93,6 +94,10 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         <p>
           <Link href="/about">{t("aboutMore")}</Link>
         </p>
+      </section>
+
+      <section aria-label={t("newsletter")} className="rounded-md border border-rule px-5 py-5">
+        <NewsletterForm />
       </section>
 
       <section aria-labelledby="landing-sections">

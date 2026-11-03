@@ -1,0 +1,45 @@
+{
+  "title": "Problem tygodnia + Debunk",
+  "lead": "Raz w tygodniu: jedno zadanie do rozwiązania i jedna obietnica guru rozebrana na części. Bez reklam.",
+  "email": "Adres e-mail",
+  "placeholder": "twoj@adres.pl",
+  "submit": "Zapisz mnie",
+  "privacy": "Wyślemy link do potwierdzenia. Wypisać się można jednym kliknięciem w każdym mailu.",
+  "sent": "Sprawdź skrzynkę: wysłaliśmy link do potwierdzenia zapisu.",
+  "errors": {
+    "invalid": "To nie wygląda na adres e-mail.",
+    "rate-limited": "Za dużo prób. Spróbuj za kilka minut.",
+    "unavailable": "Zapisy jeszcze nie działają. Wróć wkrótce."
+  },
+  "invalidLink": "Ten link jest nieprawidłowy albo wygasł.",
+  "confirm": {
+    "title": "Potwierdź zapis",
+    "lead": "Kliknij, żeby co tydzień dostawać Problem tygodnia i nowy wpis z Debunk Lab.",
+    "button": "Potwierdzam zapis",
+    "done": "Gotowe. Pierwszy mail przyjdzie w najbliższy poniedziałek.",
+    "failed": "Nie udało się potwierdzić. Link mógł już wygasnąć."
+  },
+  "unsubscribe": {
+    "title": "Wypisz się z newslettera",
+    "lead": "Kliknij, żeby przestać dostawać Problem tygodnia.",
+    "button": "Wypisz mnie",
+    "done": "Wypisano. Nie wyślemy już żadnego maila.",
+    "failed": "Nie udało się wypisać. Spróbuj ponownie później."
+  },
+  "confirmEmail": {
+    "subject": "Potwierdź zapis: Problem tygodnia + Debunk",
+    "line1": "Ktoś (miejmy nadzieję, że Ty) zapisał ten adres na cotygodniowy newsletter.",
+    "line2": "Jeśli to nie Ty, zignoruj tę wiadomość: bez potwierdzenia nic więcej nie wyślemy.",
+    "cta": "Potwierdź zapis",
+    "footer": "Ta wiadomość przyszła jednorazowo."
+  },
+  "weekly": {
+    "subject": "Problem tygodnia + Debunk",
+    "intro": "Jedno zadanie i jedna obietnica guru na ten tydzień.",
+    "problem": "Problem tygodnia",
+    "debunk": "Debunk Lab",
+    "cta": "Rozwiąż zadanie",
+    "footer": "Dostajesz to, bo zapisałeś się na newsletter.",
+    "unsubscribe": "Wypisz się"
+  }
+}

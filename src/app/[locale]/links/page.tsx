@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/display";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { siteConfig } from "@/config/site";
 import { env } from "@/env";
+import { NewsletterForm } from "@/features/newsletter/form";
 import { bioSource, withUtm, type Utm } from "@/features/utm/utm";
 import { listVideos, pickText } from "@/features/videos/entries";
 import { getPathname } from "@/i18n/navigation";
@@ -100,6 +101,7 @@ async function Links({ params, searchParams }: Props) {
           ))}
         </ul>
       </nav>
+      <NewsletterForm compact />
     </div>
   );
 }

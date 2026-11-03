@@ -18,6 +18,7 @@ export type Section =
   | "ai"
   | "flags"
   | "announcements"
+  | "social"
   | "system";
 
 const ADMIN: readonly Role[] = ["admin"];
@@ -37,6 +38,7 @@ export const SECTIONS: Record<Section, { segment: string; roles: readonly Role[]
   ai: { segment: "ai", roles: ADMIN },
   flags: { segment: "flagi", roles: ADMIN },
   announcements: { segment: "ogloszenia", roles: ADMIN },
+  social: { segment: "social", roles: ADMIN },
   system: { segment: "system", roles: ADMIN },
 };
 
@@ -53,6 +55,7 @@ export const NAV: readonly Section[] = [
   "ai",
   "flags",
   "announcements",
+  "social",
   "system",
 ];
 

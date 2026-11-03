@@ -1,0 +1,45 @@
+{
+  "title": "Problem of the week + Debunk",
+  "lead": "Once a week: one problem to solve and one guru promise taken apart. No ads.",
+  "email": "Email address",
+  "placeholder": "you@example.com",
+  "submit": "Sign me up",
+  "privacy": "We’ll send a confirmation link. Every email has a one-click unsubscribe.",
+  "sent": "Check your inbox: we’ve sent a link to confirm.",
+  "errors": {
+    "invalid": "That doesn’t look like an email address.",
+    "rate-limited": "Too many tries. Try again in a few minutes.",
+    "unavailable": "Sign-ups aren’t open yet. Come back soon."
+  },
+  "invalidLink": "This link is invalid or has expired.",
+  "confirm": {
+    "title": "Confirm your sign-up",
+    "lead": "Click to get the Problem of the week and a new Debunk Lab entry every week.",
+    "button": "Confirm",
+    "done": "Done. The first email arrives next Monday.",
+    "failed": "That didn’t work. The link may have expired."
+  },
+  "unsubscribe": {
+    "title": "Unsubscribe from the newsletter",
+    "lead": "Click to stop getting the Problem of the week.",
+    "button": "Unsubscribe me",
+    "done": "Unsubscribed. We won’t send you anything else.",
+    "failed": "That didn’t work. Please try again later."
+  },
+  "confirmEmail": {
+    "subject": "Confirm: Problem of the week + Debunk",
+    "line1": "Someone (hopefully you) signed this address up for the weekly newsletter.",
+    "line2": "If it wasn’t you, ignore this email: without confirmation we won’t send anything else.",
+    "cta": "Confirm sign-up",
+    "footer": "This is a one-off message."
+  },
+  "weekly": {
+    "subject": "Problem of the week + Debunk",
+    "intro": "One problem and one guru promise for this week.",
+    "problem": "Problem of the week",
+    "debunk": "Debunk Lab",
+    "cta": "Solve the problem",
+    "footer": "You get this because you signed up for the newsletter.",
+    "unsubscribe": "Unsubscribe"
+  }
+}

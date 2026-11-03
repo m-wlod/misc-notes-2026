@@ -12,7 +12,8 @@
     "ai": "Koszty AI",
     "flags": "Flagi",
     "announcements": "Ogłoszenia",
-    "system": "System"
+    "system": "System",
+    "social": "Kalendarz wideo"
   },
   "dashboard": {
     "title": "Pulpit",
@@ -242,7 +243,8 @@
     "jobs": {
       "leagues": "Ligi (rozliczenie tygodnia)",
       "calibrate": "Kalibracja trudności",
-      "notify": "Powiadomienia"
+      "notify": "Powiadomienia",
+      "newsletter": "Newsletter (co tydzień)"
     },
     "league": "Liga w tym tygodniu",
     "week": "Tydzień od {week}",
@@ -251,6 +253,21 @@
     "activeMembers": "Z XP w tym tygodniu",
     "lastRoll": "Ostatnio rozliczony tydzień",
     "none": "brak"
+  },
+  "social": {
+    "title": "Kalendarz wideo",
+    "note": "Lekcje i wpisy Debunk Lab, do których nie ma jeszcze wideo, z linkiem do trybu nagrywania 9:16. Wideo dodajesz plikiem content/videos/<id>.yaml (CONTENT_GUIDE §6b).",
+    "kind": "Rodzaj",
+    "status": "Status",
+    "all": "wszystkie",
+    "filter": "Filtruj",
+    "lesson": "lekcja",
+    "debunk": "Debunk",
+    "recording": "Nagrywanie",
+    "record": "Tryb nagrywania",
+    "noRecording": "brak trybu nagrywania",
+    "empty": "Wszystko ma już wideo.",
+    "count": "Bez wideo: {n}."
   },
   "roles": {
     "admin": "administrator",

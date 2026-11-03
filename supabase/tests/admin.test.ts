@@ -462,3 +462,33 @@ describe("campaign counter (Phase 19)", () => {
     await admin().from("utm_visits").delete().eq("source", "e2e-src");
   });
 });
+
+describe("newsletter sends (Phase 19c)", () => {
+  it("one send per subscriber and week; nobody but the server sees them", async () => {
+    const db = admin();
+    const { data: sub, error } = await db
+      .from("newsletter_subscribers")
+      .insert({ email: `nl-${String(Date.now())}@test.local` })
+      .select("id")
+      .single();
+    if (error) throw error;
+    try {
+      const row = { week: "2026-11-02", subscriber_id: sub.id };
+      expect((await db.from("newsletter_sends").insert(row)).error).toBeNull();
+      expect((await db.from("newsletter_sends").insert(row)).error?.code).toBe("23505");
+      expect(
+        (await db.from("newsletter_sends").insert({ ...row, week: "2026-11-09" })).error,
+      ).toBeNull();
+      const { data } = await (boss as TestUser).client.from("newsletter_sends").select("*");
+      expect(data).toEqual([]);
+      const run = await db.from("cron_runs").insert({ job: "newsletter" }).select("id").single();
+      expect(run.error).toBeNull();
+      await db
+        .from("cron_runs")
+        .delete()
+        .eq("id", run.data?.id ?? 0);
+    } finally {
+      await db.from("newsletter_subscribers").delete().eq("id", sub.id);
+    }
+  });
+});

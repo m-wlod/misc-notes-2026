@@ -48,31 +48,57 @@ export function buildEmail(input: {
   unsubscribePage: string;
   unsubscribePost: string;
 }): Email {
-  const { words } = input;
+  return renderEmail({
+    to: input.to,
+    words: input.words,
+    ctaUrl: input.ctaUrl,
+    unsubscribe: { page: input.unsubscribePage, post: input.unsubscribePost },
+  });
+}
+
+/**
+ * The shared email layout (Phase 15, generalised in Phase 19c): lines, one call to
+ * action, and, for anything sent repeatedly, an unsubscribe link plus RFC 8058
+ * one-click headers. A one-off message (a sign-up confirmation) has none.
+ */
+export function renderEmail(input: {
+  to: string;
+  words: Omit<EmailWords, "unsubscribe"> & { unsubscribe?: string };
+  ctaUrl: string;
+  unsubscribe: { page: string; post: string } | null;
+}): Email {
+  const { words, unsubscribe } = input;
+  const optOut =
+    unsubscribe && words.unsubscribe ? { ...unsubscribe, label: words.unsubscribe } : null;
   const text = [
     ...words.lines,
     "",
     `${words.cta}: ${input.ctaUrl}`,
     "",
     words.footer,
-    `${words.unsubscribe}: ${input.unsubscribePage}`,
+    ...(optOut ? [`${optOut.label}: ${optOut.page}`] : []),
   ].join("\n");
+  const footer = optOut
+    ? `${esc(words.footer)} <a href="${esc(optOut.page)}" style="color:#5d6472">${esc(optOut.label)}</a>`
+    : esc(words.footer);
   const html = `<!doctype html><html><body style="margin:0;padding:24px;background:#f6f1e7;color:#1b2230;font-family:Georgia,serif;font-size:17px;line-height:1.6">
 <div style="max-width:560px;margin:0 auto">
 ${words.lines.map((l) => `<p style="margin:0 0 12px">${esc(l)}</p>`).join("\n")}
 <p style="margin:20px 0"><a href="${esc(input.ctaUrl)}" style="color:#a33d0c">${esc(words.cta)}</a></p>
 <hr style="border:none;border-top:1px solid #ddd4c3;margin:24px 0">
-<p style="margin:0;font-family:Arial,sans-serif;font-size:13px;color:#5d6472">${esc(words.footer)} <a href="${esc(input.unsubscribePage)}" style="color:#5d6472">${esc(words.unsubscribe)}</a></p>
+<p style="margin:0;font-family:Arial,sans-serif;font-size:13px;color:#5d6472">${footer}</p>
 </div></body></html>`;
   return {
     to: input.to,
     subject: words.subject,
     text,
     html,
-    headers: {
-      "List-Unsubscribe": `<${input.unsubscribePost}>`,
-      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-    },
+    headers: optOut
+      ? {
+          "List-Unsubscribe": `<${optOut.post}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        }
+      : {},
   };
 }
 
