@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/display";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import { aiAvailable } from "@/features/ai-grading/service";
+import { Discussion, Solutions } from "@/features/community/discussion";
 import { allExercises, getExercise } from "@/features/exercises/data";
 import { ExerciseCard } from "@/features/exercises/exercise-card";
 import { nextInSet, parseFilters, toQuery } from "@/features/exercises/filter";
@@ -98,13 +99,17 @@ async function Exercise({ params, searchParams }: Pick<Props, "params" | "search
   const isDaily = daily.byLevel.get(ex.level)?.id === ex.id;
 
   return (
-    <ExerciseCard
-      key={`${id}-${String(view.variant)}`}
-      daily={isDaily ? { day: daily.day, level: ex.level } : null}
-      view={view}
-      similarHref={similarHref}
-      nextHref={nextHref}
-      aiAvailable={aiAvailable()}
-    />
+    <>
+      <ExerciseCard
+        key={`${id}-${String(view.variant)}`}
+        daily={isDaily ? { day: daily.day, level: ex.level } : null}
+        view={view}
+        similarHref={similarHref}
+        nextHref={nextHref}
+        aiAvailable={aiAvailable()}
+      />
+      <Solutions exerciseId={ex.id} />
+      <Discussion target="exercise" id={ex.id} />
+    </>
   );
 }

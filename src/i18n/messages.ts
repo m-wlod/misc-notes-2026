@@ -29,6 +29,7 @@ export const NAMESPACES = [
   "certificates",
   "notify",
   "debunk",
+  "community",
 ] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 

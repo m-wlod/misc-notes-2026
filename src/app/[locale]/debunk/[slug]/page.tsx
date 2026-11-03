@@ -9,6 +9,7 @@ import { buttonClass } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/display";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
+import { Discussion } from "@/features/community/discussion";
 import { DepthToggle } from "@/features/content/depth-toggle";
 import { getLesson } from "@/features/content/lessons";
 import { MdxContent } from "@/features/content/mdx-content";
@@ -178,6 +179,7 @@ async function Entry({ params, searchParams }: Props) {
         <p className="font-sans text-xs text-ink-muted">{t("entry.principle")}</p>
       </section>
       <FinishTracker entryId={e.id} />
+      <Discussion target="debunk" id={e.id} />
     </article>
   );
 }
