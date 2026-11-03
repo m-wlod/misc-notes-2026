@@ -1,10 +1,9 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense, type ReactNode } from "react";
 
 import { Skeleton } from "@/components/ui/display";
+import { requirePage } from "@/features/admin/server";
 import { renderMarkdown } from "@/features/community/markdown";
 import {
   BanForm,
@@ -13,19 +12,16 @@ import {
   ReportActions,
   UnbanButton,
 } from "@/features/community/ui/admin-actions";
-import { isSupabaseConfigured } from "@/lib/db/config";
-import { getSession } from "@/lib/db/session";
-
-export const metadata: Metadata = { title: "Admin", robots: { index: false, follow: false } };
 
 /**
- * The community moderation queue (Phase 17b), staff only (404 for everyone else).
+ * The community moderation queue (Phase 17b), for moderators and admins (others get a
+ * 403 from the proxy; `requirePage` checks again).
  * Content error reports first (they fix the course), then reports, held posts, bans
  * and the audit log (admins only, by RLS). Every action here is written to the log.
  */
 export default function AdminCommunityPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-12 pb-16 sm:px-6">
+    <div>
       <Suspense fallback={<Skeleton className="h-64" />}>
         <Queue />
       </Suspense>
@@ -58,11 +54,7 @@ function Body({ source }: { source: string }) {
 
 async function Queue() {
   await connection();
-  if (!isSupabaseConfigured()) notFound();
-  const session = await getSession();
-  if (!session) notFound();
-  const { data: staff } = await session.supabase.rpc("is_staff");
-  if (!staff) notFound();
+  const { session } = await requirePage("community");
   const db = session.supabase;
   const t = await getTranslations("community.admin");
   const format = await getFormatter();

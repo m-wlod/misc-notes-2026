@@ -185,15 +185,10 @@ test.describe("entries (16b, labelled samples on internal deployments)", () => {
     );
   });
 
-  test("the admin queue shows visitors the not-found page and nothing of the queue", async ({
-    page,
-  }) => {
-    // The staff check runs in a streamed boundary, so the status is already 200 when
-    // notFound() renders; the content and noindex are what matter (see PROGRESS).
-    await page.goto("/pl/admin/debunk");
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Nie ma takiej strony" }),
-    ).toBeVisible();
+  test("the admin queue is a 403 for visitors and shows nothing of the queue", async ({ page }) => {
+    const res = await page.goto("/pl/admin/debunk");
+    expect(res?.status()).toBe(403);
+    await expect(page.getByRole("heading", { level: 1, name: "Brak dostępu" })).toBeVisible();
     await expect(page.getByText("Kolejka Debunk Lab")).toHaveCount(0);
     await expect(page.locator(`meta[name="robots"]`).first()).toHaveAttribute("content", /noindex/);
   });

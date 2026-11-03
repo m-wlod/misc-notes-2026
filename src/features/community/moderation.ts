@@ -2,44 +2,20 @@
 
 import { z } from "zod";
 
+import { audit, staffFor } from "@/features/admin/server";
 import { XP } from "@/features/gamification/config";
 import { award } from "@/features/gamification/server/award";
 import { gamificationStore, lookups } from "@/features/gamification/server/index";
 import { xpKey } from "@/features/gamification/xp";
-import { createAdminClient } from "@/lib/db/admin";
-import { isSupabaseConfigured } from "@/lib/db/config";
-import { getSession } from "@/lib/db/session";
 
 /**
- * Moderation (Phase 17), staff only. The caller's role is checked with their own client
- * (`is_staff()`), then the change is written with the secret key together with an
- * `audit_log` row (actor, action, target, before/after). Users can't write the audit log.
+ * Moderation (Phase 17), for moderators and admins. The role is checked first
+ * (`staffFor`, the Phase 18 access map), then the change is written with the secret key
+ * together with an `audit_log` row (actor, action, target, before/after).
  */
 export type ModerationResult = { ok: boolean };
 
-type Admin = NonNullable<ReturnType<typeof createAdminClient>>;
-
-async function staff(): Promise<{ admin: Admin; actor: string } | null> {
-  if (!isSupabaseConfigured()) return null;
-  const session = await getSession();
-  if (!session) return null;
-  const { data } = await session.supabase.rpc("is_staff");
-  const admin = createAdminClient();
-  return data === true && admin ? { admin, actor: session.user.id } : null;
-}
-
-async function audit(
-  admin: Admin,
-  actor: string,
-  action: string,
-  target: string,
-  details: Record<string, unknown>,
-): Promise<boolean> {
-  const { error } = await admin
-    .from("audit_log")
-    .insert({ actor_id: actor, action, target, details: JSON.parse(JSON.stringify(details)) });
-  return !error;
-}
+const staff = () => staffFor("community");
 
 const POST_TABLE = { comment: "comments", solution: "shared_solutions" } as const;
 const postRef = z.object({

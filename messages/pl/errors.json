@@ -10,5 +10,10 @@
     "title": "Coś poszło nie tak",
     "body": "To błąd po naszej stronie, nie twojej. Spróbuj jeszcze raz za chwilę.",
     "retry": "Spróbuj ponownie"
+  },
+  "forbidden": {
+    "title": "Brak dostępu",
+    "body": "Ta część serwisu jest tylko dla zespołu. Jeśli masz mieć tu dostęp, zaloguj się na właściwe konto.",
+    "home": "Wróć na start"
   }
 }

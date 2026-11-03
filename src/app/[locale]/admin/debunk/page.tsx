@@ -1,24 +1,19 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { Skeleton } from "@/components/ui/display";
+import { requirePage } from "@/features/admin/server";
 import { QueueActions } from "@/features/debunk/queue-actions";
-import { isSupabaseConfigured } from "@/lib/db/config";
-import { getSession } from "@/lib/db/session";
-
-export const metadata: Metadata = { title: "Admin", robots: { index: false, follow: false } };
 
 /**
  * The Debunk Lab moderation queue (Phase 16): submitted claims and suggested
- * corrections. Staff only (`is_staff()`); everyone else gets a 404, so the page doesn't
- * even reveal that it exists. The full admin area comes in Phase 18.
+ * corrections. For moderators and admins: others get a 403 from the proxy, and
+ * `requirePage` checks again.
  */
 export default function AdminDebunkPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-12 pb-16 sm:px-6">
+    <div>
       <Suspense fallback={<Skeleton className="h-64" />}>
         <Queue />
       </Suspense>
@@ -28,11 +23,7 @@ export default function AdminDebunkPage() {
 
 async function Queue() {
   await connection();
-  if (!isSupabaseConfigured()) notFound();
-  const session = await getSession();
-  if (!session) notFound();
-  const { data: staff } = await session.supabase.rpc("is_staff");
-  if (!staff) notFound();
+  const { session } = await requirePage("debunk");
   const t = await getTranslations("debunk.admin");
   const format = await getFormatter();
   const [claims, corrections] = await Promise.all([

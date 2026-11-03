@@ -619,7 +619,25 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "discussion_unlocked":
+            "admin_export_user":
+{ Args: { "target": string }; Returns: Json
+                           },
+"admin_find_users":
+{ Args: { "q": string }; Returns: {
+              "banned": boolean,"created_at": string,"display_name": string,"email": string,"handle": string,"id": string,"last_sign_in_at": string,"roles": string
+            }[]
+                           },
+"admin_metrics":
+{ Args: { "from_day": string,"to_day": string }; Returns: {
+              "active_users": number,"attempts": number,"day": string,"lessons_completed": number,"signups": number,"wau": number
+            }[]
+                           },
+"admin_retention":
+{ Args: { "weeks": number }; Returns: {
+              "active": number,"cohort": string,"size": number,"week": number
+            }[]
+                           },
+"discussion_unlocked":
 { Args: { "exercise_id": string }; Returns: boolean
                            },
 "export_my_data":
