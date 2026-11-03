@@ -16,6 +16,8 @@ export const XP = {
   /** Interview sessions are finished in the browser: XP for at most this many a day. */
   interviewSessionsPerDay: 5,
   dailyGoalMet: 20,
+  /** A content error report a moderator accepted (Phase 17). */
+  correctionAccepted: 50,
   /** The daily goal is set in minutes (5, 10, 20); this many XP stand for a minute. */
   perGoalMinute: 5,
 } as const;

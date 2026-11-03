@@ -254,7 +254,7 @@ const PUBLIC_CATALOG: Record<string, Row> = {
   feature_flags: { key: "probe", enabled: true },
   announcements: { body_pl: "x", body_en: "x" },
 };
-const STAFF_ONLY = ["audit_log"];
+const STAFF_ONLY = ["audit_log", "bans"];
 /** RLS on and no policies at all: deny everything to anon and authenticated. */
 const SERVER_ONLY = ["newsletter_subscribers"];
 
@@ -295,6 +295,11 @@ beforeAll(async () => {
     if (session.error) throw session.error;
     ctx.sessions[who] = session.data.id;
   }
+  // Sharing a solution needs the exercise solved (the spoiler gate, Phase 17).
+  const solved = await db
+    .from("exercise_attempts")
+    .insert({ user_id: C.id, exercise_id: "e1", answer: {}, score: 1, grader: "auto" });
+  if (solved.error) throw solved.error;
   // Seed A's and B's rows with the secret key (bypasses RLS).
   for (const t of OWNED) {
     if (t.createdBySignup || !t.row) continue;

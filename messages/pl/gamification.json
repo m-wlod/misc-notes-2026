@@ -212,6 +212,10 @@
     "ruina-gracza": {
       "name": "Ruina gracza",
       "description": "Przeprowadź symulację martyngału dla 1000 graczy."
+    },
+    "korektor": {
+      "name": "Korektor",
+      "description": "Zgłoś błąd w treści, który zostanie przyjęty."
     }
   },
   "share": {

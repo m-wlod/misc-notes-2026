@@ -79,6 +79,20 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"bans": {
+                  Row: {
+                    "banned_by": string | null,"created_at": string,"reason": string,"until": string | null,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "banned_by"?: string | null,"created_at"?: string,"reason": string,"until"?: string | null,"user_id": string
+                  }
+                  Update: {
+                    "banned_by"?: string | null,"created_at"?: string,"reason"?: string,"until"?: string | null,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"bookmarks": {
                   Row: {
                     "created_at": string,"lesson_id": string,"user_id": string
@@ -605,7 +619,10 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "export_my_data":
+            "discussion_unlocked":
+{ Args: { "exercise_id": string }; Returns: boolean
+                           },
+"export_my_data":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
 "has_role":
@@ -614,12 +631,23 @@ isOneToOne: false
 "in_my_league_group":
 { Args: { "g": number,"l": number,"w": string }; Returns: boolean
                            },
+"is_banned":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
 "is_staff":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"reputation":
+{ Args: { "uid": string }; Returns: number
                            },
 "verify_certificate":
 { Args: { "certificate_id": string }; Returns: {
               "display_name": string,"handle": string,"issued_at": string,"track_id": string
+            }[]
+                           },
+"vote_totals":
+{ Args: { "ids": number[],"target_type": string }; Returns: {
+              "target_id": number,"total": number
             }[]
                            }
           }

@@ -71,6 +71,8 @@ export function factsFrom(input: {
       if (ref.f === "1" && ref.id && input.topicsOf(ref.id).includes("kelly")) {
         f.kellyFirstTry = true;
       }
+    } else if (r.reason === "correction") {
+      f.corrections += 1;
     } else if (r.reason === "lesson" && ref.id) {
       lessons.add(ref.id);
     } else if (r.reason === "interview" && ref.kind) {
