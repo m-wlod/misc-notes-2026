@@ -16,6 +16,14 @@ import { Link } from "@/components/ui/link";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import { CertificatesPanel } from "@/features/certificates/certificates-panel";
+import {
+  lockedThread,
+  sampleSolutions,
+  sampleThread,
+  sampleViewer,
+} from "@/features/community/specimens";
+import { SolutionsView } from "@/features/community/ui/solutions";
+import { ThreadView } from "@/features/community/ui/thread";
 import { Checker } from "@/features/debunk/checkers/checker";
 import { CHECKER_IDS } from "@/features/debunk/checkers/ids";
 import { renderText } from "@/features/exercises/render-text";
@@ -370,6 +378,28 @@ function Styleguide() {
               <Checker id={id} />
             </div>
           ))}
+        </div>
+      </Section>
+
+      <Section id="community" title="Community (sample data)">
+        <p className="mb-6 max-w-(--measure) text-sm text-ink-muted">
+          Signed-in only, dormant until accounts are on: a thread as a moderator sees it (with a
+          shadow-hidden own post), the locked exercise state, and shared solutions.
+        </p>
+        <div className="grid gap-10">
+          <div data-specimen="community-thread">
+            <ThreadView thread={sampleThread} discord="https://discord.example/zaproszenie" />
+          </div>
+          <div data-specimen="community-locked">
+            <ThreadView thread={lockedThread} discord={null} />
+          </div>
+          <div data-specimen="community-solutions">
+            <SolutionsView
+              exerciseId="styleguide-sample"
+              viewer={sampleViewer}
+              solutions={sampleSolutions}
+            />
+          </div>
         </div>
       </Section>
 

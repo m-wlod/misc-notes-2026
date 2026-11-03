@@ -4,6 +4,7 @@ import type auth from "../messages/pl/auth.json";
 import type certificates from "../messages/pl/certificates.json";
 import type challenge from "../messages/pl/challenge.json";
 import type common from "../messages/pl/common.json";
+import type community from "../messages/pl/community.json";
 import type content from "../messages/pl/content.json";
 import type curriculum from "../messages/pl/curriculum.json";
 import type debunk from "../messages/pl/debunk.json";
@@ -55,6 +56,7 @@ declare module "next-intl" {
       certificates: typeof certificates;
       notify: typeof notify;
       debunk: typeof debunk;
+      community: typeof community;
     };
     Formats: typeof formats;
   }

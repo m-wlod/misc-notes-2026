@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
+import { resolveCorrection } from "@/features/community/moderation";
 
 import { resolveItem } from "./actions";
 
@@ -21,7 +22,11 @@ export function QueueActions({
   if (done) return <span className="font-sans text-xs text-ink-muted">{done}</span>;
   const act = (status: "approved" | "rejected", label: string) => {
     startTransition(async () => {
-      const r = await resolveItem({ table, id, status });
+      // Corrections go through community moderation: audited, and accepted ones earn XP.
+      const r =
+        table === "content_error_reports"
+          ? await resolveCorrection({ id, status })
+          : await resolveItem({ table, id, status });
       if (r.ok) setDone(label);
     });
   };

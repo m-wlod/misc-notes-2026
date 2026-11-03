@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { alternatesForPaths } from "@/components/shell/section-page";
+import { Discussion } from "@/features/community/discussion";
 import { getLesson } from "@/features/content/lessons";
 import {
   findLesson,
@@ -69,6 +70,7 @@ export default async function LessonPage({ params }: Props) {
         prerequisiteTitles={nodes}
         practiceCount={exerciseCount(place.lesson.id, false)}
       />
+      <Discussion target="lesson" id={place.lesson.id} />
     </div>
   );
 }

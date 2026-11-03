@@ -31,6 +31,8 @@ export const routing = defineRouting({
     "/debunk": "/debunk",
     "/debunk/[slug]": "/debunk/[slug]",
     "/admin/debunk": "/admin/debunk",
+    "/admin/community": "/admin/community",
+    "/u/[handle]": "/u/[handle]",
     "/glossary": { pl: "/slowniczek", en: "/glossary" },
     "/lab": { pl: "/laboratorium", en: "/lab" },
     "/lab/sims/[id]": { pl: "/laboratorium/symulacje/[id]", en: "/lab/sims/[id]" },
