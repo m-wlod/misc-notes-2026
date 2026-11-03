@@ -1,4 +1,4 @@
--- Phase 18b: exercise analytics for staff (admins, moderators, reviewers).
+-- Phase 18b: exercise analytics for all staff roles (admins, moderators, reviewers).
 -- Security definer because attempts are private to their authors; the function checks
 -- the role itself and returns only aggregates (no user ids).
 
@@ -12,7 +12,12 @@ as $$
 declare
   result jsonb;
 begin
-  if not (select public.is_staff()) then
+  -- Reviewers too (unlike `is_staff()`, which is admins and moderators): they fix
+  -- content from these numbers.
+  if not exists (
+    select 1 from public.user_roles r
+    where r.user_id = (select auth.uid()) and r.role in ('admin', 'moderator', 'reviewer')
+  ) then
     raise exception 'forbidden' using errcode = '42501';
   end if;
   select jsonb_build_object(
