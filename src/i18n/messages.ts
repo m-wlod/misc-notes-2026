@@ -30,6 +30,7 @@ export const NAMESPACES = [
   "notify",
   "debunk",
   "community",
+  "admin",
 ] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 

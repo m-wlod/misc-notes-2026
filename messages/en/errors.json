@@ -10,5 +10,10 @@
     "title": "Something went wrong",
     "body": "This is an error on our side, not yours. Please try again in a moment.",
     "retry": "Try again"
+  },
+  "forbidden": {
+    "title": "No access",
+    "body": "This part of the site is for the team only. If you should have access, sign in with the right account.",
+    "home": "Back to the start"
   }
 }

@@ -15,6 +15,7 @@ import { Badge, Callout, Kbd, Progress, Skeleton, Table, Td, Th } from "@/compon
 import { Link } from "@/components/ui/link";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
+import { staffFor } from "@/features/admin/server";
 import { CertificatesPanel } from "@/features/certificates/certificates-panel";
 import {
   lockedThread,
@@ -37,7 +38,7 @@ import { randomWalk } from "@/lib/math/rng";
 
 import { CelebrationDemo, FieldDemos, OverlayDemos, TabDemos } from "./demos";
 
-// Internal tool at /[locale]/styleguide. TODO(phase-18): also allow admins in production.
+// Internal tool at /[locale]/styleguide: dev, previews, and admins in production (Phase 18).
 // Documented i18n exception (CLAUDE.md): chrome is English and the samples are Polish
 // design specimens (diacritics, number formats), so they are not translated.
 
@@ -60,7 +61,7 @@ export default function StyleguidePage() {
  */
 async function Gate() {
   await connection();
-  if (!isStyleguideEnabled(env)) notFound();
+  if (!isStyleguideEnabled(env) && !(await staffFor("dashboard"))) notFound();
   return <Styleguide />;
 }
 

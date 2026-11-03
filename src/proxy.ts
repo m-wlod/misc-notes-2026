@@ -4,6 +4,7 @@ import createMiddleware from "next-intl/middleware";
 
 import { isInternalPath, isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
+import { canAccess, sectionFor } from "@/features/admin/access";
 import { curriculumRoute } from "@/features/curriculum/slug-redirect";
 import { LEARNER_COOKIE } from "@/features/grading/random";
 import { routing } from "@/i18n/routing";
@@ -23,10 +24,22 @@ const handleI18nRouting = createMiddleware(routing);
  *    It only seeds exercise numbers; it identifies no one.
  * 3. Supabase session refresh: keeps the auth cookie fresh. It makes no access
  *    decisions; pages and server actions check the user themselves.
+ * 4. Admin paths (and internal tools in production) read the user's roles to choose
+ *    between the page and a 403. The pages, actions and API routes enforce it again.
  */
 export async function proxy(request: NextRequest) {
-  if (isInternalPath(request.nextUrl.pathname) && !isStyleguideEnabled(env)) {
-    return new NextResponse(null, { status: 404 });
+  const { pathname } = request.nextUrl;
+  // Internal tools: open in development and previews; in production for admins only.
+  if (isInternalPath(pathname) && !isStyleguideEnabled(env)) {
+    const roles = await rolesOf(request);
+    if (!roles.includes("admin")) return new NextResponse(null, { status: 404 });
+  }
+
+  // 4. Admin panel (Phase 18): who gets the panel and who gets a 403. This only picks
+  //    the page; every admin page, action and API route checks the role again itself.
+  const section = sectionFor(pathname);
+  if (section && !canAccess(await rolesOf(request), section)) {
+    return forbidden(request);
   }
 
   const route = curriculumRoute(request.nextUrl.pathname);
@@ -49,6 +62,46 @@ export async function proxy(request: NextRequest) {
   }
   await refreshSupabaseSession(request, response);
   return response;
+}
+
+/**
+ * The localised 403 page with a real 403 status. A rewrite can't carry a status code,
+ * so the proxy fetches the page (static, prerendered) and returns it as a 403.
+ */
+async function forbidden(request: NextRequest): Promise<NextResponse> {
+  const locale = request.nextUrl.pathname.split("/")[1] === "en" ? "en" : routing.defaultLocale;
+  const path = locale === "en" ? "/en/forbidden" : "/pl/brak-dostepu";
+  const page = await fetch(new URL(path, request.url), {
+    headers: { "accept-language": locale },
+  }).catch(() => null);
+  return new NextResponse(page?.ok ? await page.text() : "403 Forbidden", {
+    status: 403,
+    headers: {
+      "content-type": page?.ok ? "text/html; charset=utf-8" : "text/plain; charset=utf-8",
+      "cache-control": "private, no-store",
+      "x-robots-tag": "noindex",
+    },
+  });
+}
+
+/**
+ * The signed-in user's roles (own rows of `user_roles`, readable by RLS), or none when
+ * signed out or without a database. Only called for admin and internal paths.
+ */
+async function rolesOf(request: NextRequest): Promise<string[]> {
+  const url = env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key || !request.cookies.getAll().some((c) => c.name.startsWith("sb-"))) return [];
+  const supabase = createServerClient(url, key, {
+    cookies: { getAll: () => request.cookies.getAll(), setAll: () => undefined },
+  });
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) return [];
+  const { data: rows } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", data.user.id);
+  return (rows ?? []).map((r: { role: string }) => r.role);
 }
 
 async function refreshSupabaseSession(request: NextRequest, response: NextResponse) {

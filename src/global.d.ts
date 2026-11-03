@@ -1,5 +1,6 @@
 import type { routing } from "./i18n/routing";
 import type account from "../messages/pl/account.json";
+import type admin from "../messages/pl/admin.json";
 import type auth from "../messages/pl/auth.json";
 import type certificates from "../messages/pl/certificates.json";
 import type challenge from "../messages/pl/challenge.json";
@@ -57,6 +58,7 @@ declare module "next-intl" {
       notify: typeof notify;
       debunk: typeof debunk;
       community: typeof community;
+      admin: typeof admin;
     };
     Formats: typeof formats;
   }
