@@ -1,43 +1,32 @@
-import { createClient } from "@supabase/supabase-js";
-import { cacheLife, cacheTag } from "next/cache";
+"use client";
 
-import { supabasePublicConfig } from "@/lib/db/config";
-import type { Database } from "@/lib/db/database.types";
+import { useLocale } from "next-intl";
+import { useEffect, useState } from "react";
 
 import { DismissibleAnnouncement } from "./dismissible";
-import { ANNOUNCEMENTS_TAG } from "./tag";
 
 /**
- * The site-wide announcement banner (Phase 18c). Cached and tagged, so public pages
- * stay static: an admin change updates the tag, and scheduled starts and ends show up
- * within the cache's few minutes. Reads with the publishable key; RLS returns only the
- * announcements that are live. Without a database there are none.
+ * The site-wide announcement banner (Phase 18c). Loaded in the browser from
+ * /api/announcements (edge-cached for a minute), so every public page stays static.
+ * Without a database the list is empty and nothing renders.
  */
 type Announcement = { id: number; body_pl: string; body_en: string };
 
-async function liveAnnouncements(): Promise<Announcement[]> {
-  "use cache";
-  cacheTag(ANNOUNCEMENTS_TAG);
-  cacheLife("minutes");
-  const config = supabasePublicConfig();
-  if (!config) return [];
-  try {
-    const db = createClient<Database>(config.url, config.publishableKey, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const { data } = await db
-      .from("announcements")
-      .select("id, body_pl, body_en")
-      .order("id", { ascending: false })
-      .limit(3);
-    return data ?? [];
-  } catch {
-    return [];
-  }
-}
-
-export async function AnnouncementBanner({ locale }: { locale: string }) {
-  const rows = await liveAnnouncements();
+export function AnnouncementBanner() {
+  const locale = useLocale();
+  const [rows, setRows] = useState<Announcement[]>([]);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/announcements", { signal: controller.signal, cache: "no-store" })
+      .then((r) => (r.ok ? (r.json() as Promise<Announcement[]>) : []))
+      .then((list) => {
+        setRows(Array.isArray(list) ? list : []);
+      })
+      .catch(() => undefined);
+    return () => {
+      controller.abort();
+    };
+  }, []);
   if (rows.length === 0) return null;
   return (
     <div className="print:hidden">

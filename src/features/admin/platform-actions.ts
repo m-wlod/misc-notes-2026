@@ -1,10 +1,8 @@
 "use server";
 
-import { updateTag } from "next/cache";
 import { z } from "zod";
 
 import { aiSettingsSchema } from "@/features/ai-grading/quota";
-import { ANNOUNCEMENTS_TAG } from "@/features/announcements/tag";
 
 import { FLAG_KEY, warsawLocalToIso } from "./platform";
 import { audit, staffFor } from "./server";
@@ -113,7 +111,6 @@ export async function createAnnouncement(input: unknown): Promise<ActionResult> 
     .select("id")
     .single();
   if (error) return { ok: false };
-  updateTag(ANNOUNCEMENTS_TAG);
   return {
     ok: await audit(
       who.admin,
@@ -148,7 +145,6 @@ export async function closeAnnouncement(input: unknown): Promise<ActionResult> {
           .eq("id", id)
       : await who.admin.from("announcements").delete().eq("id", id);
   if (error) return { ok: false };
-  updateTag(ANNOUNCEMENTS_TAG);
   return {
     ok: await audit(who.admin, who.actor, `announcement.${mode}`, `announcement:${String(id)}`, {
       before,

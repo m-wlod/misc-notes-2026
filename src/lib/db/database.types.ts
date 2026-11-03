@@ -67,14 +67,14 @@ export type Database = {
                   ]
                 },"app_settings": {
                   Row: {
-                    "key": string,"updated_at": string,"updated_by": string | null,"value": Json
+                    "key": string,"updated_at": string,"updated_by": string | null,"value": NonNullable<Json>
                   }
                   ComputedFields: never
                   Insert: {
-                    "key": string,"updated_at"?: string,"updated_by"?: string | null,"value": Json
+                    "key": string,"updated_at"?: string,"updated_by"?: string | null,"value": NonNullable<Json>
                   }
                   Update: {
-                    "key"?: string,"updated_at"?: string,"updated_by"?: string | null,"value"?: Json
+                    "key"?: string,"updated_at"?: string,"updated_by"?: string | null,"value"?: NonNullable<Json>
                   }
                   Relationships: [
                     
