@@ -1,0 +1,158 @@
+"use server";
+
+import { headers } from "next/headers";
+import { z } from "zod";
+
+import { exerciseLimiter } from "@/features/exercises/limiter";
+import { gamificationStore } from "@/features/gamification/server/index";
+import { createAdminClient } from "@/lib/db/admin";
+import { isSupabaseConfigured } from "@/lib/db/config";
+import { getSession } from "@/lib/db/session";
+
+import { claimInput, correctionInput, submit, type SubmitResult, type Writer } from "./submit";
+
+/**
+ * Debunk Lab actions (Phase 16). Submissions go to moderated queues (never published
+ * without review), so signed-out visitors may send them too: the server writes those
+ * with the secret key and no user id, rate-limited per IP. Signed in, rows are written
+ * as the user (RLS: own rows, status pending).
+ */
+async function who() {
+  const session = isSupabaseConfigured() ? await getSession() : null;
+  const h = await headers();
+  const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip") ?? "local";
+  return { session, key: session ? `user:${session.user.id}` : `ip:${ip}` };
+}
+
+type Db = NonNullable<ReturnType<typeof createAdminClient>>;
+
+/** As the signed-in user (RLS), or signed out with the secret key and no user id. */
+function writerFor(
+  session: Awaited<ReturnType<typeof getSession>>,
+  insert: (db: Db, userId: string | null, row: Record<string, unknown>) => Promise<boolean>,
+): Writer | null {
+  const admin = createAdminClient();
+  if (!admin) return null;
+  return {
+    insert: (row, userId) =>
+      session ? insert(session.supabase, userId, row) : insert(admin, null, row),
+  };
+}
+
+const insertClaim = async (db: Db, userId: string | null, row: Record<string, unknown>) => {
+  const { error } = await db.from("debunk_submissions").insert({
+    user_id: userId,
+    claim: String(row.claim),
+    source_url: (row.source_url as string | null) ?? null,
+  });
+  return !error;
+};
+
+const insertCorrection = async (db: Db, userId: string | null, row: Record<string, unknown>) => {
+  const { error } = await db.from("content_error_reports").insert({
+    user_id: userId,
+    content_type: "debunk",
+    content_id: String(row.content_id),
+    body: String(row.body),
+  });
+  return !error;
+};
+
+export async function submitClaim(input: unknown): Promise<SubmitResult> {
+  const { session, key } = await who();
+  return submit(
+    () => {
+      const p = claimInput.safeParse(input);
+      return p.success
+        ? {
+            success: true,
+            row: { claim: p.data.claim, source_url: p.data.sourceUrl },
+            honeypot: p.data.website,
+          }
+        : { success: false };
+    },
+    {
+      writer: writerFor(session, insertClaim),
+      userId: session?.user.id ?? null,
+      allowed: async () => exerciseLimiter.hit(`debunk:${key}`),
+    },
+  );
+}
+
+export async function reportCorrection(input: unknown): Promise<SubmitResult> {
+  const { session, key } = await who();
+  return submit(
+    () => {
+      const p = correctionInput.safeParse(input);
+      return p.success
+        ? {
+            success: true,
+            row: { content_type: "debunk", content_id: p.data.entryId, body: p.data.body },
+            honeypot: p.data.website,
+          }
+        : { success: false };
+    },
+    {
+      writer: writerFor(session, insertCorrection),
+      userId: session?.user.id ?? null,
+      allowed: async () => exerciseLimiter.hit(`correction:${key}`),
+    },
+  );
+}
+
+/**
+ * A signed-in reader reached the end of an entry: recorded like a lesson
+ * (`lesson_progress`, id `debunk:<id>`); ten of them earn "Anty-guru" (no XP).
+ */
+export async function finishEntry(input: unknown): Promise<{ ok: boolean }> {
+  const parsed = z.object({ id: z.string().regex(/^[a-z0-9-]{1,100}$/) }).safeParse(input);
+  if (!parsed.success || !isSupabaseConfigured()) return { ok: false };
+  const session = await getSession();
+  if (!session) return { ok: false };
+  const lessonId = `debunk:${parsed.data.id}`;
+  const { error } = await session.supabase.from("lesson_progress").upsert(
+    {
+      user_id: session.user.id,
+      lesson_id: lessonId,
+      status: "completed",
+      completed_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,lesson_id" },
+  );
+  if (error) return { ok: false };
+  const { count } = await session.supabase
+    .from("lesson_progress")
+    .select("lesson_id", { count: "exact", head: true })
+    .like("lesson_id", "debunk:%");
+  if ((count ?? 0) >= 10) {
+    await gamificationStore()?.grantAchievements(session.user.id, ["anty-guru"]);
+  }
+  return { ok: true };
+}
+
+/** Staff resolve a queue item (RLS "staff resolve" policy does the authorisation). */
+export async function resolveItem(input: unknown): Promise<{ ok: boolean }> {
+  const parsed = z
+    .object({
+      table: z.enum(["debunk_submissions", "content_error_reports"]),
+      id: z.number().int().positive(),
+      status: z.enum(["approved", "rejected"]),
+    })
+    .safeParse(input);
+  if (!parsed.success || !isSupabaseConfigured()) return { ok: false };
+  const session = await getSession();
+  if (!session) return { ok: false };
+  const { table, id, status } = parsed.data;
+  const now = new Date().toISOString();
+  const { error } =
+    table === "debunk_submissions"
+      ? await session.supabase
+          .from(table)
+          .update({ status, reviewed_by: session.user.id })
+          .eq("id", id)
+      : await session.supabase
+          .from(table)
+          .update({ status, resolved_by: session.user.id, resolved_at: now })
+          .eq("id", id);
+  return { ok: !error };
+}

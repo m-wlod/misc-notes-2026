@@ -29,6 +29,8 @@ export const routing = defineRouting({
     "/interview/roadmap": { pl: "/rozmowa/plan-przygotowan", en: "/interview/roadmap" },
     "/interview/[type]": { pl: "/rozmowa/[type]", en: "/interview/[type]" },
     "/debunk": "/debunk",
+    "/debunk/[slug]": "/debunk/[slug]",
+    "/admin/debunk": "/admin/debunk",
     "/glossary": { pl: "/slowniczek", en: "/glossary" },
     "/lab": { pl: "/laboratorium", en: "/lab" },
     "/lab/sims/[id]": { pl: "/laboratorium/symulacje/[id]", en: "/lab/sims/[id]" },

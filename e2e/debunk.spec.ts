@@ -95,3 +95,122 @@ for (const theme of ["light", "dark"] as const) {
     await axe(page, "#checkers");
   });
 }
+
+test.describe("entries (16b, labelled samples on internal deployments)", () => {
+  const ENTRY = "/pl/debunk/przyklad-90-procent-skutecznosci";
+
+  test("index lists the samples and filters by category and verdict", async ({ page }) => {
+    await page.goto("/pl/debunk");
+    await expect(page.getByRole("heading", { level: 1, name: "Debunk Lab" })).toBeVisible();
+    const list = page.locator("[data-debunk-list] [data-entry]");
+    await expect(list).toHaveCount(2);
+    await page.getByLabel("Kategoria").selectOption("course-economics");
+    await page.getByRole("button", { name: "Pokaż" }).click();
+    await expect(page).toHaveURL(/kategoria=course-economics/);
+    await expect(list).toHaveCount(1);
+    await expect(list.first()).toContainText("kurs sam się zwróci");
+    await page.goto("/pl/debunk?werdykt=false");
+    await expect(page.getByText("Brak wpisów dla tych filtrów.")).toBeVisible();
+    await page.goto("/pl/debunk?werdykt=misleading&kategoria=nonsense");
+    await expect(list).toHaveCount(2); // unknown values are ignored
+  });
+
+  test("an entry: verdict, the maths in both depths, a working checker, sources", async ({
+    page,
+  }) => {
+    await page.goto(ENTRY);
+    const article = page.locator("[data-debunk-entry='przyklad-skutecznosc']");
+    await expect(article.getByRole("heading", { level: 1 })).toContainText("90% skuteczności");
+    await expect(article.locator("[data-verdict-badge='misleading']").first()).toContainText(
+      "Wprowadza w błąd",
+    );
+    await expect(article.locator("[data-block='the-math']")).toContainText("średnio tracisz");
+    await page.getByRole("radio", { name: "Podręcznik" }).check();
+    await expect(article.locator("[data-block='the-math'] .katex").first()).toBeVisible();
+    const checker = article.locator("[data-checker='ev']");
+    await checker.getByLabel("Średnia strata").fill("5");
+    await expect(
+      checker.locator("dt", { hasText: "Wartość oczekiwana na transakcję" }).locator("+ dd"),
+    ).toHaveText("7,5");
+    await expect(article.locator("[data-block='instead']")).toBeVisible();
+    await expect(article.getByText("Hasło sformułowane ogólnie")).toBeVisible();
+  });
+
+  test("share card, recording layout and the English entry", async ({ page, request }) => {
+    for (const [format, w, h] of [
+      ["og", 1200, 630],
+      ["story", 1080, 1920],
+    ] as const) {
+      const res = await request.get(
+        `/api/share/debunk?id=przyklad-skutecznosc&lang=pl&format=${format}`,
+      );
+      expect(res.status()).toBe(200);
+      const body = await res.body();
+      expect([body.readUInt32BE(16), body.readUInt32BE(20)]).toEqual([w, h]);
+    }
+    expect((await request.get("/api/share/debunk?id=nie-ma&lang=pl")).status()).toBe(404);
+    expect((await request.get("/api/share/debunk?id=../x")).status()).toBe(400);
+    await page.goto(`${ENTRY}?nagranie=1`);
+    const frame = page.locator("[data-recording]");
+    await expect(frame.locator("[data-checker='ev']")).toBeVisible();
+    await expect(frame.getByRole("link", { name: /1080×1920/ })).toHaveAttribute(
+      "href",
+      /format=story/,
+    );
+    await page.goto("/en/debunk/sample-90-percent-win-rate");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("90% win rate");
+  });
+
+  test("submissions and corrections say honestly they need accounts here", async ({ page }) => {
+    await page.goto("/pl/debunk");
+    const form = page.locator("[data-submit-claim]");
+    await form.getByLabel("Hasło").fill("Ten wskaźnik ma 95% trafności, tak piszą w reklamie.");
+    await form.getByRole("button", { name: "Wyślij" }).click();
+    await expect(form.getByRole("status")).toHaveText(
+      "Zgłoszenia ruszą razem z kontami w tej wersji aplikacji.",
+    );
+    await form.getByLabel("Hasło").fill("krótko");
+    await form.getByRole("button", { name: "Wyślij" }).click();
+    await expect(form.getByRole("status")).toContainText("co najmniej 10 znaków");
+
+    await page.goto(ENTRY);
+    await page.getByRole("button", { name: "Zgłoś poprawkę" }).click();
+    const correction = page.locator("[data-correction]");
+    await correction
+      .getByLabel("Co jest nie tak i jak to poprawić?")
+      .fill("Próg zera to 91,8%, nie 92%.");
+    await correction.getByRole("button", { name: "Wyślij zgłoszenie" }).click();
+    await expect(correction.getByRole("status")).toHaveText(
+      "Zgłoszenia ruszą razem z kontami w tej wersji aplikacji.",
+    );
+  });
+
+  test("the admin queue shows visitors the not-found page and nothing of the queue", async ({
+    page,
+  }) => {
+    // The staff check runs in a streamed boundary, so the status is already 200 when
+    // notFound() renders; the content and noindex are what matter (see PROGRESS).
+    await page.goto("/pl/admin/debunk");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Nie ma takiej strony" }),
+    ).toBeVisible();
+    await expect(page.getByText("Kolejka Debunk Lab")).toHaveCount(0);
+    await expect(page.locator(`meta[name="robots"]`).first()).toHaveAttribute("content", /noindex/);
+  });
+
+  for (const theme of ["light", "dark"] as const) {
+    test(`index and entry pass axe (${theme})`, async ({ page }) => {
+      await page.addInitScript(
+        ([key, value]) => {
+          window.localStorage.setItem(key, value);
+        },
+        [THEME_STORAGE_KEY, theme] as const,
+      );
+      await page.goto("/pl/debunk");
+      await axe(page, "main");
+      await page.goto(ENTRY);
+      await page.getByRole("button", { name: "Zgłoś poprawkę" }).click();
+      await axe(page, "main");
+    });
+  }
+});

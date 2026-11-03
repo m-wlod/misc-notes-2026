@@ -55,5 +55,7 @@
     "easy": "Plain words",
     "formal": "Textbook"
   },
-  "stub": "This lesson is in preparation. Its place in the curriculum, level and prerequisites are already set."
+  "stub": "This lesson is in preparation. Its place in the curriculum, level and prerequisites are already set.",
+  "theMath": "The maths",
+  "whatInstead": "What to do instead"
 }

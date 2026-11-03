@@ -11,6 +11,7 @@ import { defineCollection, defineConfig, s } from "velite";
 import { curriculum } from "./content/curriculum";
 import { rehypeNumbering } from "./src/features/content/rehype-numbering";
 import { termRefsIn, validateContent, validateCurriculum } from "./src/features/content/validate";
+import { validateDebunk } from "./src/features/debunk/validate";
 import { validateExercises } from "./src/features/exercises/validate";
 import { lessonCards } from "./src/features/review/cards";
 import { buildSearchDocs } from "./src/features/search/docs";
@@ -146,6 +147,56 @@ const challenges = defineCollection({
     .strict(),
 });
 
+/**
+ * Debunk Lab entries (Phase 16): content/<locale>/debunk/<id>.mdx. A claim (phrased
+ * generically, never about a person), a verdict, the maths with a checker, what to do
+ * instead, and dated, archived sources. Rules in docs/CONTENT_GUIDE.md.
+ */
+const debunk = defineCollection({
+  name: "DebunkEntry",
+  pattern: ["pl/debunk/*.mdx", "en/debunk/*.mdx"],
+  schema: s
+    .object({
+      id,
+      slug: id,
+      locale: s.enum(["pl", "en"]),
+      claim: s.string().min(5).max(160),
+      category: s.enum([
+        "indicators",
+        "money-management",
+        "course-economics",
+        "signals",
+        "secret-strategy",
+        "fibonacci-elliott",
+        "martingale-grid",
+        "backtests",
+      ]),
+      verdict: s.enum(["false", "misleading", "true-but-irrelevant", "depends"]),
+      summary: s.string().min(10).max(300),
+      checker: s.enum(["ev", "luck", "mlm", "indicators"]).optional(),
+      relatedLessons: s.array(id).default([]),
+      relatedVideo: s.object({ title: s.string(), url: s.string().url() }).optional(),
+      /** Where the claim is made publicly: when, and an archived copy (claims change). */
+      sources: s
+        .array(
+          s
+            .object({
+              title: s.string().min(3),
+              url: s.string().url(),
+              date: s.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+              archive: s.string().url(),
+            })
+            .strict(),
+        )
+        .default([]),
+      status: s.enum(["draft", "review", "published"]),
+      sample: s.boolean().default(false),
+      body: s.mdx(),
+    })
+    .strict()
+    .transform((data, { meta }) => ({ ...data, file: fileOf(meta.path) })),
+});
+
 export default defineConfig({
   root: process.env.CONTENT_ROOT ?? "content",
   strict: true,
@@ -155,7 +206,7 @@ export default defineConfig({
     base: "/static/",
     clean: true,
   },
-  collections: { lessons, glossary, exercises, challenges },
+  collections: { lessons, glossary, exercises, challenges, debunk },
   mdx: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [
@@ -183,7 +234,7 @@ export default defineConfig({
       writeFileSync(`public/search/${locale}.json`, JSON.stringify(docs));
     }
   },
-  prepare: ({ lessons, glossary, exercises: exerciseFiles }) => {
+  prepare: ({ lessons, glossary, exercises: exerciseFiles, debunk: entries }) => {
     const errors = lessons.flatMap((l) => {
       const folder = /(?:^|\/)(pl|en)\/tracks\//.exec(l.file)?.[1];
       return folder && folder !== l.locale
@@ -192,6 +243,7 @@ export default defineConfig({
     });
     errors.push(...validateContent(lessons, glossary));
     errors.push(...validateExercises(exerciseFiles, lessons));
+    errors.push(...validateDebunk(entries, new Set(lessons.map((l) => l.id))));
     const outline = curriculumOutline();
     if (outline !== null) errors.push(...validateCurriculum(outline, lessons));
     if (errors.length > 0) {

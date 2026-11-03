@@ -76,5 +76,79 @@
     "manyWalks": "300 random charts",
     "studyResult": "{signals} signals, hit rate {hitRate}, average result {ret}",
     "conclusion": "Signals appear even where, by definition, there is nothing to predict, and their hit rate hovers around a coin flip. An indicator \"showing\" something is not evidence of an edge."
+  },
+  "index": {
+    "title": "Debunk Lab",
+    "lead": "Popular trading and course claims, checked with arithmetic. Every entry has a calculator where you can plug in your own numbers.",
+    "filters": "Filters",
+    "category": "Category",
+    "verdict": "Verdict",
+    "all": "All",
+    "apply": "Show",
+    "clear": "Clear filters",
+    "empty": "Entries are coming soon.",
+    "none": "No entries for these filters.",
+    "count": "{n, plural, one {# entry} other {# entries}}",
+    "sample": "sample"
+  },
+  "category": {
+    "indicators": "Indicators",
+    "money-management": "Money management",
+    "course-economics": "Course and MLM economics",
+    "signals": "Signals",
+    "secret-strategy": "\"Secret strategy\"",
+    "fibonacci-elliott": "Fibonacci and Elliott",
+    "martingale-grid": "Martingale and grid bots",
+    "backtests": "Backtests"
+  },
+  "verdict": {
+    "false": "False",
+    "misleading": "Misleading",
+    "true-but-irrelevant": "True but irrelevant",
+    "depends": "It depends"
+  },
+  "entry": {
+    "claim": "Claim",
+    "verdictLabel": "Verdict",
+    "related": "Related lessons",
+    "video": "Video",
+    "sources": "Where the claim is made",
+    "archived": "archived copy",
+    "noSources": "A generic claim; we don't attribute it to anyone.",
+    "fallback": "This entry isn't translated yet; showing the Polish version.",
+    "share": "Share",
+    "shareImage": "Image to share",
+    "recording": "Recording mode (9:16)",
+    "back": "All entries",
+    "principle": "We test claims and methods, not people."
+  },
+  "correction": {
+    "open": "Suggest a correction",
+    "label": "What's wrong and how should it be fixed?",
+    "send": "Send",
+    "sent": "Thank you. We'll check it."
+  },
+  "submit": {
+    "title": "Submit a claim to test",
+    "lead": "Seen a promise that sounds too good? Describe it generically (no names). A person reads every submission; nothing is published without review.",
+    "claim": "Claim",
+    "source": "Where you saw it (link, optional)",
+    "send": "Send",
+    "sent": "Thank you. It's in the queue."
+  },
+  "errors": {
+    "invalid": "Check the fields: the claim needs at least 10 characters, the link must start with http.",
+    "rate-limited": "Too many submissions at once. Try again in a minute.",
+    "unavailable": "Submissions open together with accounts in this version of the app.",
+    "failed": "Couldn't send. Try again."
+  },
+  "admin": {
+    "title": "Debunk Lab queue",
+    "submissions": "Submitted claims",
+    "corrections": "Suggested corrections",
+    "empty": "Empty.",
+    "approve": "Accept",
+    "reject": "Reject",
+    "entry": "Entry"
   }
 }

@@ -1,0 +1,31 @@
+---
+id: przyklad-kurs-sie-zwroci
+slug: przyklad-kurs-sam-sie-zwroci
+locale: pl
+claim: "Przykład: kurs sam się zwróci, wystarczy polecić go trzem osobom"
+category: course-economics
+verdict: misleading
+summary: "PRZYKŁADOWY wpis, pokazuje format Debunk Lab. Model, w którym każdy musi przyprowadzić kolejne osoby, szybko kończy się brakiem ludzi."
+checker: mlm
+relatedLessons: []
+status: draft
+sample: true
+---
+
+<TheMath>
+
+<Depth level="easy">
+Jeśli każdy musi przyprowadzić trzy osoby, kolejne „piętra” rosną: 3, 9, 27, 81… Po kilkunastu piętrach potrzeba więcej ludzi, niż mieszka w Polsce. Większość uczestników zawsze jest na samym dole i nie ma już kogo zaprosić.
+</Depth>
+
+<Depth level="formal">
+Poziom $n$ liczy $r^n$ osób, a cały schemat do poziomu $n$: $\sum_{i=0}^{n} r^i = \frac{r^{n+1}-1}{r-1}$. Udział ostatniego poziomu dąży do $\frac{r-1}{r}$, czyli przy $r = 3$ do około dwóch trzecich.
+</Depth>
+
+</TheMath>
+
+<Checker id="mlm" />
+
+<WhatToDoInstead>
+Oceniaj kurs po tym, czego uczy i co można sprawdzić, a nie po obietnicy, że zwróci się z poleceń.
+</WhatToDoInstead>
