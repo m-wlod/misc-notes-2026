@@ -16,7 +16,7 @@ export default function AdminSystemPage() {
   );
 }
 
-const JOBS: readonly CronJob[] = ["leagues", "calibrate", "notify"];
+const JOBS: readonly CronJob[] = ["leagues", "calibrate", "notify", "newsletter"];
 
 async function System() {
   await connection();

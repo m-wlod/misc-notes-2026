@@ -12,7 +12,8 @@
     "ai": "AI costs",
     "flags": "Flags",
     "announcements": "Announcements",
-    "system": "System"
+    "system": "System",
+    "social": "Video calendar"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -242,7 +243,8 @@
     "jobs": {
       "leagues": "Leagues (weekly roll)",
       "calibrate": "Difficulty calibration",
-      "notify": "Notifications"
+      "notify": "Notifications",
+      "newsletter": "Newsletter (weekly)"
     },
     "league": "This week's league",
     "week": "Week of {week}",
@@ -251,6 +253,21 @@
     "activeMembers": "With XP this week",
     "lastRoll": "Last rolled week",
     "none": "none"
+  },
+  "social": {
+    "title": "Video calendar",
+    "note": "Lessons and Debunk Lab entries without a video yet, each with its 9:16 recording mode. Add a video with a content/videos/<id>.yaml file (CONTENT_GUIDE §6b).",
+    "kind": "Type",
+    "status": "Status",
+    "all": "all",
+    "filter": "Filter",
+    "lesson": "lesson",
+    "debunk": "Debunk",
+    "recording": "Recording",
+    "record": "Recording mode",
+    "noRecording": "no recording mode",
+    "empty": "Everything has a video.",
+    "count": "Without a video: {n}."
   },
   "roles": {
     "admin": "admin",

@@ -257,7 +257,7 @@ const PUBLIC_CATALOG: Record<string, Row> = {
 /** Readable by staff or admins only, written only by server code (Phases 17–18). */
 const STAFF_ONLY = ["audit_log", "bans", "app_settings", "cron_runs", "utm_visits"];
 /** RLS on and no policies at all: deny everything to anon and authenticated. */
-const SERVER_ONLY = ["newsletter_subscribers"];
+const SERVER_ONLY = ["newsletter_subscribers", "newsletter_sends"];
 
 const RLS_DENIED = "42501";
 

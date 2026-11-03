@@ -17,6 +17,7 @@ import type home from "../messages/pl/home.json";
 import type interview from "../messages/pl/interview.json";
 import type links from "../messages/pl/links.json";
 import type nav from "../messages/pl/nav.json";
+import type newsletter from "../messages/pl/newsletter.json";
 import type notes from "../messages/pl/notes.json";
 import type notify from "../messages/pl/notify.json";
 import type onboarding from "../messages/pl/onboarding.json";
@@ -65,6 +66,7 @@ declare module "next-intl" {
       videos: typeof videos;
       links: typeof links;
       seo: typeof seo;
+      newsletter: typeof newsletter;
     };
     Formats: typeof formats;
   }

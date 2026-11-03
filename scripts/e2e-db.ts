@@ -42,6 +42,8 @@ const env = {
   SUPABASE_SECRET_KEY: s.SECRET_KEY,
   // Labelled sample exercises and lessons (internal deployment).
   ENABLE_STYLEGUIDE: "1",
+  // Signs newsletter unsubscribe links: a fixed test value (e2e-db/newsletter.spec.ts).
+  EMAIL_TOKEN_SECRET: "e2e-email-token-secret",
 };
 
 const run = (cmd: string) => {

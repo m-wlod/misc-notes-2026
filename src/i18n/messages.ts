@@ -34,6 +34,7 @@ export const NAMESPACES = [
   "videos",
   "links",
   "seo",
+  "newsletter",
 ] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 

@@ -16,7 +16,8 @@ test("sign-in explains that accounts are not enabled, in both locales", async ({
   await page.goto("/pl/logowanie");
   await expect(page.getByRole("heading", { level: 1, name: "Zaloguj się" })).toBeVisible();
   await expect(page.getByRole("note")).toContainText("Konta nie są jeszcze włączone");
-  await expect(page.getByRole("textbox")).toHaveCount(0);
+  // No sign-in form (the footer's newsletter field is not part of it).
+  await expect(page.locator("main").getByRole("textbox")).toHaveCount(0);
 
   await page.goto("/en/sign-in");
   await expect(page.getByRole("heading", { level: 1, name: "Sign in" })).toBeVisible();
