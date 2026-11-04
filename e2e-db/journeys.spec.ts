@@ -89,12 +89,10 @@ for (const locale of LOCALES) {
     test("sign-up: the emailed link, then onboarding", async ({ page }) => {
       const email = `e2e-signup-${locale}-${randomUUID().slice(0, 8)}@test.local`;
       await page.goto(PATHS.signIn[locale]);
-      // The footer has the newsletter form's e-mail field too.
-      await page.locator("main").getByLabel(msg(locale, "auth.email")).fill(email);
-      await page
-        .locator("main")
-        .getByRole("button", { name: msg(locale, "auth.submit") })
-        .click();
+      // The footer's newsletter form has an e-mail field and a "Zapisz" button too.
+      const main = page.locator("main");
+      await main.getByLabel(msg(locale, "auth.email")).fill(email);
+      await main.getByRole("button", { name: msg(locale, "auth.submit") }).click();
       await expect(page.getByText(msg(locale, "auth.sentTitle"))).toBeVisible();
 
       await page.goto(await magicLink(email));
@@ -105,14 +103,14 @@ for (const locale of LOCALES) {
       expect(user, "the account exists").toBeTruthy();
       if (user) users.push({ id: user.id, email, password: "" });
 
-      await page.getByRole("radio", { name: msg(locale, "onboarding.goal.curiosity") }).check();
-      await page.getByRole("button", { name: msg(locale, "onboarding.next") }).click();
-      await page.getByRole("radio", { name: /^1 · / }).check();
-      await page.getByRole("button", { name: msg(locale, "onboarding.next") }).click();
-      await page
+      await main.getByRole("radio", { name: msg(locale, "onboarding.goal.curiosity") }).check();
+      await main.getByRole("button", { name: msg(locale, "onboarding.next") }).click();
+      await main.getByRole("radio", { name: /^1 · / }).check();
+      await main.getByRole("button", { name: msg(locale, "onboarding.next") }).click();
+      await main
         .getByRole("radio", { name: msg(locale, "onboarding.daily.minutes", { minutes: 5 }) })
         .check();
-      await page.getByRole("button", { name: msg(locale, "onboarding.finish") }).click();
+      await main.getByRole("button", { name: msg(locale, "onboarding.finish") }).click();
       await expect(page.getByText(msg(locale, "onboarding.done.title"))).toBeVisible();
 
       const { data: profile } = await admin()
