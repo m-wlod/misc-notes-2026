@@ -23,12 +23,15 @@ beforeAll(async () => {
   const db = admin();
   await db.from("user_roles").insert({ user_id: reviewer.id, role: "reviewer" });
   const old = new Date(Date.now() - 20 * 86_400_000).toISOString();
-  await db.from("lesson_progress").insert([
-    { user_id: learner.id, lesson_id: lesson, status: "completed" },
+  const now = new Date().toISOString();
+  // Every row names the same columns: in a batch insert a missing one becomes NULL.
+  const { error } = await db.from("lesson_progress").insert([
+    { user_id: learner.id, lesson_id: lesson, status: "completed", updated_at: now },
     // Stopped 20 days ago: stalled (set on insert; the update trigger would overwrite it).
     { user_id: other.id, lesson_id: lesson, status: "in_progress", updated_at: old },
-    { user_id: reviewer.id, lesson_id: lesson, status: "in_progress" },
+    { user_id: reviewer.id, lesson_id: lesson, status: "in_progress", updated_at: now },
   ]);
+  if (error) throw error;
   const attempt = (user: string, score: number, hints: number, source = "app") => ({
     user_id: user,
     exercise_id: exercise,
