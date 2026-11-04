@@ -2,7 +2,6 @@
 
 import { randomUUID } from "node:crypto";
 
-import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
@@ -13,6 +12,7 @@ import { resendMailer } from "@/features/notify/email";
 import { getPathname } from "@/i18n/navigation";
 import { createAdminClient } from "@/lib/db/admin";
 import { sharedKV } from "@/lib/kv/shared";
+import { allowWrite, clientIp } from "@/lib/rate/write";
 
 import { confirmEmail, isConfirmToken } from "./core";
 import { applyNewsletterUnsubscribe } from "./server";
@@ -44,11 +44,11 @@ export async function subscribe(raw: unknown): Promise<SubscribeResult> {
   if (website) return { status: "sent" };
   const admin = createAdminClient();
   if (!admin) return { status: "unavailable" };
-  const h = await headers();
-  const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip") ?? "local";
-  if (!(await limiter.hit(`ip:${ip}`))) return { status: "rate-limited" };
+  if (!(await limiter.hit(`ip:${await clientIp()}`))) return { status: "rate-limited" };
 
   const address = email.trim().toLowerCase();
+  // Per address too: nobody can flood one inbox with confirmations from many IPs.
+  if (!(await allowWrite("mailTo", `email:${address}`))) return { status: "sent" };
   const { data: existing } = await admin
     .from("newsletter_subscribers")
     .select("id, confirmed_at, unsubscribed_at")
@@ -93,6 +93,7 @@ export async function subscribe(raw: unknown): Promise<SubscribeResult> {
 export async function confirmSubscription(raw: unknown): Promise<{ ok: boolean }> {
   const parsed = z.object({ token: z.string() }).safeParse(raw);
   if (!parsed.success || !isConfirmToken(parsed.data.token)) return { ok: false };
+  if (!(await allowWrite("emailLink", `ip:${await clientIp()}`))) return { ok: false };
   const admin = createAdminClient();
   if (!admin) return { ok: false };
   const { data } = await admin
@@ -108,5 +109,6 @@ export async function confirmSubscription(raw: unknown): Promise<{ ok: boolean }
 export async function unsubscribeNewsletter(raw: unknown): Promise<{ ok: boolean }> {
   const parsed = z.object({ i: z.string().max(20), s: z.string().max(100) }).safeParse(raw);
   if (!parsed.success) return { ok: false };
+  if (!(await allowWrite("emailLink", `ip:${await clientIp()}`))) return { ok: false };
   return applyNewsletterUnsubscribe(parsed.data.i, parsed.data.s);
 }

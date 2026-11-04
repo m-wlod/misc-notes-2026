@@ -36,7 +36,21 @@ export function userQuota(_userId: string, config: QuotaConfig): number {
 export async function checkQuota(
   kv: KV,
   config: QuotaConfig,
-  { userId, ip, now = Date.now() }: { userId: string; ip: string; now?: number | undefined },
+  {
+    userId,
+    ip,
+    now = Date.now(),
+    recordedSpend,
+  }: {
+    userId: string;
+    ip: string;
+    now?: number | undefined;
+    /**
+     * The day's spend as the usage log in the database has it (Phase 21). The KV counter
+     * is per instance without Upstash; the database is shared, so the budget holds.
+     */
+    recordedSpend?: number | null | undefined;
+  },
 ): Promise<QuotaDecision> {
   const k = keys(now, userId, ip);
   const [ipCount, spent, userCount] = await Promise.all([
@@ -45,13 +59,18 @@ export async function checkQuota(
     kv.get<number>(k.user),
   ]);
   if ((ipCount ?? 0) >= config.ipDailyLimit) return { ok: false, reason: "ip-limit" };
-  if ((spent ?? 0) >= config.dailyBudgetUsd) return { ok: false, reason: "budget" };
+  if (Math.max(spent ?? 0, recordedSpend ?? 0) >= config.dailyBudgetUsd) {
+    return { ok: false, reason: "budget" };
+  }
   const quota = userQuota(userId, config);
   if ((userCount ?? 0) >= quota) return { ok: false, reason: "user-quota" };
   return { ok: true, remaining: quota - (userCount ?? 0) };
 }
 
 /** After a grading ran: count it for the user and the IP, and add its cost to the day. */
+/** Midnight UTC of the quota day (the usage log is summed from here). */
+export const dayStart = (now: number) => `${day(now)}T00:00:00.000Z`;
+
 export async function recordUse(
   kv: KV,
   {

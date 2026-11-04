@@ -30,7 +30,14 @@ export function trackExercises(trackId: string): string[] {
 export async function readTrackProgress(session: Session): Promise<Map<string, Progress>> {
   const [lessons, attempts] = await Promise.all([
     session.supabase.from("lesson_progress").select("lesson_id, status"),
-    session.supabase.from("exercise_attempts").select("exercise_id, score").limit(10_000),
+    // Server-graded attempts only: imported anonymous progress carries scores from the
+    // browser, so it never counts toward a certificate (Phase 21). Lesson completion is
+    // self-reported by design ("Oznacz jako zrozumiane"); the exercises are the proof.
+    session.supabase
+      .from("exercise_attempts")
+      .select("exercise_id, score")
+      .eq("source", "app")
+      .limit(10_000),
   ]);
   const completed = new Set(
     (lessons.data ?? [])

@@ -66,6 +66,18 @@ export function canAccess(roles: readonly string[], section: Section): boolean {
   return SECTIONS[section].roles.some((r) => roles.includes(r));
 }
 
+const RANK: Record<Role, number> = { reviewer: 1, moderator: 2, admin: 3 };
+/** The highest role in a list, as a number (0 = no staff role). */
+export const rankOf = (roles: readonly string[]) =>
+  Math.max(0, ...roles.map((r) => (RANK as Partial<Record<string, number>>)[r] ?? 0));
+
+/**
+ * Who may ban whom (Phase 21): only someone who outranks the target; admins may also
+ * act on other admins. A moderator can't ban a moderator or an admin.
+ */
+export const mayBan = (actor: readonly string[], target: readonly string[]) =>
+  rankOf(actor) > rankOf(target) || rankOf(actor) === RANK.admin;
+
 export const isStaffRole = (roles: readonly string[]) =>
   (["admin", "moderator", "reviewer"] as const).some((r) => roles.includes(r));
 

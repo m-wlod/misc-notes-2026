@@ -3,6 +3,7 @@
 import { z } from "zod";
 
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 import { GRADES, rate } from "./schedule";
 
@@ -17,6 +18,7 @@ export async function reviewCard(input: unknown): Promise<{ ok: boolean; due?: s
   if (!parsed.success) return { ok: false };
   const session = await getSession();
   if (!session) return { ok: false };
+  if (!(await allowWrite("reviewCard", session.user.id))) return { ok: false };
   const { data: row } = await session.supabase
     .from("review_cards")
     .select(

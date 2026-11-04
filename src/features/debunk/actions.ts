@@ -3,13 +3,17 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 
+import { isStyleguideEnabled } from "@/config/runtime";
+import { env } from "@/env";
 import { audit, staffFor } from "@/features/admin/server";
 import { exerciseLimiter } from "@/features/exercises/limiter";
 import { gamificationStore } from "@/features/gamification/server/index";
 import { createAdminClient } from "@/lib/db/admin";
 import { isSupabaseConfigured } from "@/lib/db/config";
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
+import { listEntries } from "./entries";
 import { claimInput, correctionInput, submit, type SubmitResult, type Writer } from "./submit";
 
 /**
@@ -108,8 +112,12 @@ export async function reportCorrection(input: unknown): Promise<SubmitResult> {
 export async function finishEntry(input: unknown): Promise<{ ok: boolean }> {
   const parsed = z.object({ id: z.string().regex(/^[a-z0-9-]{1,100}$/) }).safeParse(input);
   if (!parsed.success || !isSupabaseConfigured()) return { ok: false };
+  // Only entries readers can actually open count (no made-up ids: Phase 21).
+  const known = new Set(listEntries("pl", isStyleguideEnabled(env)).map((e) => e.id));
+  if (!known.has(parsed.data.id)) return { ok: false };
   const session = await getSession();
   if (!session) return { ok: false };
+  if (!(await allowWrite("finishEntry", session.user.id))) return { ok: false };
   const lessonId = `debunk:${parsed.data.id}`;
   const { error } = await session.supabase.from("lesson_progress").upsert(
     {
@@ -121,11 +129,13 @@ export async function finishEntry(input: unknown): Promise<{ ok: boolean }> {
     { onConflict: "user_id,lesson_id" },
   );
   if (error) return { ok: false };
-  const { count } = await session.supabase
+  // Rows can also be written directly (RLS: own progress), so count real entries only.
+  const { data: read } = await session.supabase
     .from("lesson_progress")
-    .select("lesson_id", { count: "exact", head: true })
+    .select("lesson_id")
     .like("lesson_id", "debunk:%");
-  if ((count ?? 0) >= 10) {
+  const count = (read ?? []).filter((r) => known.has(r.lesson_id.slice("debunk:".length))).length;
+  if (count >= 10) {
     await gamificationStore()?.grantAchievements(session.user.id, ["anty-guru"]);
   }
   return { ok: true };

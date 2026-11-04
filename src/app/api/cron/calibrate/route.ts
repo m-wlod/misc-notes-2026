@@ -35,6 +35,8 @@ export async function GET(request: NextRequest) {
       const { data, error } = await admin
         .from("exercise_attempts")
         .select("exercise_id, score, time_ms")
+        // Server-graded attempts only: imported scores come from the browser (Phase 21).
+        .eq("source", "app")
         .order("id")
         .range(from, from + PAGE - 1);
       if (error) return NextResponse.json({ error: "read failed" }, { status: 500 });

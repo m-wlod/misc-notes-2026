@@ -49,3 +49,26 @@ export function resolveSiteUrl(env: UrlEnv): URL {
   if (env.VERCEL_URL) return new URL(`https://${env.VERCEL_URL}`);
   return new URL("http://localhost:3000");
 }
+
+/**
+ * Where sign-in links and OAuth send people back to (Phase 21). Production always uses
+ * the configured site URL, never a request header (a forged Host/Origin can't redirect
+ * a sign-in link elsewhere). Elsewhere the request's origin is used only if it is a
+ * known host (localhost, this deployment's URL, the site URL); otherwise the site URL.
+ */
+export function authOrigin(env: UrlEnv, requestOrigin: string | null): string {
+  const site = resolveSiteUrl(env);
+  if (env.VERCEL_ENV === "production" || !requestOrigin) return site.origin;
+  let url: URL;
+  try {
+    url = new URL(requestOrigin);
+  } catch {
+    return site.origin;
+  }
+  const known =
+    url.hostname === "localhost" ||
+    url.hostname === "127.0.0.1" ||
+    url.host === site.host ||
+    (env.VERCEL_URL !== undefined && url.host === env.VERCEL_URL);
+  return known ? url.origin : site.origin;
+}

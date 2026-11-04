@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/db/admin";
 import { updateMyProfile } from "@/lib/db/profile";
 import { getSession } from "@/lib/db/session";
 import { formText } from "@/lib/form";
+import { allowWrite } from "@/lib/rate/write";
 
 export type SettingsState =
   | { status: "idle" }
@@ -19,6 +20,10 @@ export async function saveSettings(_prev: SettingsState, form: FormData): Promis
   const currentLocale = asLocale(form.get("currentLocale"));
   const locale = asLocale(form.get("locale"));
   const displayName = formText(form, "display_name").trim();
+  const session = await getSession();
+  if (session && !(await allowWrite("settings", session.user.id))) {
+    return { status: "error", error: "failed" };
+  }
 
   const result = await updateMyProfile({
     display_name: displayName === "" ? null : displayName,
@@ -63,6 +68,7 @@ export async function deleteAccount(_prev: DeleteState, form: FormData): Promise
   const session = await getSession();
   if (!session) redirect({ href: "/sign-in", locale });
   const { supabase, user } = session as NonNullable<typeof session>;
+  if (!(await allowWrite("deleteAccount", user.id))) return { status: "error", error: "failed" };
 
   const { data: profile } = await supabase
     .from("profiles")

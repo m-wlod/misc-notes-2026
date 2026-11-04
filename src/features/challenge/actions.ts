@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { challenges } from "#content";
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 import { currentChallenge } from "./current";
 
@@ -20,6 +21,7 @@ export async function submitChallenge(input: unknown): Promise<{ ok: boolean }> 
   if (!c?.open || c.id !== parsed.data.challengeId) return { ok: false };
   const session = await getSession();
   if (!session) return { ok: false };
+  if (!(await allowWrite("submitChallenge", session.user.id))) return { ok: false };
   const { error } = await session.supabase.from("challenge_submissions").insert({
     user_id: session.user.id,
     challenge_id: c.id,

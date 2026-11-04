@@ -10,6 +10,7 @@ import { variantOf } from "@/features/exercises/grade";
 import { exerciseLimiter } from "@/features/exercises/limiter";
 import { exerciseHtml, renderText } from "@/features/exercises/render-text";
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 import { isOpen, rubricTexts } from "./service";
 
@@ -67,6 +68,8 @@ export async function reportUnfairGrade(
   if (!parsed.success) return { ok: false, reason: "invalid" };
   const session = await getSession();
   if (!session) return { ok: false, reason: "unauthorized" };
+  if (!(await allowWrite("reportUnfairGrade", session.user.id)))
+    return { ok: false, reason: "failed" };
   // The user's own client: RLS only lets them dispute their own attempts.
   const { error } = await session.supabase.from("grading_disputes").insert({
     user_id: session.user.id,

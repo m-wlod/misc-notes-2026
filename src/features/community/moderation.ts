@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 
+import { mayBan } from "@/features/admin/access";
 import { audit, staffFor } from "@/features/admin/server";
 import { XP } from "@/features/gamification/config";
 import { award } from "@/features/gamification/server/award";
@@ -33,8 +34,14 @@ export async function setPostStatus(input: unknown): Promise<ModerationResult> {
   if (!who) return { ok: false };
   const { kind, id, status } = parsed.data;
   const table = POST_TABLE[kind];
-  const { data: before } = await who.admin.from(table).select("status").eq("id", id).maybeSingle();
+  const { data: before } = await who.admin
+    .from(table)
+    .select("status, user_id")
+    .eq("id", id)
+    .maybeSingle();
   if (!before) return { ok: false };
+  // Nobody approves their own held post (Phase 21).
+  if (status === "approved" && before.user_id === who.actor) return { ok: false };
   const { error } = await who.admin.from(table).update({ status }).eq("id", id);
   if (error) return { ok: false };
   return {
@@ -116,6 +123,17 @@ export async function banUser(input: unknown): Promise<ModerationResult> {
   const who = await staff();
   if (!who || parsed.data.userId === who.actor) return { ok: false };
   const { userId, reason, days } = parsed.data;
+  const { data: targetRoles } = await who.admin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId);
+  if (
+    !mayBan(
+      who.roles,
+      (targetRoles ?? []).map((r) => r.role),
+    )
+  )
+    return { ok: false };
   const until = days === null ? null : new Date(Date.now() + days * 86_400_000).toISOString();
   const { error } = await who.admin
     .from("bans")

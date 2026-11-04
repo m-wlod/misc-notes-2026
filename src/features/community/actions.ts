@@ -9,6 +9,7 @@ import { getExercise } from "@/features/exercises/data";
 import { createAdminClient } from "@/lib/db/admin";
 import { isSupabaseConfigured } from "@/lib/db/config";
 import { getSession, type Session } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 import { MAX_POST_CHARS } from "./limits";
 import { MIN_POST_CHARS, rateOk, screen } from "./policy";
@@ -84,6 +85,18 @@ export async function postComment(input: unknown): Promise<CommunityResult> {
     return { ok: false, reason: "locked" };
   }
   if (!rateOk(await recentPosts(session))) return { ok: false, reason: "rate-limited" };
+  // A reply answers an approved comment in the same thread (Phase 21).
+  if (parentId !== null) {
+    const { data: parent } = await session.supabase
+      .from("comments")
+      .select("id")
+      .eq("id", parentId)
+      .eq("target_type", target)
+      .eq("target_id", targetId)
+      .eq("status", "approved")
+      .maybeSingle();
+    if (!parent) return { ok: false, reason: "invalid" };
+  }
   const verdict = screen(parsed.data.body);
   const row = {
     user_id: session.user.id,
@@ -116,6 +129,8 @@ export async function shareSolution(input: unknown): Promise<CommunityResult> {
   }
   const session = await signedIn();
   if (!session) return { ok: false, reason: "signed-out" };
+  if (!(await allowWrite("shareSolution", session.user.id)))
+    return { ok: false, reason: "rate-limited" };
   if (await banned(session)) return { ok: false, reason: "banned" };
   if (!(await unlocked(session, parsed.data.exerciseId))) return { ok: false, reason: "locked" };
   const row = {
@@ -146,6 +161,7 @@ export async function vote(input: unknown): Promise<CommunityResult> {
   if (!parsed.success) return { ok: false, reason: "invalid" };
   const session = await signedIn();
   if (!session) return { ok: false, reason: "signed-out" };
+  if (!(await allowWrite("vote", session.user.id))) return { ok: false, reason: "rate-limited" };
   const { targetType, targetId, value } = parsed.data;
   const { data: existing } = await session.supabase
     .from("votes")
@@ -181,6 +197,7 @@ export async function report(input: unknown): Promise<CommunityResult> {
   if (!parsed.success) return { ok: false, reason: "invalid" };
   const session = await signedIn();
   if (!session) return { ok: false, reason: "signed-out" };
+  if (!(await allowWrite("report", session.user.id))) return { ok: false, reason: "rate-limited" };
   const { error } = await session.supabase.from("reports").insert({
     user_id: session.user.id,
     target_type: parsed.data.targetType,
@@ -197,6 +214,9 @@ export async function editComment(input: unknown): Promise<CommunityResult> {
   if (!parsed.success) return { ok: false, reason: "invalid" };
   const session = await signedIn();
   if (!session) return { ok: false, reason: "signed-out" };
+  if (!(await allowWrite("editComment", session.user.id)))
+    return { ok: false, reason: "rate-limited" };
+  if (await banned(session)) return { ok: false, reason: "banned" };
   if (screen(parsed.data.body).status === "pending") {
     // Held again: only the server may set `pending`, for the author's own comment.
     const { error } = (await createAdminClient()
@@ -220,6 +240,8 @@ export async function deleteComment(input: unknown): Promise<CommunityResult> {
   if (!parsed.success) return { ok: false, reason: "invalid" };
   const session = await signedIn();
   if (!session) return { ok: false, reason: "signed-out" };
+  if (!(await allowWrite("deleteComment", session.user.id)))
+    return { ok: false, reason: "rate-limited" };
   const { error } = await session.supabase.from("comments").delete().eq("id", parsed.data.id);
   return error ? { ok: false, reason: "failed" } : { ok: true };
 }

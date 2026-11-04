@@ -36,7 +36,8 @@
     "datasets": "tsx scripts/gen-datasets.ts",
     "gamification:catalog": "tsx scripts/gen-gamification-catalog.ts",
     "test:coverage": "vitest run --project unit --coverage",
-    "check:static": "tsx scripts/check-static.ts"
+    "check:static": "tsx scripts/check-static.ts",
+    "check:client-secrets": "tsx scripts/check-client-secrets.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",

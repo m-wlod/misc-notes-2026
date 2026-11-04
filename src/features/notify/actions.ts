@@ -2,6 +2,8 @@
 
 import { z } from "zod";
 
+import { allowWrite, clientIp } from "@/lib/rate/write";
+
 import { prefsStore, tokenSecret } from "./server";
 import { applyUnsubscribe, type UnsubscribeResult } from "./unsubscribe";
 
@@ -16,5 +18,6 @@ export async function setEmailByLink(input: unknown): Promise<UnsubscribeResult>
     })
     .safeParse(input);
   if (!parsed.success) return { ok: false };
+  if (!(await allowWrite("emailLink", `ip:${await clientIp()}`))) return { ok: false };
   return applyUnsubscribe(prefsStore(), tokenSecret(), parsed.data, parsed.data.on);
 }

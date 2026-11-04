@@ -14,7 +14,7 @@ import { sharedKV } from "@/lib/kv/shared";
 import type { KV } from "@/lib/kv/store";
 
 import { cacheKey, getCached, setCached } from "./cache";
-import { checkQuota, recordUse, withSettings, type QuotaConfig } from "./quota";
+import { checkQuota, dayStart, recordUse, withSettings, type QuotaConfig } from "./quota";
 
 /**
  * AI grading of one open answer (Phase 10), shared by the route and its tests:
@@ -48,6 +48,14 @@ export async function quotaConfig(): Promise<QuotaConfig> {
   if (!admin) return base;
   const { data } = await admin.from("app_settings").select("value").eq("key", "ai").maybeSingle();
   return withSettings(base, data?.value);
+}
+
+/** Today's AI spend from the usage log (shared by every instance); null without a database. */
+async function recordedSpend(now: number): Promise<number | null> {
+  const admin = createAdminClient();
+  if (!admin) return null;
+  const { data, error } = await admin.rpc("ai_spend_since", { since: dayStart(now) });
+  return error ? null : data;
 }
 
 export const graderModelId = () => env.AI_GRADER_MODEL ?? DEFAULT_GRADER_MODEL;
@@ -107,6 +115,19 @@ export const databaseLog: GradingLog = {
   async attempt({ userId, exerciseId, version, answer, grade }) {
     const admin = createAdminClient();
     if (!admin) return null;
+    // The same answer graded again (a cached grade): reuse its attempt instead of
+    // writing another row each time (Phase 21).
+    const { data: same } = await admin
+      .from("exercise_attempts")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("exercise_id", exerciseId)
+      .eq("variant_seed", version)
+      .eq("grader", "ai")
+      .contains("answer", { kind: "text", value: answer })
+      .limit(1)
+      .maybeSingle();
+    if (same) return same.id;
     const { data } = await admin
       .from("exercise_attempts")
       .insert({
@@ -140,6 +161,8 @@ export async function gradeOpenAnswer(
     config?: QuotaConfig;
     now?: number;
     log?: GradingLog;
+    /** The day's spend from the usage log (default: the database). */
+    spend?: (now: number) => Promise<number | null>;
   } = {},
 ): Promise<ServiceResult> {
   const kv = deps.kv ?? sharedKV();
@@ -149,18 +172,22 @@ export async function gradeOpenAnswer(
   const store = (grade: AiGrade) =>
     log.attempt({ userId, exerciseId: ex.id, version, answer, grade });
 
+  // Limits first, also for answers already graded: an exhausted user or IP can't replay
+  // cached answers to write rows (Phase 21). A cached grade uses no quota and no money.
+  const now = deps.now ?? Date.now();
+  const quota = await checkQuota(kv, deps.config ?? (await quotaConfig()), {
+    userId,
+    ip,
+    now,
+    recordedSpend: await (deps.spend ?? recordedSpend)(now),
+  });
+  if (!quota.ok) return { ok: false, reason: quota.reason };
+
   // Same answer as before: the stored grade, no model call, no quota used.
   const key = cacheKey(ex.id, version, lang, answer);
   const hit = await getCached(kv, key);
   if (hit)
     return { ok: true, grade: hit, cached: true, remaining: null, attemptId: await store(hit) };
-
-  const quota = await checkQuota(kv, deps.config ?? (await quotaConfig()), {
-    userId,
-    ip,
-    now: deps.now,
-  });
-  if (!quota.ok) return { ok: false, reason: quota.reason };
 
   const { params } = variantOf(ex, version);
   const outcome = await gradeOpen(
@@ -174,7 +201,7 @@ export async function gradeOpenAnswer(
     model,
   );
   // Every model call costs money, also the ones that fell back.
-  await recordUse(kv, { userId, ip, costUsd: outcome.costUsd, now: deps.now });
+  await recordUse(kv, { userId, ip, costUsd: outcome.costUsd, now });
   await log.usage({
     userId,
     exerciseId: ex.id,

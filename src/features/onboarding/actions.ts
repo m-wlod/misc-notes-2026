@@ -3,6 +3,7 @@
 import { z } from "zod";
 
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 const onboardingSchema = z.object({
   goal: z.enum(["trading", "interviews", "university", "curiosity"]),
@@ -18,6 +19,7 @@ export async function saveOnboarding(input: OnboardingInput): Promise<{ ok: bool
   if (!parsed.success) return { ok: false };
   const session = await getSession();
   if (!session) return { ok: false };
+  if (!(await allowWrite("onboarding", session.user.id))) return { ok: false };
   const { error } = await session.supabase
     .from("profiles")
     .update({ ...parsed.data, onboarded_at: new Date().toISOString() })

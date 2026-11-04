@@ -2,12 +2,14 @@
 
 import { z } from "zod";
 
+import { allExercises } from "@/features/exercises/data";
 import type { Rewards } from "@/features/gamification/server/award";
 import { onLessonCompleted } from "@/features/gamification/server/hooks";
 import { addLessonCards } from "@/features/review/server";
 import { createAdminClient } from "@/lib/db/admin";
 import type { Json } from "@/lib/db/database.types";
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 import { lessonUpserts, localProgressSchema, type LessonStatus } from "./schema";
 import { curriculum } from "../../../content/curriculum";
@@ -26,8 +28,20 @@ export async function mergeAnonymousProgress(input: unknown): Promise<MergeResul
   if (!parsed.success) return { ok: false };
   const session = await getSession();
   if (!session) return { ok: false };
+  if (!(await allowWrite("mergeAnonymousProgress", session.user.id))) return { ok: false };
   const { supabase, user } = session;
-  const { lessons, attempts } = parsed.data;
+  const { lessons: localLessons, attempts: localAttempts } = parsed.data;
+  // Untrusted input (Phase 21): only known lessons and exercises, small answers, and dates
+  // inside the last year. Anything else is dropped, not stored.
+  const lessons = Object.fromEntries(
+    Object.entries(localLessons).filter(([id]) => LESSON_IDS.has(id)),
+  );
+  const knownExercises = new Set(allExercises().map((e) => e.id));
+  const now = Date.now();
+  const attempts = localAttempts
+    .filter((a) => knownExercises.has(a.exerciseId))
+    .filter((a) => JSON.stringify(a.answer).length <= MAX_ANSWER_CHARS)
+    .map((a) => ({ ...a, createdAt: clampDate(a.createdAt, now) }));
 
   const lessonIds = Object.keys(lessons);
   let lessonCount = 0;
@@ -76,6 +90,14 @@ export async function mergeAnonymousProgress(input: unknown): Promise<MergeResul
   return { ok: true, lessons: lessonCount, attempts: attempts.length };
 }
 
+const MAX_ANSWER_CHARS = 4096;
+const YEAR_MS = 365 * 86_400_000;
+/** A date from the browser, kept inside [a year ago, now]. */
+function clampDate(iso: string, now: number): string {
+  const t = Date.parse(iso);
+  return new Date(Number.isNaN(t) ? now : Math.min(now, Math.max(now - YEAR_MS, t))).toISOString();
+}
+
 const LESSON_IDS = new Set(
   curriculum.flatMap((t) => t.modules.flatMap((m) => m.lessons as readonly string[])),
 );
@@ -94,6 +116,7 @@ export async function completeLesson(
   }
   const session = await getSession();
   if (!session) return { ok: false, rewards: null };
+  if (!(await allowWrite("completeLesson", session.user.id))) return { ok: false, rewards: null };
   const { error } = await session.supabase.from("lesson_progress").upsert(
     {
       user_id: session.user.id,

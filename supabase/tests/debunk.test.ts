@@ -56,22 +56,24 @@ describe("debunk queue", () => {
     expect(error).toBeNull();
   });
 
-  it("a moderator sees the queue and resolves it", async () => {
+  it("a moderator sees the queue but resolves only through the app (Phase 21)", async () => {
     const m = moderator as TestUser;
     const { data: staff } = await m.client.rpc("is_staff");
     expect(staff).toBe(true);
     const { data } = await m.client.from("debunk_submissions").select("id").eq("id", id);
     expect(data).toHaveLength(1);
-    const { error } = await m.client
+    // No direct write: resolving goes through the server action, which audits it.
+    const { data: changed } = await m.client
       .from("debunk_submissions")
       .update({ status: "approved", reviewed_by: m.id })
-      .eq("id", id);
-    expect(error).toBeNull();
+      .eq("id", id)
+      .select();
+    expect(changed ?? []).toEqual([]);
     const { data: row } = await admin()
       .from("debunk_submissions")
-      .select("status, reviewed_by")
+      .select("status")
       .eq("id", id)
       .single();
-    expect(row).toEqual({ status: "approved", reviewed_by: m.id });
+    expect(row).toEqual({ status: "pending" });
   });
 });

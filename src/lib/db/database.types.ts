@@ -710,6 +710,9 @@ isOneToOne: false
               "campaign": string,"landing_path": string,"medium": string,"source": string,"visits": number
             }[]
                            },
+"ai_spend_since":
+{ Args: { "since": string }; Returns: number
+                           },
 "discussion_unlocked":
 { Args: { "exercise_id": string }; Returns: boolean
                            },
