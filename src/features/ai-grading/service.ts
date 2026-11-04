@@ -1,6 +1,7 @@
 import "server-only";
 
 import { env } from "@/env";
+import { sendAlert, type Alert } from "@/features/alerts/send";
 import { variantOf } from "@/features/exercises/grade";
 import { fillPlaceholders } from "@/features/exercises/render-text";
 import type { Exercise } from "@/features/exercises/schema";
@@ -13,6 +14,7 @@ import { createAdminClient } from "@/lib/db/admin";
 import { sharedKV } from "@/lib/kv/shared";
 import type { KV } from "@/lib/kv/store";
 
+import { alertBudget } from "./budget-alerts";
 import { cacheKey, getCached, setCached } from "./cache";
 import { addSpend, dayStart, release, reserve, withSettings, type QuotaConfig } from "./quota";
 
@@ -51,7 +53,7 @@ export async function quotaConfig(): Promise<QuotaConfig> {
 }
 
 /** Today's AI spend from the usage log (shared by every instance); null without a database. */
-async function recordedSpend(now: number): Promise<number | null> {
+export async function recordedSpend(now: number): Promise<number | null> {
   const admin = createAdminClient();
   if (!admin) return null;
   const { data, error } = await admin.rpc("ai_spend_since", { since: dayStart(now) });
@@ -163,6 +165,8 @@ export async function gradeOpenAnswer(
     log?: GradingLog;
     /** The day's spend from the usage log (default: the database). */
     spend?: (now: number) => Promise<number | null>;
+    /** Where budget alerts go (default: `sendAlert`). */
+    alert?: (a: Alert) => Promise<unknown>;
   } = {},
 ): Promise<ServiceResult> {
   const kv = deps.kv ?? sharedKV();
@@ -175,11 +179,13 @@ export async function gradeOpenAnswer(
   // Limits first, also for answers already graded: an exhausted user or IP can't replay
   // cached answers to write rows (Phase 21). A cached grade uses no quota and no money.
   const now = deps.now ?? Date.now();
-  const quota = await reserve(kv, deps.config ?? (await quotaConfig()), {
+  const config = deps.config ?? (await quotaConfig());
+  const spend = deps.spend ?? recordedSpend;
+  const quota = await reserve(kv, config, {
     userId,
     ip,
     now,
-    recordedSpend: await (deps.spend ?? recordedSpend)(now),
+    recordedSpend: await spend(now),
   });
   if (!quota.ok) return { ok: false, reason: quota.reason };
 
@@ -211,6 +217,12 @@ export async function gradeOpenAnswer(
     usage: outcome.usage,
     costUsd: outcome.costUsd,
   });
+  await alertBudget(
+    await spend(now),
+    outcome.costUsd,
+    config.dailyBudgetUsd,
+    deps.alert ?? sendAlert,
+  );
   if (!outcome.ok) return { ok: false, reason: "fallback" };
   await setCached(kv, key, outcome.grade);
   return {

@@ -47,6 +47,8 @@ export const serverSchema = {
 
   // Observability (Phase 22). Bot protection (Phase 21) is Vercel BotID: no keys.
   SENTRY_AUTH_TOKEN: optionalString,
+  /** Where operational alerts go (AI budget, failed or late cron jobs). Phase 22a. */
+  ALERT_EMAIL: z.email().optional(),
 };
 
 export const clientSchema = {

@@ -267,7 +267,14 @@
     "groups": "Groups",
     "activeMembers": "With XP this week",
     "lastRoll": "Last rolled week",
-    "none": "none"
+    "none": "none",
+    "health": "Health",
+    "healthStatus": {
+      "ok": "fine",
+      "late": "late",
+      "failed": "failed",
+      "never": "never ran"
+    }
   },
   "social": {
     "title": "Video calendar",

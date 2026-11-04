@@ -5,6 +5,7 @@ import type { AiGrade } from "@/lib/ai/grade-schema";
 import type { GraderModel, ModelReply } from "@/lib/ai/grader";
 import { memoryKV } from "@/lib/kv/store";
 
+import { alertBudget } from "./budget-alerts";
 import { cacheKey, normaliseAnswer } from "./cache";
 import { checkQuota, dayStart, recordUse, type QuotaConfig } from "./quota";
 
@@ -206,6 +207,26 @@ describe("gradeOpenAnswer", () => {
     expect(m.calls).toBe(2);
   });
 
+  it("a grading that takes spend past 50% sends the alert", async () => {
+    // The usage log's spend: before the call (at the claim), then with its cost.
+    const readings = [2.49, 2.504];
+    const alerts: string[] = [];
+    const m = model({ ok: true, output: good, usage: { input_tokens: 1000, output_tokens: 500 } });
+    await gradeOpenAnswer(ex, req, {
+      kv: memoryKV(() => T0),
+      model: m,
+      config,
+      now: T0,
+      log: log(),
+      spend: () => Promise.resolve(readings.shift() ?? null),
+      alert: (a) => {
+        alerts.push(a.key);
+        return Promise.resolve();
+      },
+    });
+    expect(alerts).toEqual(["ai-budget-50"]);
+  });
+
   it("an exhausted user can't replay a cached answer either (Phase 21)", async () => {
     const kv = memoryKV(() => T0);
     const m = model({ ok: true, output: good, usage: { input_tokens: 1, output_tokens: 1 } });
@@ -228,5 +249,19 @@ describe("gradeOpenAnswer", () => {
       }),
     ).toEqual({ ok: false, reason: "budget" });
     expect(m.calls).toBe(0);
+  });
+});
+
+describe("AI budget alerts (Phase 22a)", () => {
+  it("one alert per threshold this call's cost crossed", async () => {
+    const sent: string[] = [];
+    const send = (a: { key: string }) => {
+      sent.push(a.key);
+      return Promise.resolve();
+    };
+    expect(await alertBudget(4.1, 0.2, 5, send)).toEqual([80]);
+    expect(await alertBudget(5.05, 1.2, 5, send)).toEqual([80, 100]);
+    expect(await alertBudget(null, 1, 5, send)).toEqual([]);
+    expect(sent).toEqual(["ai-budget-80", "ai-budget-80", "ai-budget-100"]);
   });
 });
