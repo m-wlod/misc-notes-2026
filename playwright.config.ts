@@ -6,6 +6,8 @@ const isCI = !!process.env.CI;
 
 export default defineConfig({
   testDir: "./e2e",
+  // Visual baselines (Phase 20b): Linux only, one folder per project, no platform suffix.
+  snapshotPathTemplate: "{testDir}/__screenshots__/{projectName}/{arg}{ext}",
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,

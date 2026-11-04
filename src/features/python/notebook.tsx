@@ -376,7 +376,13 @@ function NotebookCell(props: {
           }}
         />
       ) : (
-        <pre className="overflow-x-auto rounded-sm bg-sunken px-3 py-2 font-mono text-xs leading-relaxed">
+        <pre
+          // Long lines scroll sideways on phones: focusable so a keyboard can scroll it.
+          tabIndex={0}
+          role="group"
+          aria-label={t("notebook.cell", { n })}
+          className="overflow-x-auto rounded-sm bg-sunken px-3 py-2 font-mono text-xs leading-relaxed"
+        >
           {props.code || " "}
         </pre>
       )}

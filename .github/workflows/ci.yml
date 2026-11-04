@@ -4,6 +4,14 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Re-take every visual baseline (after an intended visual change): run from the Actions
+  # tab, then download the "visual-baselines" artifact and commit it (e2e/README.md).
+  workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: "Re-take all visual baselines"
+        type: boolean
+        default: false
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -16,7 +24,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
@@ -55,6 +63,39 @@ jobs:
       - run: pnpm content:verify
       - run: pnpm content:qa
       - run: pnpm test:coverage
+
+  e2e:
+    # The public Playwright suite, split across runners (Phase 20: one runner took 21 min).
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm (corepack)
+        run: corepack enable pnpm
+
+      - name: Get pnpm store path
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - run: pnpm install --frozen-lockfile
+
       - run: pnpm build
 
       - name: Playwright version
@@ -72,12 +113,89 @@ jobs:
       - if: steps.pw-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
 
-      - run: pnpm test:e2e
+      - run: pnpm test:e2e --shard=${{ matrix.shard }}/3
 
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shard }}
+          path: playwright-report/
+          retention-days: 7
+
+  visual:
+    # Screenshots of key pages in both themes against the committed Linux baselines
+    # (e2e/visual.spec.ts). Missing baselines are written, uploaded, and fail the job.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm (corepack)
+        run: corepack enable pnpm
+
+      - name: Get pnpm store path
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        id: pw-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+      - if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      - name: Compare screenshots
+        env:
+          VISUAL: "1"
+        run: |
+          mode=missing
+          if [ "${{ inputs.update_snapshots }}" = "true" ]; then mode=all; fi
+          pnpm exec playwright test e2e/visual.spec.ts --update-snapshots=$mode
+      - name: New or re-taken baselines
+        id: baselines
+        if: always()
+        run: |
+          changes=$(git status --porcelain -- e2e/__screenshots__)
+          echo "$changes"
+          if [ -n "$changes" ]; then echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+      - if: always() && steps.baselines.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-baselines
+          path: e2e/__screenshots__/
+          retention-days: 7
+      - if: always() && steps.baselines.outputs.changed == 'true' && inputs.update_snapshots != true
+        run: |
+          echo "::error::Visual baselines were missing: review the visual-baselines artifact and commit it."
+          exit 1
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-visual
           path: playwright-report/
           retention-days: 7
 

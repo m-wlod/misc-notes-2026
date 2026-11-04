@@ -58,6 +58,9 @@ export function SimPlayer({
   const [data, setData] = useState<SimData | null>(null);
   const [frame, setFrame] = useState(0);
   const [playing, setPlaying] = useState(false);
+  // Set by the first play, step, reset or parameter change: from then on the result is
+  // announced to screen readers each time playback stops (never frame by frame).
+  const [interacted, setInteracted] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [copied, setCopied] = useState(false);
@@ -226,12 +229,14 @@ export function SimPlayer({
       frameRef.current = v;
       paint(v, v < drawn.current);
       setFrame(v);
+      setInteracted(true);
     },
     [data, paint],
   );
 
   /** Play, pause (showing the exact frame), or replay from the start at the end. */
   const togglePlay = () => {
+    setInteracted(true);
     if (playing) {
       setPlaying(false);
       setFrame(frameRef.current);
@@ -308,6 +313,7 @@ export function SimPlayer({
 
   const setParam = (name: string, spec: ParamSpec, raw: unknown) => {
     const next = { ...params, [name]: clampParam(spec, raw) };
+    setInteracted(true);
     setPlaying(false);
     setParams(next);
     syncLink({ params: next });
@@ -387,6 +393,53 @@ export function SimPlayer({
       <p className="num font-sans text-sm text-ink" aria-live="off">
         {summary}
       </p>
+      <p className="sr-only" aria-live="polite" data-sim-announce>
+        {interacted && !playing && data ? summary : ""}
+      </p>
+
+      {compact ? null : (
+        <details className="font-sans text-sm text-ink" data-sim-data>
+          <summary className="cursor-pointer text-accent-text">{t("data.show")}</summary>
+          <table className="mt-2 num">
+            <caption className="text-left text-ink-muted">
+              {t("seed", { seed })} · {t("data.frame", { frame, total: data?.T ?? 0 })}
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col" className="pr-6 text-left font-medium">
+                  {t("data.parameter")}
+                </th>
+                <th scope="col" className="text-left font-medium">
+                  {t("data.value")}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(def.params).map(([name, spec]) => {
+                const v = params[name] ?? spec.default;
+                return (
+                  <tr key={name}>
+                    <th scope="row" className="pr-6 text-left font-normal">
+                      {t(`${def.id}.params.${name}` as "coin-walk.params.paths")}
+                    </th>
+                    <td>
+                      {typeof v === "number"
+                        ? format.number(v, { maximumFractionDigits: 4 })
+                        : typeof v === "boolean"
+                          ? t(v ? "data.on" : "data.off")
+                          : t.has(`${def.id}.options.${v}` as "options.gbm")
+                            ? t(`${def.id}.options.${v}` as "options.gbm")
+                            : t.has(`options.${v}` as "options.gbm")
+                              ? t(`options.${v}` as "options.gbm")
+                              : v}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </details>
+      )}
 
       {def.static ? null : (
         <div className="flex flex-wrap items-center gap-2">
