@@ -13,7 +13,8 @@
     "flags": "Flagi",
     "announcements": "Ogłoszenia",
     "system": "System",
-    "social": "Kalendarz wideo"
+    "social": "Kalendarz wideo",
+    "learning": "Nauka"
   },
   "dashboard": {
     "title": "Pulpit",
@@ -295,5 +296,42 @@
     "admin": "administrator",
     "moderator": "moderator",
     "reviewer": "recenzent"
+  },
+  "learning": {
+    "title": "Nauka",
+    "range": "Zakres",
+    "from": "Od",
+    "to": "Do",
+    "show": "Pokaż",
+    "empty": "Brak danych w tym zakresie.",
+    "dropoff": {
+      "title": "Gdzie uczący się przerywają lekcje",
+      "lead": "Dla każdej lekcji: ile osób zaczęło, ile skończyło i ile utknęło (w trakcie, bez zmian od 14 dni). Najpierw najniższy odsetek ukończeń; lekcje z mniej niż 5 rozpoczęciami na końcu.",
+      "lesson": "Lekcja",
+      "started": "Rozpoczęte",
+      "completed": "Ukończone",
+      "rate": "Ukończenia",
+      "stalled": "Utknęło"
+    },
+    "failures": {
+      "title": "Zadania o nietypowej skuteczności",
+      "lead": "Z nocnej kalibracji: zadania, których skuteczność nie pasuje do poziomu (co najmniej 30 podejść). Może poziom jest źle dobrany albo treść niejasna.",
+      "none": "Żadne zadanie nie odstaje (albo jest za mało podejść).",
+      "exercise": "Zadanie",
+      "level": "Poziom",
+      "success": "Skuteczność",
+      "verdict": "Ocena",
+      "too-easy": "za łatwe na ten poziom",
+      "too-hard": "za trudne na ten poziom"
+    },
+    "hints": {
+      "title": "Korzystanie z podpowiedzi według poziomu",
+      "lead": "Ile podpowiedzi przypada na podejście i jaka część rozwiązań korzystała z podpowiedzi. Tylko podejścia ocenione przez serwer.",
+      "level": "Poziom",
+      "attempts": "Podejścia",
+      "perAttempt": "Podpowiedzi na podejście",
+      "solves": "Rozwiązania",
+      "hinted": "Z podpowiedzią"
+    }
   }
 }

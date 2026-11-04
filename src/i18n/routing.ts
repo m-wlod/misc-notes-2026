@@ -42,6 +42,7 @@ export const routing = defineRouting({
     "/admin/kolejki": "/admin/kolejki",
     "/admin/spory": "/admin/spory",
     "/admin/tresci": "/admin/tresci",
+    "/admin/nauka": "/admin/nauka",
     "/admin/zadania": "/admin/zadania",
     "/admin/zadania/[id]": "/admin/zadania/[id]",
     "/admin/ai": "/admin/ai",

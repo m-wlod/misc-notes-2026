@@ -219,6 +219,19 @@ test("a reviewer sees content status and an exercise's analytics from the databa
   expect((await page.request.get("/pl/admin", { maxRedirects: 0 })).status()).toBe(403);
 });
 
+test("a reviewer sees the learning analytics: drop-off, odd exercises, hints by level (Phase 22c)", async ({
+  browser,
+}) => {
+  const page = await pageAs(browser, reviewer as User);
+  await page.goto("/pl/admin/nauka");
+  await expect(page.getByRole("heading", { level: 1, name: "Nauka" })).toBeVisible();
+  for (const part of ["dropoff", "failures", "hints"]) {
+    await expect(page.locator(`[data-learning='${part}']`)).toBeVisible();
+  }
+  // Hints by level always lists the five levels.
+  await expect(page.locator("[data-learning='hints'] tbody tr")).toHaveCount(5);
+});
+
 test("a campaign landing shows in the dashboard's campaign table (Phase 19)", async ({
   browser,
 }) => {
