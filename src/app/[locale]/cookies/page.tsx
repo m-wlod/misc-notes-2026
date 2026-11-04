@@ -1,6 +1,6 @@
-import { sectionPage } from "@/components/shell/section-page";
+import { legalPage } from "@/features/legal/legal-page";
 
-const { Page, generateMetadata } = sectionPage("cookies");
+const { Page, generateMetadata } = legalPage("cookies");
 
 export { generateMetadata };
 export default Page;

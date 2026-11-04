@@ -16,6 +16,8 @@ export const LEGAL_NAV = [
   { key: "terms", href: "/terms" },
   { key: "cookies", href: "/cookies" },
   { key: "disclaimer", href: "/disclaimer" },
+  { key: "communityGuidelines", href: "/community-guidelines" },
+  { key: "corrections", href: "/corrections" },
 ] as const satisfies readonly { key: string; href: StaticPathname }[];
 
 export const MORE_NAV = [

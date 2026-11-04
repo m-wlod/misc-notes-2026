@@ -74,6 +74,8 @@ const ROUTES: [string, string, string][] = [
   ["terms", "/pl/regulamin", "/en/terms"],
   ["cookies", "/pl/cookies", "/en/cookies"],
   ["disclaimer", "/pl/zastrzezenia", "/en/disclaimer"],
+  ["community guidelines", "/pl/zasady-spolecznosci", "/en/community-guidelines"],
+  ["corrections", "/pl/korekty", "/en/corrections"],
   ["sign-in", "/pl/logowanie", "/en/sign-in"],
   ["placement", "/pl/test-poziomujacy", "/en/placement"],
   ["newsletter confirm", "/pl/newsletter/potwierdz", "/en/newsletter/confirm"],

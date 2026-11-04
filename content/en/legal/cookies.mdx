@@ -1,0 +1,53 @@
+---
+id: cookies
+locale: en
+title: Cookie policy
+description: Which cookies and browser storage the service uses, what for, and how to change your consent settings.
+updated: 2026-11-09
+draft: true
+---
+
+> Draft awaiting legal review. It takes effect when the final version is published.
+
+## What cookies and browser storage are
+
+Cookies are small files your browser saves on your device. The service also uses browser storage (localStorage and sessionStorage). Data in localStorage stays on your device and is not sent to us unless you sign in and merge your progress into your account.
+
+We use no advertising or tracking cookies.
+
+## Categories
+
+- **Essential**: needed for the service to work, always on.
+- **Functional**: remember your settings and progress on your device.
+- **Analytics**: planned (PostHog, EU cloud); runs only with your consent.
+- **Videos**: the YouTube (youtube-nocookie.com) and TikTok players set their own cookies only once a video is loaded, that is after you click it or choose “remember my choice”.
+
+## List
+
+| Name | Purpose | Type | Lifetime |
+| --- | --- | --- | --- |
+| `sb-…-auth-token` | sign-in session (Supabase), only when signed in | cookie, essential | until sign-out or session expiry |
+| `NEXT_LOCALE` | chosen language | cookie, essential | [to be completed: lifetime] |
+| `qla_sid` | random identifier used only to seed randomised exercise numbers; identifies no one; httpOnly | cookie, essential | 1 year |
+| `theme` | light or dark theme | localStorage, functional | until you delete it |
+| `qla:depth` | depth of explanations | localStorage, functional | until you delete it |
+| `qla:reading:v1` | reading settings | localStorage, functional | until you delete it |
+| `qla:sound:v1` | sound settings | localStorage, functional | until you delete it |
+| `qla:celebrate` | celebration animations | localStorage, functional | until you delete it |
+| `qla:progress:v1` | progress without an account | localStorage, functional | until you delete it |
+| `qla:notes:v1` | notes without an account | localStorage, functional | until you delete it |
+| `qla:notebook:v1` | Python notebook | localStorage, functional | until you delete it |
+| `qla:daily:v1` | daily task | localStorage, functional | until you delete it |
+| `qla:interview:v1` | interview practice | localStorage, functional | until you delete it |
+| `qla:consent:v1` | your consent choices | localStorage, functional | until you delete it |
+| campaign counter flag | counts a visit from a campaign link once per tab | sessionStorage, aggregated statistics | until the tab is closed |
+
+The campaign counter stores only daily visit totals; it stores no IP address, cookie or user identifier.
+
+## How to change your settings
+
+On the cookie settings page you can switch analytics and videos on or off at any time. Essential items are always active. You can also delete cookies and site data in your browser settings; you will then lose any progress saved without an account.
+
+## Contact
+
+Send questions about cookies to [to be completed: contact e-mail]. More about personal data is in the Privacy policy.

@@ -1,0 +1,123 @@
+---
+id: privacy
+locale: pl
+title: Polityka prywatności
+description: Jakie dane osobowe przetwarza serwis, w jakich celach, komu je powierza, jak długo je przechowuje i jakie prawa Ci przysługują.
+updated: 2026-11-09
+draft: true
+---
+
+> Projekt do przeglądu prawnego. Obowiązuje od dnia publikacji wersji ostatecznej.
+
+## Kto jest administratorem Twoich danych
+
+Administratorem danych osobowych jest [do uzupełnienia: pełna nazwa administratora], [do uzupełnienia: adres siedziby lub adres do doręczeń], [do uzupełnienia: NIP lub inny identyfikator, jeśli dotyczy]. W sprawach dotyczących danych osobowych możesz pisać na adres [do uzupełnienia: e-mail kontaktowy].
+
+Polityka dotyczy serwisu [do uzupełnienia: nazwa serwisu] dostępnego pod adresem [do uzupełnienia: domena], dalej „serwis”.
+
+## Czym jest serwis
+
+Serwis to bezpłatna platforma edukacyjna z zakresu rachunku prawdopodobieństwa, statystyki i finansów ilościowych. Obejmuje lekcje, zadania na pięciu poziomach, symulacje, notatnik Python działający w przeglądarce, trening rozmów rekrutacyjnych, „Debunk Lab” (matematyczną weryfikację haseł o tradingu) oraz cotygodniowy newsletter. Serwis nie wyświetla reklam i nie oferuje płatnych planów.
+
+## Korzystanie bez konta
+
+Bez zakładania konta możesz czytać wszystkie materiały i rozwiązywać zadania. Twoje postępy są wtedy zapisywane wyłącznie w pamięci przeglądarki (localStorage) na Twoim urządzeniu i nie trafiają do nas. Jeżeli później zalogujesz się, możesz połączyć te postępy z kontem; dopiero wtedy przesyłamy je na serwer.
+
+## Jakie dane przetwarzamy i w jakim celu
+
+### Konto
+
+Do logowania używasz linku wysłanego e-mailem albo konta Google lub GitHub. Przechowujemy: adres e-mail, nazwę użytkownika i opcjonalną nazwę wyświetlaną, język, strefę czasową, dzienny cel, cel nauki, deklarowany poziom i wynik testu poziomującego, a także informację, czy Twój profil jest publiczny i czy rezygnujesz z udziału w ligach.
+
+### Nauka i aktywność
+
+Zapisujemy postępy w lekcjach, notatki, zaznaczenia, zakładki i zapisane notatniki; podejścia do zadań (odpowiedzi, wyniki, czas, użyte podpowiedzi); karty powtórek; punkty XP, serie, osiągnięcia i przynależność do lig; sesje treningu rozmów rekrutacyjnych wraz z odpowiedziami; certyfikaty (imię i nazwisko, dział, data). Certyfikat można publicznie zweryfikować po jego identyfikatorze.
+
+### Społeczność i zgłoszenia
+
+Przetwarzamy Twoje wpisy w dyskusjach, udostępnione rozwiązania, głosy i zgłoszenia, a także zgłoszenia błędów w treściach, hasła przesłane do Debunk Lab i odwołania od oceny AI. Przechowujemy też ustawienia powiadomień i subskrypcje powiadomień push w przeglądarce (adres punktu końcowego i klucze). Osobom z zespołu przypisujemy role.
+
+### Newsletter
+
+Newsletter „Problem tygodnia + Debunk” wymaga podwójnej zgody: po podaniu adresu wysyłamy e-mail z linkiem, a zapis potwierdzasz przyciskiem na stronie. Przechowujemy adres e-mail, język oraz daty potwierdzenia i rezygnacji. Lista subskrybentów znajduje się w naszej bazie danych, a nie u dostawcy poczty. Z newslettera wypiszesz się jednym kliknięciem z każdego wydania.
+
+### Ocena odpowiedzi przez AI
+
+Gdy funkcja jest włączona, odpowiedzi otwarte mogą być oceniane przez model językowy. Do firmy Anthropic (Claude API) wysyłamy tylko treść odpowiedzi, treść pytania i kryteria oceny, bez Twojego e-maila i nazwy. Zapisujemy zużycie (liczbę tokenów, koszt) przypisane do konta, aby stosować limity. Ocena nie wywołuje wobec Ciebie skutków prawnych; możesz się od niej odwołać, a odwołanie rozpatruje moderator.
+
+### Licznik kampanii
+
+Wejścia z linków z parametrami `utm_*` zliczamy jako dzienne sumy dla źródła, medium, kampanii i strony docelowej. Nie zapisujemy adresu IP, pliku cookie ani identyfikatora użytkownika.
+
+### Bezpieczeństwo i zapobieganie nadużyciom
+
+Stosujemy limity liczby żądań powiązane z identyfikatorem użytkownika lub adresem IP. Liczniki istnieją od kilku minut do jednej doby i nie są łączone z innymi danymi. Przy logowaniu, zapisie do newslettera, funkcjach AI i anonimowych zgłoszeniach działa wykrywanie botów (Vercel BotID). Moderujemy treści (ukrywanie wpisów, wstrzymywanie wpisów nowych kont, blokady), prowadzimy rejestr działań zespołu i sprawdzamy nietypowe przyrosty XP. Takie przypadki są tylko oznaczane do oceny przez człowieka.
+
+## Podstawy prawne
+
+| Cel | Podstawa (RODO) |
+| --- | --- |
+| Konto i jego funkcje | art. 6 ust. 1 lit. b (umowa) |
+| Newsletter, analityka, osadzone filmy, powiadomienia push | art. 6 ust. 1 lit. a (zgoda) |
+| Bezpieczeństwo, limity żądań, moderacja, rejestr działań, zbiorcze statystyki | art. 6 ust. 1 lit. f (prawnie uzasadniony interes) |
+| Obowiązki wynikające z przepisów | art. 6 ust. 1 lit. c (obowiązek prawny), jeśli dotyczy |
+
+## Odbiorcy danych
+
+Korzystamy z usług podmiotów przetwarzających dane w naszym imieniu:
+
+- **Supabase**: baza danych, uwierzytelnianie i wysyłka linków logowania; region UE [do uzupełnienia: potwierdzenie regionu].
+- **Vercel**: hosting serwisu, funkcje serwerowe we Frankfurcie (`fra1`), logi żądań, BotID.
+- **Anthropic**: ocena odpowiedzi otwartych; zgodnie z warunkami API dane przesyłane przez API nie służą do trenowania modeli.
+- **Resend**: wysyłka newslettera i powiadomień [do uzupełnienia: potwierdzenie regionu UE].
+- **Upstash**: liczniki limitów żądań, gdy funkcja jest włączona.
+- **YouTube** (tryb rozszerzonej prywatności, youtube-nocookie.com) i **TikTok**: tylko gdy klikniesz film albo zezwolisz na filmy w ustawieniach cookie.
+- **PostHog** (analityka, chmura UE) i **Sentry** (raporty błędów): planowane; analityka działa wyłącznie po wyrażeniu zgody.
+
+## Przekazywanie danych poza EOG
+
+Niektórzy dostawcy (m.in. Anthropic i Vercel) mają siedzibę w Stanach Zjednoczonych. Przekazanie danych odbywa się na podstawie programu EU–US Data Privacy Framework lub standardowych klauzul umownych [do uzupełnienia: potwierdzenie podstawy dla każdego dostawcy].
+
+## Jak długo przechowujemy dane
+
+| Dane | Okres |
+| --- | --- |
+| Dane konta | do usunięcia konta |
+| Treść odpowiedzi ocenianych przez AI | usuwana po 365 dniach (wynik zostaje), nie w trakcie odwołania |
+| Rejestr zużycia AI | 13 miesięcy |
+| Powiadomienia | przeczytane 90 dni, nieprzeczytane 1 rok |
+| Rejestr zadań systemowych | 90 dni |
+| Rejestr działań zespołu | 2 lata |
+| Newsletter | niepotwierdzone adresy 7 dni, wypisane adresy 30 dni |
+| Wygasłe blokady | 1 rok od wygaśnięcia |
+| Liczniki limitów żądań | od kilku minut do 1 doby |
+| Logi żądań hostingu | zgodnie z polityką Vercel [do uzupełnienia: okres przechowywania] |
+
+## Usunięcie konta
+
+Konto usuniesz w Ustawieniach, w sekcji „Usuń konto”, wpisując swoją nazwę użytkownika. Konto i wszystkie dane prywatne są usuwane natychmiast, łącznie z certyfikatami. Wpisy w społeczności i udostępnione rozwiązania pozostają widoczne, ale bez wskazania autora.
+
+## Twoje prawa
+
+Przysługuje Ci prawo do:
+
+- dostępu do danych i ich przenoszenia: w Ustawieniach opcja „Pobierz moje dane” tworzy plik JSON ze wszystkimi danymi konta;
+- sprostowania danych w Ustawieniach;
+- usunięcia danych przez usunięcie konta;
+- ograniczenia przetwarzania i sprzeciwu wobec przetwarzania opartego na prawnie uzasadnionym interesie;
+- wycofania zgody w dowolnym momencie: link rezygnacji w newsletterze, strona ustawień cookie, ustawienia powiadomień w przeglądarce. Wycofanie zgody nie wpływa na zgodność z prawem wcześniejszego przetwarzania;
+- wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (PUODO), ul. Stawki 2, 00-193 Warszawa.
+
+Wnioski kieruj na adres [do uzupełnienia: e-mail kontaktowy]. Odpowiemy w ciągu miesiąca.
+
+## Wiek
+
+Konto może założyć osoba, która ukończyła 16 lat. Osoba młodsza może korzystać z konta wyłącznie za zgodą rodzica lub opiekuna prawnego.
+
+## Pliki cookie i pamięć przeglądarki
+
+Szczegóły opisujemy w Polityce cookies. Ustawienia zgód zmienisz w każdej chwili na stronie ustawień cookie.
+
+## Zmiany polityki
+
+O istotnych zmianach poinformujemy w serwisie z wyprzedzeniem. Data ostatniej aktualizacji znajduje się na górze strony.

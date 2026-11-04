@@ -37,6 +37,8 @@ const SECTIONS = [
   "/terms",
   "/cookies",
   "/disclaimer",
+  "/community-guidelines",
+  "/corrections",
 ];
 
 const modules = curriculum.flatMap((t) => t.modules);

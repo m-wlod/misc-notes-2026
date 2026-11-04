@@ -193,6 +193,17 @@ for (const locale of LOCALES) {
         .single();
       expect(saved?.display_name).toBe("Journey");
 
+      // Data export (RODO art. 15/20): the JSON file with the account's data.
+      const download = page.waitForEvent("download");
+      await page.getByRole("link", { name: msg(locale, "account.settings.export") }).click();
+      const file = await (await download).path();
+      const exported = JSON.parse(readFileSync(file, "utf8")) as {
+        user_id: string;
+        profile: { display_name: string };
+      };
+      expect(exported.user_id).toBe(user.id);
+      expect(exported.profile.display_name).toBe("Journey");
+
       const handle = saved?.handle ?? "";
       await page.getByRole("button", { name: msg(locale, "account.settings.delete") }).click();
       await page

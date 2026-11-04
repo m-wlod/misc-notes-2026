@@ -53,5 +53,15 @@
     "title": "Zastrzeżenia",
     "description": "Treści mają charakter edukacyjny.",
     "body": "Wszystkie treści służą nauce. Nie są poradą inwestycyjną ani rekomendacją kupna lub sprzedaży instrumentów finansowych."
+  },
+  "community": {
+    "title": "Zasady społeczności",
+    "description": "Jak rozmawiamy w dyskusjach pod lekcjami i zadaniami, i co robi moderacja.",
+    "body": "Jak rozmawiamy w dyskusjach pod lekcjami i zadaniami, i co robi moderacja."
+  },
+  "corrections": {
+    "title": "Polityka korekt",
+    "description": "Jak zgłaszać błędy w lekcjach, zadaniach i wpisach Debunk Lab, i jak je poprawiamy.",
+    "body": "Jak zgłaszać błędy w lekcjach, zadaniach i wpisach Debunk Lab, i jak je poprawiamy."
   }
 }

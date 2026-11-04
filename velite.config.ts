@@ -201,6 +201,27 @@ const debunk = defineCollection({
 });
 
 /**
+ * Legal pages (Phase 21b): privacy, terms, cookies, disclaimer, community guidelines and
+ * the correction policy, one MDX file per locale. `draft: true` until the owner's legal
+ * review: the page then says so and stays out of search engines.
+ */
+const legal = defineCollection({
+  name: "LegalPage",
+  pattern: ["pl/legal/*.mdx", "en/legal/*.mdx"],
+  schema: s
+    .object({
+      id: s.enum(["privacy", "terms", "cookies", "disclaimer", "community", "corrections"]),
+      locale: s.enum(["pl", "en"]),
+      title: s.string().min(3).max(120),
+      description: s.string().min(10).max(200),
+      updated: s.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      draft: s.boolean().default(true),
+      body: s.mdx(),
+    })
+    .strict(),
+});
+
+/**
  * Video landing pages (Phase 19): content/videos/<id>.yaml, one per TikTok/YouTube video,
  * both languages in the file. The page /v/<slug> shows the embed, the key formula, the
  * matching simulation, three exercises and the next lesson. Rules in CONTENT_GUIDE.md.
@@ -246,7 +267,7 @@ export default defineConfig({
     base: "/static/",
     clean: true,
   },
-  collections: { lessons, glossary, exercises, challenges, debunk, videos },
+  collections: { lessons, glossary, exercises, challenges, debunk, videos, legal },
   mdx: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [

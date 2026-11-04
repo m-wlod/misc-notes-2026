@@ -53,5 +53,15 @@
     "title": "Disclaimer",
     "description": "All content is educational.",
     "body": "All content is for learning. It is not investment advice or a recommendation to buy or sell financial instruments."
+  },
+  "community": {
+    "title": "Community guidelines",
+    "description": "How we talk in the discussions under lessons and exercises, and what moderation does.",
+    "body": "How we talk in the discussions under lessons and exercises, and what moderation does."
+  },
+  "corrections": {
+    "title": "Corrections policy",
+    "description": "How to report errors in lessons, exercises and Debunk Lab entries, and how we fix them.",
+    "body": "How to report errors in lessons, exercises and Debunk Lab entries, and how we fix them."
   }
 }

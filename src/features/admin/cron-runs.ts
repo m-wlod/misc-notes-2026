@@ -7,7 +7,7 @@ import type { Admin } from "./server";
  * `cron_runs` (start, finish, ok, a short summary), shown on /admin/system. Recording
  * never breaks the job: if the row can't be written, the job runs anyway.
  */
-export type CronJob = "leagues" | "calibrate" | "notify" | "newsletter";
+export type CronJob = "leagues" | "calibrate" | "notify" | "newsletter" | "retention";
 
 export async function recordRun(admin: Admin, job: CronJob, run: () => Promise<Response>) {
   let runId: number | null = null;
