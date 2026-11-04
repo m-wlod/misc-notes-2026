@@ -244,7 +244,8 @@
       "leagues": "Ligi (rozliczenie tygodnia)",
       "calibrate": "Kalibracja trudności",
       "notify": "Powiadomienia",
-      "newsletter": "Newsletter (co tydzień)"
+      "newsletter": "Newsletter (co tydzień)",
+      "retention": "Retencja danych (codziennie)"
     },
     "league": "Liga w tym tygodniu",
     "week": "Tydzień od {week}",

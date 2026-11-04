@@ -1,0 +1,27 @@
+{
+  "banner": {
+    "title": "Analityka tylko za Twoją zgodą",
+    "body": "Niezbędne pliki (sesja, język, ustawienia) działają zawsze. Za Twoją zgodą zbieramy też anonimowe statystyki użycia, żeby poprawiać serwis.",
+    "settings": "Ustawienia cookies",
+    "essential": "Tylko niezbędne",
+    "accept": "Zgadzam się na analitykę"
+  },
+  "settings": {
+    "title": "Ustawienia prywatności",
+    "lead": "Wybór jest zapisany tylko w tej przeglądarce. Możesz go zmienić w każdej chwili.",
+    "saved": "Zapisano.",
+    "analyticsOff": "Analityka nie jest jeszcze włączona w serwisie: ta zgoda zacznie działać, gdy zostanie włączona.",
+    "essential": {
+      "label": "Niezbędne (zawsze włączone)",
+      "hint": "Sesja po zalogowaniu, język, ziarno zadań losowych i Twoje ustawienia w przeglądarce. Bez nich serwis nie działa."
+    },
+    "analytics": {
+      "label": "Analityka",
+      "hint": "Anonimowe statystyki użycia (które strony i funkcje są używane), żeby poprawiać serwis."
+    },
+    "embeds": {
+      "label": "Filmy z YouTube i TikToka",
+      "hint": "Odtwarzacze wczytują się od razu, bez kliknięcia. YouTube i TikTok mogą wtedy zapisywać własne pliki cookie."
+    }
+  }
+}

@@ -30,6 +30,7 @@
     "consent": "Po kliknięciu wczytamy odtwarzacz {platform}, który może zapisać pliki cookie.",
     "openOn": "Otwórz w {platform}",
     "related": "Powiązane materiały",
-    "videos": "Wideo"
+    "videos": "Wideo",
+    "remember": "Zapamiętaj wybór: wczytuj filmy od razu (możesz to zmienić w ustawieniach cookies)"
   }
 }

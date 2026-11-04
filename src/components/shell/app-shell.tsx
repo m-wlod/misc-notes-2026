@@ -3,7 +3,9 @@ import { Suspense, type ReactNode } from "react";
 
 import { StatTicker } from "@/components/content/data";
 import { siteConfig } from "@/config/site";
+import { env } from "@/env";
 import { AnnouncementBanner } from "@/features/announcements/banner";
+import { ConsentBanner } from "@/features/consent/consent-ui";
 import { Celebration } from "@/features/gamification/celebration";
 import { readMe } from "@/features/gamification/server/read";
 import { NewsletterForm } from "@/features/newsletter/form";
@@ -36,6 +38,7 @@ export async function AppShell({ children }: { children: ReactNode }) {
       <BottomNav />
       <Celebration />
       <UtmBeacon />
+      <ConsentBanner analyticsConfigured={Boolean(env.NEXT_PUBLIC_POSTHOG_KEY)} />
     </>
   );
 }

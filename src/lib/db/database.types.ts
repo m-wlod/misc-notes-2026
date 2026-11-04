@@ -713,6 +713,9 @@ isOneToOne: false
 "ai_spend_since":
 { Args: { "since": string }; Returns: number
                            },
+"apply_retention":
+{ Args: never; Returns: Json
+                           },
 "discussion_unlocked":
 { Args: { "exercise_id": string }; Returns: boolean
                            },

@@ -67,6 +67,8 @@ export const routing = defineRouting({
     "/terms": { pl: "/regulamin", en: "/terms" },
     "/cookies": "/cookies",
     "/disclaimer": { pl: "/zastrzezenia", en: "/disclaimer" },
+    "/community-guidelines": { pl: "/zasady-spolecznosci", en: "/community-guidelines" },
+    "/corrections": { pl: "/korekty", en: "/corrections" },
     "/sign-in": { pl: "/logowanie", en: "/sign-in" },
     "/onboarding": { pl: "/pierwsze-kroki", en: "/onboarding" },
     "/placement": { pl: "/test-poziomujacy", en: "/placement" },

@@ -1,0 +1,27 @@
+{
+  "banner": {
+    "title": "Analytics only with your consent",
+    "body": "Essential storage (session, language, settings) always works. With your consent we also collect anonymous usage statistics to improve the service.",
+    "settings": "Cookie settings",
+    "essential": "Essential only",
+    "accept": "Allow analytics"
+  },
+  "settings": {
+    "title": "Privacy settings",
+    "lead": "Your choice is stored in this browser only. You can change it at any time.",
+    "saved": "Saved.",
+    "analyticsOff": "Analytics isn’t switched on in the service yet: this consent applies once it is.",
+    "essential": {
+      "label": "Essential (always on)",
+      "hint": "Your session when signed in, the language, the seed for randomised exercises and your settings in the browser. The service doesn’t work without them."
+    },
+    "analytics": {
+      "label": "Analytics",
+      "hint": "Anonymous usage statistics (which pages and features are used), to improve the service."
+    },
+    "embeds": {
+      "label": "YouTube and TikTok videos",
+      "hint": "Players load straight away, without a click. YouTube and TikTok may then set their own cookies."
+    }
+  }
+}

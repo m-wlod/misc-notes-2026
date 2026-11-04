@@ -21,6 +21,8 @@ export const SECTIONS = {
   terms: { href: "/terms", phase: 21 },
   cookies: { href: "/cookies", phase: 21 },
   disclaimer: { href: "/disclaimer", phase: 21 },
+  community: { href: "/community-guidelines", phase: 21 },
+  corrections: { href: "/corrections", phase: 21 },
 } as const satisfies Record<string, { href: StaticPathname; phase: number }>;
 
 export type SectionKey = keyof typeof SECTIONS;

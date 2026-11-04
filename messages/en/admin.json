@@ -244,7 +244,8 @@
       "leagues": "Leagues (weekly roll)",
       "calibrate": "Difficulty calibration",
       "notify": "Notifications",
-      "newsletter": "Newsletter (weekly)"
+      "newsletter": "Newsletter (weekly)",
+      "retention": "Data retention (daily)"
     },
     "league": "This week's league",
     "week": "Week of {week}",

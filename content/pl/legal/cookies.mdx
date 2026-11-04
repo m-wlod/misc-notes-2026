@@ -1,0 +1,53 @@
+---
+id: cookies
+locale: pl
+title: Polityka cookies
+description: Jakie pliki cookie i dane w pamięci przeglądarki wykorzystuje serwis, w jakim celu i jak zmienić swoje ustawienia zgód.
+updated: 2026-11-09
+draft: true
+---
+
+> Projekt do przeglądu prawnego. Obowiązuje od dnia publikacji wersji ostatecznej.
+
+## Czym są pliki cookie i pamięć przeglądarki
+
+Pliki cookie to małe pliki zapisywane przez przeglądarkę na Twoim urządzeniu. Serwis korzysta też z pamięci przeglądarki (localStorage i sessionStorage). Dane w localStorage pozostają na Twoim urządzeniu i nie są do nas wysyłane, chyba że zalogujesz się i połączysz postępy z kontem.
+
+Nie używamy plików cookie reklamowych ani śledzących.
+
+## Rodzaje
+
+- **Niezbędne**: potrzebne do działania serwisu, zawsze włączone.
+- **Funkcjonalne**: zapamiętują Twoje ustawienia i postępy na urządzeniu.
+- **Analityczne**: planowane (PostHog, chmura UE); działają tylko po wyrażeniu zgody.
+- **Filmy**: odtwarzacze YouTube (youtube-nocookie.com) i TikTok zapisują własne pliki cookie dopiero po załadowaniu filmu, czyli po kliknięciu albo po wybraniu „zapamiętaj mój wybór”.
+
+## Wykaz
+
+| Nazwa | Cel | Rodzaj | Czas przechowywania |
+| --- | --- | --- | --- |
+| `sb-…-auth-token` | sesja logowania (Supabase), tylko po zalogowaniu | cookie, niezbędne | do wylogowania lub wygaśnięcia sesji |
+| `NEXT_LOCALE` | wybrany język | cookie, niezbędne | [do uzupełnienia: czas życia] |
+| `qla_sid` | losowy identyfikator służący wyłącznie do losowania liczb w zadaniach; nikogo nie identyfikuje; httpOnly | cookie, niezbędne | 1 rok |
+| `theme` | motyw jasny lub ciemny | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:depth` | poziom szczegółowości wyjaśnień | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:reading:v1` | ustawienia czytania | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:sound:v1` | ustawienia dźwięku | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:celebrate` | animacje po sukcesie | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:progress:v1` | postępy bez konta | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:notes:v1` | notatki bez konta | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:notebook:v1` | notatnik Python | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:daily:v1` | zadanie dnia | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:interview:v1` | trening rozmów rekrutacyjnych | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| `qla:consent:v1` | Twoje wybory dotyczące zgód | localStorage, funkcjonalne | do usunięcia przez Ciebie |
+| znacznik licznika kampanii | jednorazowe zliczenie wejścia z linku kampanii w danej karcie | sessionStorage, statystyki zbiorcze | do zamknięcia karty |
+
+Licznik kampanii zapisuje tylko dzienne sumy wejść; nie zapisuje adresu IP, plików cookie ani identyfikatora użytkownika.
+
+## Jak zmienić ustawienia
+
+Na stronie ustawień cookie możesz w każdej chwili włączyć lub wyłączyć analitykę i filmy. Pliki niezbędne są zawsze aktywne. Możesz też usunąć pliki cookie i dane witryny w ustawieniach przeglądarki; utracisz wtedy postępy zapisane bez konta.
+
+## Kontakt
+
+Pytania dotyczące plików cookie kieruj na adres [do uzupełnienia: e-mail kontaktowy]. Więcej informacji o danych osobowych znajdziesz w Polityce prywatności.

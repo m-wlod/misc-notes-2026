@@ -6,6 +6,7 @@ import type certificates from "../messages/pl/certificates.json";
 import type challenge from "../messages/pl/challenge.json";
 import type common from "../messages/pl/common.json";
 import type community from "../messages/pl/community.json";
+import type consent from "../messages/pl/consent.json";
 import type content from "../messages/pl/content.json";
 import type curriculum from "../messages/pl/curriculum.json";
 import type debunk from "../messages/pl/debunk.json";
@@ -15,6 +16,7 @@ import type gamification from "../messages/pl/gamification.json";
 import type glossary from "../messages/pl/glossary.json";
 import type home from "../messages/pl/home.json";
 import type interview from "../messages/pl/interview.json";
+import type legal from "../messages/pl/legal.json";
 import type links from "../messages/pl/links.json";
 import type nav from "../messages/pl/nav.json";
 import type newsletter from "../messages/pl/newsletter.json";
@@ -67,6 +69,8 @@ declare module "next-intl" {
       links: typeof links;
       seo: typeof seo;
       newsletter: typeof newsletter;
+      consent: typeof consent;
+      legal: typeof legal;
     };
     Formats: typeof formats;
   }
