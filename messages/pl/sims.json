@@ -10,7 +10,7 @@
     "notebookLead": "Python w przeglądarce, z przykładowymi danymi. Bez instalacji.",
     "simulations": "Symulacje"
   },
-  "computing": "Liczę…",
+  "computing": "Obliczanie…",
   "play": "Odtwórz",
   "pause": "Pauza",
   "replay": "Od nowa",
@@ -144,7 +144,7 @@
   },
   "kelly": {
     "title": "Kryterium Kelly'ego",
-    "short": "Te same zakłady grane z połową stawki Kelly'ego, pełną i podwójną. Za duża stawka rośnie wolniej, a nawet traci mimo przewagi.",
+    "short": "Te same zakłady grane z połową stawki Kelly’ego, pełną i podwójną. Przy za dużej stawce kapitał rośnie wolniej, a nawet maleje mimo przewagi.",
     "params": {
       "p": "Szansa wygranej",
       "b": "Wypłata za 1 zł stawki (b)",
@@ -155,7 +155,7 @@
   },
   "vol-drag": {
     "title": "Zmienność zjada zyski",
-    "short": "Przy tej samej średniej rocznej stopie zwrotu typowy inwestor kończy dużo niżej niż średnia. Różnicę robi zmienność.",
+    "short": "Przy tej samej średniej rocznej stopie zwrotu typowy inwestor kończy dużo niżej niż średnia. Różnica wynika ze zmienności.",
     "params": {
       "mu": "Średni roczny zwrot μ",
       "sigma": "Zmienność σ",

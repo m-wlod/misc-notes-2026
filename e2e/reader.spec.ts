@@ -72,7 +72,7 @@ test("coming back offers the section where you stopped", async ({ page }) => {
     .toContain("strategia-podwajania-stawki");
   await page.reload();
   await expect(
-    page.getByRole("link", { name: /Wróć do miejsca, w którym skończyłeś: Strategia podwajania/ }),
+    page.getByRole("link", { name: /Czytaj dalej od: Strategia podwajania/ }),
   ).toBeVisible();
 });
 

@@ -45,8 +45,8 @@
     "best": "Twój rekord na tym poziomie: {percent}%",
     "rules": {
       "probability_sprint": "Odpowiadaj po kolei. Wynik zobaczysz dopiero na końcu, razem z rozwiązaniami. Nie ma powrotu do poprzedniego zadania.",
-      "brainteasers": "Pomyśl na głos na papierze, potem zapisz odpowiedź. Na końcu porównasz ją z rozwiązaniem.",
-      "open_modelling": "Opisz, jak podszedłbyś do problemu: założenia, dane, test, co może pójść źle."
+      "brainteasers": "Rozpisz rozumowanie na papierze, potem zapisz odpowiedź. Na końcu porównasz ją z rozwiązaniem.",
+      "open_modelling": "Opisz swoje podejście do problemu: założenia, dane, test, co może pójść źle."
     }
   },
   "timer": {
@@ -115,7 +115,7 @@
     "history": "Historia",
     "reviewTitle": "Przegląd odpowiedzi",
     "yourAnswer": "Twoja odpowiedź: {given}",
-    "correctAnswer": "Poprawnie: {answer}",
+    "correctAnswer": "Poprawna odpowiedź: {answer}",
     "skipped": "bez odpowiedzi"
   },
   "topics": {
@@ -135,7 +135,7 @@
     "lead": "Twoje sesje zapisane w tej przeglądarce i postęp w każdym typie.",
     "empty": "Nie masz jeszcze żadnej sesji.",
     "chartTitle": "{kind}: wynik kolejnych sesji",
-    "chartLabel": "{kind}: {count} sesji, ostatni wynik {last}%, najlepszy {best}%.",
+    "chartLabel": "{kind}: {count, plural, one {# sesja} few {# sesje} many {# sesji} other {# sesji}}, ostatni wynik {last}%, najlepszy {best}%.",
     "date": "Data",
     "kind": "Typ",
     "level": "Poziom",

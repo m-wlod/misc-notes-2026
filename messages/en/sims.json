@@ -144,7 +144,7 @@
   },
   "kelly": {
     "title": "Kelly criterion",
-    "short": "The same bets played with half, full and double the Kelly stake. Betting too much grows slower, and can even lose despite an edge.",
+    "short": "The same bets played with half, full and double the Kelly stake. With too large a stake, capital grows more slowly and can even shrink despite an edge.",
     "params": {
       "p": "Chance of winning",
       "b": "Payout per 1 staked (b)",

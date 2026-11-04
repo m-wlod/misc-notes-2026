@@ -80,7 +80,7 @@
     "comments": "Wstrzymane komentarze",
     "solutions": "Wstrzymane rozwiązania",
     "corrections": "Błędy w treściach",
-    "claims": "Zgłoszone tezy (Debunk)",
+    "claims": "Zgłoszone hasła (Debunk Lab)",
     "debunkCorrections": "Poprawki do Debunk Lab",
     "disputes": "Spory o ocenę AI"
   },
@@ -112,7 +112,7 @@
     "filter": {
       "kind": "Rodzaj",
       "status": "Status",
-      "track": "Ścieżka",
+      "track": "Dział",
       "all": "wszystkie",
       "attention": "Tylko wymagające uwagi",
       "apply": "Filtruj"

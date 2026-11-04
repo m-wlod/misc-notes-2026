@@ -22,7 +22,7 @@
   "unsubscribe": {
     "title": "Unsubscribe from the newsletter",
     "lead": "Click to stop getting the Problem of the week.",
-    "button": "Unsubscribe me",
+    "button": "Unsubscribe",
     "done": "Unsubscribed. We won’t send you anything else.",
     "failed": "That didn’t work. Please try again later."
   },

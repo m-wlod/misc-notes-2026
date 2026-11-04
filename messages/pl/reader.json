@@ -3,7 +3,7 @@
   "progress": "Postęp czytania",
   "timeLeft": "Zostało ok. {minutes} min",
   "timeDone": "Przeczytane do końca",
-  "resume": "Wróć do miejsca, w którym skończyłeś: {section}",
+  "resume": "Czytaj dalej od: {section}",
   "complete": "Oznacz jako zrozumiane",
   "completed": "Lekcja ukończona",
   "completedNote": "Zapisaliśmy to w tej przeglądarce.",

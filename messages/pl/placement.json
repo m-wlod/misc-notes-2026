@@ -7,7 +7,7 @@
   "checking": "Sprawdzanie…",
   "invalid": {
     "ambiguous": "Niejednoznaczny zapis. Wpisz liczbę bez separatora tysięcy, np. 1000 albo 1,5.",
-    "invalid": "Nie rozpoznaję tej liczby. Przykłady: 0,25 · 12,5% · 3/8 · 1e-3.",
+    "invalid": "Nie umiemy odczytać tej liczby. Przykłady: 0,25 · 12,5% · 3/8 · 1e-3.",
     "division-by-zero": "Dzielenie przez zero."
   },
   "questions": {

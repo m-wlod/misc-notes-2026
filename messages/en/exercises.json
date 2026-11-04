@@ -131,7 +131,7 @@
     "lesson": "Exercises for the lesson: {title}",
     "unsolved": "Unsolved only",
     "count": "{count, plural, one {# exercise} other {# exercises}}",
-    "empty": "Exercises are coming soon. The site comes first, then the course content.",
+    "empty": "Exercises are coming soon.",
     "noMatch": "No exercises match these filters.",
     "allSolved": "Every exercise in this set is solved.",
     "solved": "solved",
