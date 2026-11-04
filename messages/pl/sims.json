@@ -240,5 +240,13 @@
       "today": "dziś"
     },
     "summary": "Pozycja kosztuje dziś {value}. Przy cenie akcji {S}: delta {delta}, gamma {gamma}, vega {vega} na punkt procentowy zmienności, theta {theta} dziennie."
+  },
+  "data": {
+    "show": "Pokaż dane",
+    "parameter": "Parametr",
+    "value": "Wartość",
+    "frame": "klatka {frame} z {total}",
+    "on": "tak",
+    "off": "nie"
   }
 }

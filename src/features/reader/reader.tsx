@@ -172,7 +172,8 @@ export async function Reader({
                       {node ? (
                         <Link
                           href={lessonHref(node)}
-                          className="text-accent-text underline underline-offset-2"
+                          // At least 24px tall: stacked links stay separate targets (WCAG 2.5.8).
+                          className="inline-block min-h-6 py-0.5 text-accent-text underline underline-offset-2"
                         >
                           {node.title}
                         </Link>

@@ -240,5 +240,13 @@
       "today": "today"
     },
     "summary": "The position costs {value} today. At a stock price of {S}: delta {delta}, gamma {gamma}, vega {vega} per volatility point, theta {theta} per day."
+  },
+  "data": {
+    "show": "Show data",
+    "parameter": "Parameter",
+    "value": "Value",
+    "frame": "frame {frame} of {total}",
+    "on": "on",
+    "off": "off"
   }
 }
