@@ -14,7 +14,7 @@ import { sharedKV } from "@/lib/kv/shared";
 import type { KV } from "@/lib/kv/store";
 
 import { cacheKey, getCached, setCached } from "./cache";
-import { checkQuota, dayStart, recordUse, withSettings, type QuotaConfig } from "./quota";
+import { addSpend, dayStart, release, reserve, withSettings, type QuotaConfig } from "./quota";
 
 /**
  * AI grading of one open answer (Phase 10), shared by the route and its tests:
@@ -175,7 +175,7 @@ export async function gradeOpenAnswer(
   // Limits first, also for answers already graded: an exhausted user or IP can't replay
   // cached answers to write rows (Phase 21). A cached grade uses no quota and no money.
   const now = deps.now ?? Date.now();
-  const quota = await checkQuota(kv, deps.config ?? (await quotaConfig()), {
+  const quota = await reserve(kv, deps.config ?? (await quotaConfig()), {
     userId,
     ip,
     now,
@@ -186,8 +186,10 @@ export async function gradeOpenAnswer(
   // Same answer as before: the stored grade, no model call, no quota used.
   const key = cacheKey(ex.id, version, lang, answer);
   const hit = await getCached(kv, key);
-  if (hit)
+  if (hit) {
+    await release(kv, { userId, ip, now });
     return { ok: true, grade: hit, cached: true, remaining: null, attemptId: await store(hit) };
+  }
 
   const { params } = variantOf(ex, version);
   const outcome = await gradeOpen(
@@ -201,7 +203,7 @@ export async function gradeOpenAnswer(
     model,
   );
   // Every model call costs money, also the ones that fell back.
-  await recordUse(kv, { userId, ip, costUsd: outcome.costUsd, now });
+  await addSpend(kv, { costUsd: outcome.costUsd, now });
   await log.usage({
     userId,
     exerciseId: ex.id,

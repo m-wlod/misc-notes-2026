@@ -61,7 +61,8 @@ export const grid = (marks: readonly ("x" | "o")[]) =>
 
 /** Parameters of the share image; strict so the endpoint can't be made to draw anything. */
 export const shareParams = z.object({
-  d: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  // A real calendar date (pentest L5: "2026-99-99" passed the pattern and crashed the card).
+  d: z.iso.date(),
   l: z.coerce.number().int().min(1).max(5),
   r: z.string().regex(/^[xo]{1,10}$/),
   h: z.coerce.number().int().min(0).max(20),

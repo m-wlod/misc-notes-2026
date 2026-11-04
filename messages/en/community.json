@@ -114,6 +114,8 @@
     "author": "Author",
     "target": "About",
     "done": "Done.",
-    "failed": "That didn't work."
+    "failed": "That didn't work.",
+    "xpFine": "Looks fine",
+    "xpProblem": "Needs follow-up"
   }
 }

@@ -8,6 +8,7 @@ import { env } from "@/env";
 import { audit, staffFor } from "@/features/admin/server";
 import { exerciseLimiter } from "@/features/exercises/limiter";
 import { gamificationStore } from "@/features/gamification/server/index";
+import { isBot } from "@/lib/bot/check";
 import { createAdminClient } from "@/lib/db/admin";
 import { isSupabaseConfigured } from "@/lib/db/config";
 import { getSession } from "@/lib/db/session";
@@ -79,7 +80,7 @@ export async function submitClaim(input: unknown): Promise<SubmitResult> {
     {
       writer: writerFor(session, insertClaim),
       userId: session?.user.id ?? null,
-      allowed: async () => exerciseLimiter.hit(`debunk:${key}`),
+      allowed: async () => !(await isBot()) && exerciseLimiter.hit(`debunk:${key}`),
     },
   );
 }
@@ -100,7 +101,7 @@ export async function reportCorrection(input: unknown): Promise<SubmitResult> {
     {
       writer: writerFor(session, insertCorrection),
       userId: session?.user.id ?? null,
-      allowed: async () => exerciseLimiter.hit(`correction:${key}`),
+      allowed: async () => !(await isBot()) && exerciseLimiter.hit(`correction:${key}`),
     },
   );
 }

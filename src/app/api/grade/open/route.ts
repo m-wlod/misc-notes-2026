@@ -5,6 +5,7 @@ import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
 import { aiAvailable, gradeOpenAnswer, isOpen } from "@/features/ai-grading/service";
 import { getExercise } from "@/features/exercises/data";
+import { isBot } from "@/lib/bot/check";
 import { getSession } from "@/lib/db/session";
 
 /**
@@ -36,6 +37,8 @@ export async function POST(request: NextRequest) {
 
   const session = await getSession();
   if (!session) return json({ error: "unauthorized", fallback: true }, 401);
+  // Bots never reach the paid model (Vercel BotID, Phase 21c).
+  if (await isBot()) return json({ error: "forbidden", fallback: true }, 403);
   if (!aiAvailable()) return json({ error: "not-configured", fallback: true }, 503);
 
   const ex = getExercise(parsed.data.exerciseId, isStyleguideEnabled(env));

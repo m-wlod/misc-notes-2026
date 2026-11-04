@@ -8,7 +8,8 @@ import { createAdminClient } from "@/lib/db/admin";
 
 /**
  * Daily data retention (Phase 21b): `apply_retention()` redacts or deletes what the
- * privacy policy says we keep only for a while (see the migration for the table). Same
+ * privacy policy says we keep only for a while (see the migration for the table), then
+ * `flag_xp_anomalies()` queues unusual XP for review (Phase 21c). Same
  * pattern as the other crons: dormant (503) without a database and CRON_SECRET.
  */
 function authorised(request: NextRequest, secret: string): boolean {
@@ -28,6 +29,9 @@ export async function GET(request: NextRequest) {
   return recordRun(admin, "retention", async () => {
     const { data, error } = await admin.rpc("apply_retention");
     if (error) return NextResponse.json({ error: "retention failed" }, { status: 500 });
-    return NextResponse.json({ ok: true, removed: data });
+    // XP anomaly checks (Phase 21c): flags for a person to review, nothing is taken away.
+    const flags = await admin.rpc("flag_xp_anomalies");
+    if (flags.error) return NextResponse.json({ error: "xp check failed" }, { status: 500 });
+    return NextResponse.json({ ok: true, removed: data, xpFlags: flags.data });
   });
 }

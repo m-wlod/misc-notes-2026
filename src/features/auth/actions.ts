@@ -8,6 +8,7 @@ import { authOrigin } from "@/config/runtime";
 import { env } from "@/env";
 import { getPathname, redirect } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
+import { isBot } from "@/lib/bot/check";
 import { createClient } from "@/lib/db/server";
 import { formText } from "@/lib/form";
 import { allowWrite, clientIp } from "@/lib/rate/write";
@@ -49,7 +50,9 @@ export async function requestMagicLink(
   const email = formText(form, "email").trim();
   const locale = localeSchema.catch("pl").parse(form.get("locale"));
   if (!z.email().safeParse(email).success) return { status: "error", error: "invalidEmail", email };
-  // Per IP, and per address so nobody floods one inbox from many IPs (Phase 21).
+  // Bots (Vercel BotID) and floods: per IP, and per address so nobody floods one inbox
+  // from many IPs (Phase 21).
+  if (await isBot()) return { status: "error", error: "failed", email };
   if (
     !(await allowWrite("signIn", `ip:${await clientIp()}`)) ||
     !(await allowWrite("mailTo", `email:${email.toLowerCase()}`))

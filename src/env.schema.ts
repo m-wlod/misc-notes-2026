@@ -45,12 +45,13 @@ export const serverSchema = {
   VAPID_PRIVATE_KEY: optionalString,
   CRON_SECRET: optionalString,
 
-  // Observability (Phase 22), bot protection (Phase 21)
+  // Observability (Phase 22). Bot protection (Phase 21) is Vercel BotID: no keys.
   SENTRY_AUTH_TOKEN: optionalString,
-  TURNSTILE_SECRET_KEY: optionalString,
 };
 
 export const clientSchema = {
+  /** Set by Vercel (system variable). BotID runs in the browser only on Vercel (Phase 21c). */
+  NEXT_PUBLIC_VERCEL_ENV: z.enum(["development", "preview", "production"]).optional(),
   /** Optional: resolveSiteUrl() falls back to Vercel URLs, then localhost. */
   NEXT_PUBLIC_SITE_URL: optionalUrl,
 
@@ -72,5 +73,4 @@ export const clientSchema = {
   NEXT_PUBLIC_SENTRY_DSN: optionalUrl,
 
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: optionalString,
-  NEXT_PUBLIC_TURNSTILE_SITE_KEY: optionalString,
 };

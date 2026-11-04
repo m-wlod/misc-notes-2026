@@ -1,3 +1,4 @@
+import { withBotId } from "botid/next/config";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -17,6 +18,7 @@ const nextConfig: NextConfig = {
   // its own folder, so it never replaces the regular build.
   ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   cacheComponents: true,
+  poweredByHeader: false,
   // Security headers on every response (Phase 21, src/config/security-headers.ts).
   headers() {
     return Promise.resolve([
@@ -40,4 +42,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+// BotID (Phase 21c): rewrites its challenge scripts through this origin on Vercel.
+export default withBotId(withNextIntl(nextConfig));

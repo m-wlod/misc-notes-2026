@@ -9,6 +9,7 @@ import {
   banUser,
   resolveCorrection,
   resolveReport,
+  resolveXpFlag,
   setPostStatus,
   unbanUser,
   type ModerationResult,
@@ -33,6 +34,36 @@ function Done({ text }: { text: string }) {
     <p role="status" className="font-sans text-xs text-ink-muted">
       {text}
     </p>
+  );
+}
+
+/** An XP anomaly flag: looks fine, or a real problem (handled by hand). */
+export function XpFlagActions({ id }: { id: number }) {
+  const { t, done, pending, act } = useAct();
+  if (done) return <Done text={done} />;
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button
+        size="sm"
+        variant="secondary"
+        disabled={pending}
+        onClick={() => {
+          act(() => resolveXpFlag({ id, status: "approved" }));
+        }}
+      >
+        {t("xpFine")}
+      </Button>
+      <Button
+        size="sm"
+        variant="secondary"
+        disabled={pending}
+        onClick={() => {
+          act(() => resolveXpFlag({ id, status: "rejected" }));
+        }}
+      >
+        {t("xpProblem")}
+      </Button>
+    </div>
   );
 }
 

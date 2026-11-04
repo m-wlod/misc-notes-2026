@@ -34,7 +34,7 @@ const params = z.object({
 
 type Card = { eyebrow: string; title: string; model: ChartModel; chartLabel: string };
 
-const isSection = (id: string): id is keyof typeof SECTIONS => id in SECTIONS;
+const isSection = (id: string): id is keyof typeof SECTIONS => Object.hasOwn(SECTIONS, id);
 
 async function card(
   kind: z.infer<typeof params>["kind"],

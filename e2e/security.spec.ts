@@ -39,3 +39,18 @@ test("no CSP violation: a simulation, the video player and the sample lesson", a
   await page.waitForLoadState("networkidle");
   expect(found).toEqual([]);
 });
+
+test("percent-encoded paths don't slip past the admin and internal-tool gates", async ({
+  request,
+}) => {
+  const admin = await request.get("/pl/%61dmin", { maxRedirects: 0 });
+  expect(admin.status()).toBe(403);
+  const internal = await request.get("/pl/%73tyleguide", { maxRedirects: 0 });
+  // e2e builds open the style guide on purpose (ENABLE_STYLEGUIDE=1): it must resolve
+  // exactly like the plain path, not differently.
+  expect(internal.status()).toBe((await request.get("/pl/styleguide")).status());
+});
+
+test("no X-Powered-By header", async ({ request }) => {
+  expect((await request.get("/pl")).headers()["x-powered-by"]).toBeUndefined();
+});

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { checkQuota, recordUse, type QuotaConfig } from "@/features/ai-grading/quota";
+import { addSpend, reserve, type QuotaConfig } from "@/features/ai-grading/quota";
 import {
   databaseLog,
   quotaConfig,
@@ -44,7 +44,7 @@ export async function followUpQuestion(
   const model = deps.model === undefined ? followUpModel() : deps.model;
   if (!model) return { ok: false, reason: "not-configured" };
   const kv = deps.kv ?? sharedKV();
-  const quota = await checkQuota(kv, deps.config ?? (await quotaConfig()), {
+  const quota = await reserve(kv, deps.config ?? (await quotaConfig()), {
     userId,
     ip,
     now: deps.now,
@@ -56,7 +56,7 @@ export async function followUpQuestion(
     { question: fillPlaceholders(prompt, variantOf(ex, version).params, lang), answer, lang },
     model,
   );
-  await recordUse(kv, { userId, ip, costUsd: out.costUsd, now: deps.now });
+  await addSpend(kv, { costUsd: out.costUsd, now: deps.now });
   await (deps.log ?? databaseLog).usage({
     userId,
     exerciseId: ex.id,

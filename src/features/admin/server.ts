@@ -32,6 +32,9 @@ export async function staffFor(section: Section): Promise<Staff | null> {
   const roles = await rolesOf(session);
   const admin = createAdminClient();
   if (!admin || !canAccess(roles, section)) return null;
+  // A banned staff member keeps no staff powers while the ban lasts (pentest L3).
+  const { data: banned } = await session.supabase.rpc("is_banned");
+  if (banned === true) return null;
   return { session, roles, admin, actor: session.user.id };
 }
 

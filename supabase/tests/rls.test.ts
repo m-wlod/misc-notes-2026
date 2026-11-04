@@ -155,7 +155,9 @@ const OWNED: OwnedTable[] = [
   },
   {
     table: "comments",
-    can: { insert: true, update: true, delete: true },
+    // Posts are written by server code only (Phase 21c): own rows can be deleted, not
+    // inserted or edited through the API.
+    can: { insert: false, update: false, delete: true },
     patch: { body: "edited" },
     // Approved comments are public by design, so B's is hidden to test isolation.
     row: (u, who) => ({
@@ -196,14 +198,14 @@ const OWNED: OwnedTable[] = [
     patch: { auth: "hacked" },
     row: (u) => ({
       user_id: u,
-      endpoint: `https://push.example/${randomUUID()}`,
+      endpoint: `https://fcm.googleapis.com/fcm/send/${randomUUID()}`,
       p256dh: "k",
       auth: "a",
     }),
   },
   {
     table: "shared_solutions",
-    can: { insert: true, update: false, delete: true },
+    can: { insert: false, update: false, delete: true },
     patch: { mentor_pick: true },
     row: (u) => ({ user_id: u, exercise_id: "e1", body: "b", format: "text" }),
   },
@@ -255,7 +257,7 @@ const PUBLIC_CATALOG: Record<string, Row> = {
   announcements: { body_pl: "x", body_en: "x" },
 };
 /** Readable by staff or admins only, written only by server code (Phases 17–18). */
-const STAFF_ONLY = ["audit_log", "bans", "app_settings", "cron_runs", "utm_visits"];
+const STAFF_ONLY = ["audit_log", "bans", "app_settings", "cron_runs", "utm_visits", "xp_flags"];
 /** RLS on and no policies at all: deny everything to anon and authenticated. */
 const SERVER_ONLY = ["newsletter_subscribers", "newsletter_sends"];
 
@@ -393,8 +395,15 @@ describe.each(OWNED)("$table", (t) => {
 
   it(`own update is ${t.can.update ? "allowed" : "denied"}`, async () => {
     const res = await untyped(A.client).from(t.table).update(t.patch).eq(owner, A.id).select();
-    expect(res.error).toBeNull();
-    expect((res.data ?? []).length > 0).toBe(t.can.update);
+    if (t.can.update) {
+      expect(res.error).toBeNull();
+      expect((res.data ?? []).length).toBeGreaterThan(0);
+    } else {
+      // Denied either by RLS (no row matches) or by a missing table privilege (42501,
+      // e.g. comments since Phase 21c): nothing changes in both cases.
+      expect(res.error === null || res.error.code === "42501").toBe(true);
+      expect(res.data ?? []).toEqual([]);
+    }
   });
 
   it(`own insert is ${t.can.insert ? "allowed" : "denied"}`, async () => {

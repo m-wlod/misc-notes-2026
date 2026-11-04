@@ -38,21 +38,21 @@ beforeAll(async () => {
       },
     ]);
   if (seed.error) throw seed.error;
-  const c = await as(author)
+  const c = await admin()
     .from("comments")
     .insert({ user_id: author.id, target_type: "exercise", target_id: EX, body: "Wskazówka: EV." })
     .select("id")
     .single();
   if (c.error) throw c.error;
   commentId = c.data.id;
-  const s = await as(author)
+  const s = await admin()
     .from("shared_solutions")
     .insert({ user_id: author.id, exercise_id: EX, format: "text", body: "Odpowiedź: 0,25." })
     .select("id")
     .single();
   if (s.error) throw s.error;
   solutionId = s.data.id;
-  const l = await as(author)
+  const l = await admin()
     .from("comments")
     .insert({ user_id: author.id, target_type: "lesson", target_id: "l-gate", body: "Dzięki!" })
     .select("id")
@@ -240,6 +240,43 @@ describe("moderation", () => {
       .eq("user_id", a.id);
     const { data: lifted } = await a.client.rpc("is_banned");
     expect(lifted).toBe(false);
+  });
+});
+
+describe("posts are written by the server only (Phase 21c)", () => {
+  it("a user can't insert or edit a post through the API, even on an open lesson thread", async () => {
+    const a = reader as TestUser;
+    const insert = await a.client
+      .from("comments")
+      .insert({ user_id: a.id, target_type: "lesson", target_id: "l-gate", body: "spam" });
+    expect(insert.error).not.toBeNull();
+    const edit = await as(author)
+      .from("comments")
+      .update({ body: "zmienione", created_at: "2000-01-01T00:00:00Z" })
+      .eq("id", lessonCommentId)
+      .select("id");
+    expect(edit.data ?? []).toEqual([]);
+  });
+
+  it("nobody votes on their own post", async () => {
+    const a = author as TestUser;
+    const { error } = await a.client
+      .from("votes")
+      .insert({ user_id: a.id, target_type: "comment", target_id: lessonCommentId, value: 1 });
+    expect(error).not.toBeNull();
+  });
+
+  it("a profile's age and id can't be rewritten; time zones must be real", async () => {
+    const r = reader as TestUser;
+    const age = await r.client
+      .from("profiles")
+      .update({ created_at: "2000-01-01T00:00:00Z" } as never)
+      .eq("id", r.id);
+    expect(age.error).not.toBeNull();
+    const tz = await r.client.from("profiles").update({ timezone: "Mars/Olympus" }).eq("id", r.id);
+    expect(tz.error).not.toBeNull();
+    const ok = await r.client.from("profiles").update({ timezone: "Europe/Warsaw" }).eq("id", r.id);
+    expect(ok.error).toBeNull();
   });
 });
 

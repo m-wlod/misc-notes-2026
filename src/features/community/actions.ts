@@ -105,15 +105,18 @@ export async function postComment(input: unknown): Promise<CommunityResult> {
     parent_id: parentId,
     body: parsed.data.body,
   };
-  if (verdict.status === "approved") {
-    const { error } = await session.supabase.from("comments").insert(row);
-    return error ? { ok: false, reason: "failed" } : { ok: true };
-  }
+  // Only the server writes posts (Phase 21c, pentest M2): the checks above (ban, spoiler
+  // gate, rate limit, reply thread) and the screening below can't be skipped by writing
+  // to the table directly. user_id always comes from the session.
   const admin = createAdminClient();
-  const { error } = (await admin?.from("comments").insert({ ...row, status: "pending" })) ?? {
+  const held = verdict.status !== "approved";
+  const { error } = (await admin
+    ?.from("comments")
+    .insert({ ...row, status: held ? ("pending" as const) : ("approved" as const) })) ?? {
     error: true,
   };
-  return error ? { ok: false, reason: "failed" } : { ok: true, held: true };
+  if (error) return { ok: false, reason: "failed" };
+  return held ? { ok: true, held: true } : { ok: true };
 }
 
 export async function shareSolution(input: unknown): Promise<CommunityResult> {
@@ -139,14 +142,15 @@ export async function shareSolution(input: unknown): Promise<CommunityResult> {
     format: parsed.data.format,
     body: parsed.data.body,
   };
-  if (screen(parsed.data.body).status === "approved") {
-    const { error } = await session.supabase.from("shared_solutions").insert(row);
-    return error ? { ok: false, reason: "failed" } : { ok: true };
-  }
+  // Server writes only (pentest M2), as for comments.
+  const held = screen(parsed.data.body).status !== "approved";
   const { error } = (await createAdminClient()
     ?.from("shared_solutions")
-    .insert({ ...row, status: "pending" })) ?? { error: true };
-  return error ? { ok: false, reason: "failed" } : { ok: true, held: true };
+    .insert({ ...row, status: held ? ("pending" as const) : ("approved" as const) })) ?? {
+    error: true,
+  };
+  if (error) return { ok: false, reason: "failed" };
+  return held ? { ok: true, held: true } : { ok: true };
 }
 
 /** +1 / −1, and the same value again takes the vote back. */
@@ -228,11 +232,15 @@ export async function editComment(input: unknown): Promise<CommunityResult> {
       .in("status", ["approved", "pending"])) ?? { error: true };
     return error ? { ok: false, reason: "failed" } : { ok: true, held: true };
   }
-  const { error } = await session.supabase
-    .from("comments")
+  // Server writes only (pentest M2): the author's own comment, never a hidden one.
+  const { data: changed, error } = (await createAdminClient()
+    ?.from("comments")
     .update({ body: parsed.data.body })
-    .eq("id", parsed.data.id);
-  return error ? { ok: false, reason: "failed" } : { ok: true };
+    .eq("id", parsed.data.id)
+    .eq("user_id", session.user.id)
+    .in("status", ["approved", "pending"])
+    .select("id")) ?? { data: null, error: true };
+  return error || !changed?.length ? { ok: false, reason: "failed" } : { ok: true };
 }
 
 export async function deleteComment(input: unknown): Promise<CommunityResult> {

@@ -10,6 +10,7 @@ import { env } from "@/env";
 import { kvLimiter, memoryLimiter } from "@/features/exercises/rate-limit";
 import { resendMailer } from "@/features/notify/email";
 import { getPathname } from "@/i18n/navigation";
+import { isBot } from "@/lib/bot/check";
 import { createAdminClient } from "@/lib/db/admin";
 import { sharedKV } from "@/lib/kv/shared";
 import { allowWrite, clientIp } from "@/lib/rate/write";
@@ -42,6 +43,8 @@ export async function subscribe(raw: unknown): Promise<SubscribeResult> {
   if (!parsed.success) return { status: "invalid" };
   const { email, locale, website } = parsed.data;
   if (website) return { status: "sent" };
+  // Bots get the same answer as people and nothing is sent (Vercel BotID, Phase 21c).
+  if (await isBot()) return { status: "sent" };
   const admin = createAdminClient();
   if (!admin) return { status: "unavailable" };
   if (!(await limiter.hit(`ip:${await clientIp()}`))) return { status: "rate-limited" };
