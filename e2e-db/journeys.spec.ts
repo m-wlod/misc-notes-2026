@@ -89,8 +89,12 @@ for (const locale of LOCALES) {
     test("sign-up: the emailed link, then onboarding", async ({ page }) => {
       const email = `e2e-signup-${locale}-${randomUUID().slice(0, 8)}@test.local`;
       await page.goto(PATHS.signIn[locale]);
-      await page.getByLabel(msg(locale, "auth.email")).fill(email);
-      await page.getByRole("button", { name: msg(locale, "auth.submit") }).click();
+      // The footer has the newsletter form's e-mail field too.
+      await page.locator("main").getByLabel(msg(locale, "auth.email")).fill(email);
+      await page
+        .locator("main")
+        .getByRole("button", { name: msg(locale, "auth.submit") })
+        .click();
       await expect(page.getByText(msg(locale, "auth.sentTitle"))).toBeVisible();
 
       await page.goto(await magicLink(email));
