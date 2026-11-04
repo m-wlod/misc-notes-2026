@@ -44,7 +44,7 @@ export function paramsFor(spec: RandomSpec, seed: number): Record<string, number
     const p = spec.params[name];
     if (!p) continue;
     if ("choices" in p) {
-      out[name] = p.choices[Math.floor(next() * p.choices.length)] ?? p.choices[0] ?? 0;
+      out[name] = p.choices[Math.floor(next() * p.choices.length)] ?? 0;
     } else {
       const step = p.step ?? 1;
       const count = Math.floor((p.max - p.min) / step + 1e-9) + 1;

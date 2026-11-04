@@ -22,7 +22,11 @@ export default defineConfig({
     baseURL: `http://localhost:${String(PORT)}`,
     trace: "retain-on-failure",
   },
-  projects: [{ name: "desktop", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "desktop", use: { ...devices["Desktop Chrome"] } },
+    // The core journeys (Phase 20) also run on a phone.
+    { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /journeys\.spec\.ts$/ },
+  ],
   webServer: {
     command: `pnpm start --port ${String(PORT)}`,
     url: `http://localhost:${String(PORT)}`,

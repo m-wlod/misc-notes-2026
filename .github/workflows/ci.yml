@@ -54,7 +54,7 @@ jobs:
       - run: pnpm i18n:check
       - run: pnpm content:verify
       - run: pnpm content:qa
-      - run: pnpm test
+      - run: pnpm test:coverage
       - run: pnpm build
 
       - name: Playwright version
@@ -108,8 +108,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Start Supabase (Postgres, auth, REST, gateway; migrations + seed applied)
-        run: pnpm exec supabase start -x realtime,storage-api,imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor
+      - name: Start Supabase (Postgres, auth, REST, gateway, mail catcher; migrations + seed applied)
+        run: pnpm exec supabase start -x realtime,storage-api,imgproxy,studio,edge-runtime,logflare,vector,supavisor
 
       - name: Generated database types are up to date
         run: |
