@@ -114,6 +114,8 @@
     "author": "Autor",
     "target": "Dotyczy",
     "done": "Gotowe.",
-    "failed": "Nie udało się."
+    "failed": "Nie udało się.",
+    "xpFine": "W porządku",
+    "xpProblem": "Do wyjaśnienia"
   }
 }

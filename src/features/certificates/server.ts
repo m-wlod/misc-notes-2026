@@ -5,7 +5,13 @@ import { isVisible } from "@/features/exercises/visibility";
 import { createAdminClient } from "@/lib/db/admin";
 import type { Session } from "@/lib/db/session";
 
-import { bestScores, isCertificateId, trackProgress, type Progress } from "./eligibility";
+import {
+  bestScores,
+  isCertificateId,
+  solvedBeforeReveal,
+  trackProgress,
+  type Progress,
+} from "./eligibility";
 import { curriculum } from "../../../content/curriculum";
 
 /**
@@ -35,8 +41,9 @@ export async function readTrackProgress(session: Session): Promise<Map<string, P
     // self-reported by design ("Oznacz jako zrozumiane"); the exercises are the proof.
     session.supabase
       .from("exercise_attempts")
-      .select("exercise_id, score")
+      .select("exercise_id, score, answer, created_at")
       .eq("source", "app")
+      .order("created_at")
       .limit(10_000),
   ]);
   const completed = new Set(
@@ -44,7 +51,7 @@ export async function readTrackProgress(session: Session): Promise<Map<string, P
       .filter((r) => r.status === "completed" || r.status === "mastered")
       .map((r) => r.lesson_id),
   );
-  const best = bestScores(attempts.data ?? []);
+  const best = bestScores(solvedBeforeReveal(attempts.data ?? []));
   return new Map(
     TRACK_IDS.map((id) => [
       id,

@@ -193,6 +193,19 @@ describe("gradeOpenAnswer", () => {
     expect(m.calls).toBe(1);
   });
 
+  it("parallel requests can't overshoot the quota: claims are taken before the call", async () => {
+    const kv = memoryKV(() => T0);
+    const m = model({ ok: true, output: good, usage: { input_tokens: 1, output_tokens: 1 } });
+    const deps = { kv, model: m, config: { ...config, userDailyQuota: 2 }, now: T0, log: log() };
+    const results = await Promise.all(
+      [1, 2, 3, 4, 5].map((i) =>
+        gradeOpenAnswer(ex, { ...req, answer: `answer ${String(i)}` }, deps),
+      ),
+    );
+    expect(results.filter((r) => r.ok)).toHaveLength(2);
+    expect(m.calls).toBe(2);
+  });
+
   it("an exhausted user can't replay a cached answer either (Phase 21)", async () => {
     const kv = memoryKV(() => T0);
     const m = model({ ok: true, output: good, usage: { input_tokens: 1, output_tokens: 1 } });

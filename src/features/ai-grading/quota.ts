@@ -68,6 +68,58 @@ export async function checkQuota(
 }
 
 /** After a grading ran: count it for the user and the IP, and add its cost to the day. */
+type Who = {
+  userId: string;
+  ip: string;
+  now?: number | undefined;
+  recordedSpend?: number | null | undefined;
+};
+
+/**
+ * Claims one grading before the model is called (Phase 21c, pentest M4): the per-IP and
+ * per-user counters are incremented first and the new values compared, so parallel
+ * requests can't all pass a read-then-write check. A refused claim is given back. The
+ * budget is checked here too; the cost is added after the call (`addSpend`), so at most
+ * the gradings already in flight can go over it.
+ */
+export async function reserve(
+  kv: KV,
+  config: QuotaConfig,
+  { userId, ip, now = Date.now(), recordedSpend }: Who,
+): Promise<QuotaDecision> {
+  const k = keys(now, userId, ip);
+  const spent = await kv.get<number>(k.spend);
+  if (Math.max(spent ?? 0, recordedSpend ?? 0) >= config.dailyBudgetUsd) {
+    return { ok: false, reason: "budget" };
+  }
+  const ipCount = await kv.incr(k.ip, 1, DAY);
+  if (ipCount > config.ipDailyLimit) {
+    await kv.incr(k.ip, -1, DAY);
+    return { ok: false, reason: "ip-limit" };
+  }
+  const quota = userQuota(userId, config);
+  const userCount = await kv.incr(k.user, 1, DAY);
+  if (userCount > quota) {
+    await Promise.all([kv.incr(k.user, -1, DAY), kv.incr(k.ip, -1, DAY)]);
+    return { ok: false, reason: "user-quota" };
+  }
+  return { ok: true, remaining: quota - userCount + 1 };
+}
+
+/** Gives a claim back (the answer was graded before: no model call happened). */
+export async function release(kv: KV, { userId, ip, now = Date.now() }: Who): Promise<void> {
+  const k = keys(now, userId, ip);
+  await Promise.all([kv.incr(k.user, -1, DAY), kv.incr(k.ip, -1, DAY)]);
+}
+
+/** After a model call: its cost goes into the day's spend. */
+export async function addSpend(
+  kv: KV,
+  { costUsd, now = Date.now() }: { costUsd: number; now?: number | undefined },
+): Promise<void> {
+  await kv.incr(keys(now, "", "").spend, costUsd, DAY);
+}
+
 /** Midnight UTC of the quota day (the usage log is summed from here). */
 export const dayStart = (now: number) => `${day(now)}T00:00:00.000Z`;
 

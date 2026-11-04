@@ -28,7 +28,9 @@ const handleI18nRouting = createMiddleware(routing);
  *    between the page and a 403. The pages, actions and API routes enforce it again.
  */
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  // Decoded, so "/pl/%61dmin" can't slip past the gates below (pentest L1); the pages
+  // check access again anyway. A malformed escape is left as is (the router 400s it).
+  const pathname = safeDecode(request.nextUrl.pathname);
   // Internal tools: open in development and previews; in production for admins only.
   if (isInternalPath(pathname) && !isStyleguideEnabled(env)) {
     const roles = await rolesOf(request);
@@ -127,3 +129,11 @@ export const config = {
   // Everything except API routes, Next internals, Vercel internals and files with an extension.
   matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
 };
+
+function safeDecode(path: string): string {
+  try {
+    return decodeURIComponent(path);
+  } catch {
+    return path;
+  }
+}

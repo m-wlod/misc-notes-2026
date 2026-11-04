@@ -45,8 +45,27 @@ export async function saveNotificationPrefs(input: unknown): Promise<{ ok: boole
   return { ok: !error };
 }
 
+/**
+ * Browsers' push services. The notify cron posts to the endpoint, so any other host
+ * would let a user make our server send requests wherever they like (pentest L2).
+ */
+const PUSH_HOSTS = [
+  /^fcm\.googleapis\.com$/,
+  /(^|\.)push\.services\.mozilla\.com$/,
+  /(^|\.)notify\.windows\.com$/,
+  /(^|\.)push\.apple\.com$/,
+];
+const isPushService = (url: string) => {
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" && PUSH_HOSTS.some((re) => re.test(u.hostname));
+  } catch {
+    return false;
+  }
+};
+
 const subscription = z.object({
-  endpoint: z.url().startsWith("https://").max(1000),
+  endpoint: z.url().max(1000).refine(isPushService, "not a browser push service"),
   p256dh: z.string().min(10).max(200),
   auth: z.string().min(10).max(100),
 });

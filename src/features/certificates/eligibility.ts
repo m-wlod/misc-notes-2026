@@ -52,3 +52,21 @@ export function bestScores(rows: readonly { exercise_id: string; score: number }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export const isCertificateId = (id: string) => UUID.test(id);
+
+/**
+ * Attempts that count toward a certificate: those made before the learner first revealed
+ * that exercise's solution (Phase 21c). Typing in the shown answer is not a solve.
+ * Rows must be in time order.
+ */
+export function solvedBeforeReveal<
+  R extends { exercise_id: string; score: number; answer: unknown },
+>(rows: readonly R[]): R[] {
+  const revealed = new Set<string>();
+  const out: R[] = [];
+  for (const r of rows) {
+    const a = r.answer as { revealed?: unknown } | null;
+    if (a !== null && typeof a === "object" && a.revealed === true) revealed.add(r.exercise_id);
+    else if (!revealed.has(r.exercise_id)) out.push(r);
+  }
+  return out;
+}

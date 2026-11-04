@@ -99,6 +99,15 @@ export async function submitAttempt(
           .eq("user_id", who.userId)
           .eq("exercise_id", ex.id)
       : { count: null };
+    // After the solution was shown, typing it in is no solve: no XP, no rating (Phase 21c).
+    const { count: reveals } = admin
+      ? await admin
+          .from("exercise_attempts")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", who.userId)
+          .eq("exercise_id", ex.id)
+          .contains("answer", { revealed: true })
+      : { count: null };
     await admin?.from("exercise_attempts").insert({
       user_id: who.userId,
       exercise_id: ex.id,
@@ -111,11 +120,14 @@ export async function submitAttempt(
       source: "app",
     });
     if (graded.score < 1) await addMistakeCard(who.userId, ex.id);
-    rewards = await onExerciseGraded(who.userId, ex, {
-      score: graded.score,
-      hintsUsed: parsed.data.hintsUsed,
-      firstTry: count === 0,
-    });
+    rewards =
+      (reveals ?? 0) > 0
+        ? null
+        : await onExerciseGraded(who.userId, ex, {
+            score: graded.score,
+            hintsUsed: parsed.data.hintsUsed,
+            firstTry: count === 0,
+          });
   }
   const mistake =
     graded.mistake !== undefined && "mistakes" in ex ? ex.mistakes[graded.mistake] : undefined;

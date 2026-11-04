@@ -82,7 +82,21 @@
     "corrections": "Błędy w treściach",
     "claims": "Zgłoszone hasła (Debunk Lab)",
     "debunkCorrections": "Poprawki do Debunk Lab",
-    "disputes": "Spory o ocenę AI"
+    "disputes": "Spory o ocenę AI",
+    "xp": {
+      "title": "Nietypowe XP",
+      "lead": "Wykryte przez codzienne sprawdzanie: co najmniej 2000 XP w 24 godziny albo szybciej, niż pozwala limit zadań. XP nie jest odbierane automatycznie.",
+      "empty": "Brak oznaczeń do sprawdzenia.",
+      "volume": "dużo XP",
+      "burst": "za szybko",
+      "col": {
+        "user": "Użytkownik",
+        "day": "Dzień",
+        "xp": "XP",
+        "reason": "Powód",
+        "actions": "Decyzja"
+      }
+    }
   },
   "disputes": {
     "title": "Spory o ocenę AI",

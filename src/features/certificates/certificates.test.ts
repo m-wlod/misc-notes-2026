@@ -6,6 +6,7 @@ import {
   eligible,
   isCertificateId,
   mastery,
+  solvedBeforeReveal,
   MIN_MASTERY,
   trackProgress,
 } from "./eligibility";
@@ -68,5 +69,18 @@ describe("certificate PDF", () => {
     const { width, height } = doc.getPage(0).getSize();
     expect([Math.round(width), Math.round(height)]).toEqual([842, 595]);
     expect(doc.getTitle()).toBe("Certyfikat ukończenia: Prawdopodobieństwo i statystyka");
+  });
+});
+
+describe("solves after a reveal don't count (Phase 21c)", () => {
+  it("keeps attempts made before the exercise's first reveal, drops the rest", () => {
+    const rows = [
+      { exercise_id: "a", score: 1, answer: { kind: "text", value: "5" } },
+      { exercise_id: "b", score: 0, answer: { revealed: true } },
+      { exercise_id: "b", score: 1, answer: { kind: "text", value: "7" } },
+      { exercise_id: "a", score: 0, answer: { revealed: true } },
+      { exercise_id: "a", score: 1, answer: { kind: "text", value: "5" } },
+    ];
+    expect(solvedBeforeReveal(rows).map((r) => [r.exercise_id, r.score])).toEqual([["a", 1]]);
   });
 });

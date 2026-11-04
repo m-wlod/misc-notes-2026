@@ -22,6 +22,7 @@ const EXEMPT: Record<string, string> = {
   setPostStatus: "staff",
   setMentorPick: "staff",
   resolveReport: "staff",
+  resolveXpFlag: "staff",
   banUser: "staff",
   unbanUser: "staff",
   resolveCorrection: "staff",

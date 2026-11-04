@@ -83,6 +83,37 @@ export async function setMentorPick(input: unknown): Promise<ModerationResult> {
   };
 }
 
+/**
+ * An XP anomaly flag (Phase 21c) after a look: "approved" = fine, "rejected" = a real
+ * problem (then a ban or a word with the user, by hand). XP is never changed here.
+ */
+export async function resolveXpFlag(input: unknown): Promise<ModerationResult> {
+  const parsed = z
+    .object({ id: z.number().int().positive(), status: z.enum(["approved", "rejected"]) })
+    .safeParse(input);
+  if (!parsed.success) return { ok: false };
+  const who = await staff();
+  if (!who) return { ok: false };
+  const { id, status } = parsed.data;
+  const { data: before } = await who.admin
+    .from("xp_flags")
+    .select("status, user_id")
+    .eq("id", id)
+    .maybeSingle();
+  if (!before || before.user_id === who.actor) return { ok: false };
+  const { error } = await who.admin
+    .from("xp_flags")
+    .update({ status, reviewed_by: who.actor })
+    .eq("id", id);
+  if (error) return { ok: false };
+  return {
+    ok: await audit(who.admin, who.actor, `xp_flag.${status}`, `user:${before.user_id}`, {
+      flag: id,
+      before: before.status,
+    }),
+  };
+}
+
 export async function resolveReport(input: unknown): Promise<ModerationResult> {
   const parsed = z
     .object({ id: z.number().int().positive(), status: z.enum(["approved", "rejected"]) })
@@ -146,7 +177,19 @@ export async function unbanUser(input: unknown): Promise<ModerationResult> {
   const parsed = z.object({ userId: z.uuid() }).safeParse(input);
   if (!parsed.success) return { ok: false };
   const who = await staff();
-  if (!who) return { ok: false };
+  // Nobody lifts their own ban, and the same rank rules as banning apply (pentest L3).
+  if (!who || parsed.data.userId === who.actor) return { ok: false };
+  const { data: targetRoles } = await who.admin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", parsed.data.userId);
+  if (
+    !mayBan(
+      who.roles,
+      (targetRoles ?? []).map((r) => r.role),
+    )
+  )
+    return { ok: false };
   const { data: before } = await who.admin
     .from("bans")
     .select("reason, until")

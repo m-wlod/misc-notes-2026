@@ -661,6 +661,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"xp_flags": {
+                  Row: {
+                    "created_at": string,"day": string,"id": number,"reason": string,"reviewed_by": string | null,"status": Database["public"]['Enums']["moderation_status"],"user_id": string,"xp": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"day": string,"id"?: never,"reason": string,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["moderation_status"],"user_id": string,"xp": number
+                  }
+                  Update: {
+                    "created_at"?: string,"day"?: string,"id"?: never,"reason"?: string,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["moderation_status"],"user_id"?: string,"xp"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Views: {
@@ -722,6 +736,9 @@ isOneToOne: false
 "export_my_data":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"flag_xp_anomalies":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "has_role":
 { Args: { "r": Database["public"]['Enums']["app_role"] }; Returns: boolean
                            },
@@ -730,6 +747,9 @@ isOneToOne: false
                            },
 "is_banned":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"is_own_post":
+{ Args: { "id": number,"t": string }; Returns: boolean
                            },
 "is_staff":
 { Args: Record<PropertyKey, never>; Returns: boolean

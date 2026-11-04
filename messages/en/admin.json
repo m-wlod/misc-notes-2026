@@ -82,7 +82,21 @@
     "corrections": "Content errors",
     "claims": "Submitted claims (Debunk)",
     "debunkCorrections": "Debunk Lab corrections",
-    "disputes": "AI grading disputes"
+    "disputes": "AI grading disputes",
+    "xp": {
+      "title": "Unusual XP",
+      "lead": "Found by the daily check: 2,000 XP or more in 24 hours, or faster than the exercise limit allows. XP is never taken away automatically.",
+      "empty": "No flags to review.",
+      "volume": "high XP",
+      "burst": "too fast",
+      "col": {
+        "user": "User",
+        "day": "Day",
+        "xp": "XP",
+        "reason": "Reason",
+        "actions": "Decision"
+      }
+    }
   },
   "disputes": {
     "title": "AI grading disputes",
