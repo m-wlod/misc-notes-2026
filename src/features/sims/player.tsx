@@ -4,6 +4,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { track } from "@/features/analytics/client";
 import { claimAchievement } from "@/features/gamification/actions";
 import { cx } from "@/lib/cx";
 
@@ -236,6 +237,7 @@ export function SimPlayer({
 
   /** Play, pause (showing the exact frame), or replay from the start at the end. */
   const togglePlay = () => {
+    if (!interacted && def) track("feature_used", { feature: "simulation", id: def.id });
     setInteracted(true);
     if (playing) {
       setPlaying(false);

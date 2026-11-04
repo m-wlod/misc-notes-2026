@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { Button, buttonClass } from "@/components/ui/button";
 import { RadioGroup, RadioItem } from "@/components/ui/choice";
 import { FieldError, Label } from "@/components/ui/field";
+import { track } from "@/features/analytics/client";
 import { Link } from "@/i18n/navigation";
 
 import { saveOnboarding, type OnboardingInput } from "./actions";
@@ -61,8 +62,10 @@ export function OnboardingFlow({ initial }: { initial: Initial }) {
         self_level: Number(level),
         daily_goal_minutes: Number(minutes) as OnboardingInput["daily_goal_minutes"],
       });
-      if (res.ok) setDone(true);
-      else setFailed(true);
+      if (res.ok) {
+        track("signed_up", { goal, level: Number(level) });
+        setDone(true);
+      } else setFailed(true);
     });
   };
 

@@ -101,7 +101,7 @@ async function Links({ params, searchParams }: Props) {
           ))}
         </ul>
       </nav>
-      <NewsletterForm compact />
+      <NewsletterForm compact place="links" />
     </div>
   );
 }

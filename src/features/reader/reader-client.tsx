@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { track } from "@/features/analytics/client";
 import { useLocalProgress } from "@/features/curriculum/use-local-progress";
 import { celebrate } from "@/features/gamification/celebrate";
 import { completeLesson } from "@/features/progress/actions";
@@ -259,6 +260,7 @@ export function CompleteLesson({ lessonId, next }: { lessonId: string; next: Rea
             disabled={statuses === null}
             onClick={() => {
               setLessonStatus(lessonId, "completed");
+              track("lesson_completed", { lesson_id: lessonId });
               // Signed in: on the account too, with XP (Phase 14). Signed out: no-op.
               void completeLesson({ lessonId })
                 .then((r) => {

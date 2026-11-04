@@ -1,5 +1,7 @@
 allowBuilds:
   esbuild: false
+  # posthog-js > core-js: its postinstall only prints a message
+  core-js: false
   sharp: false
   unrs-resolver: false
   # next-intl extractor deps; not used at runtime, native binaries come from optional platform packages

@@ -12,15 +12,19 @@
 export function contentSecurityPolicy({
   supabaseUrl,
   sentryDsn,
+  posthogHost,
   dev,
 }: {
   supabaseUrl?: string | undefined;
+  /** Product analytics (Phase 22b), only when PostHog is configured. */
+  posthogHost?: string | undefined;
   /** Error reports go to the DSN's ingest host (Phase 22a), when Sentry is configured. */
   sentryDsn?: string | undefined;
   dev: boolean;
 }): string {
   const supabase = supabaseUrl ? new URL(supabaseUrl).origin : null;
   const sentry = sentryDsn ? new URL(sentryDsn).origin : null;
+  const posthog = posthogHost ? new URL(posthogHost).origin : null;
   const supabaseWs = supabase ? supabase.replace(/^http/, "ws") : null;
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
@@ -42,6 +46,7 @@ export function contentSecurityPolicy({
       ...(supabase ? [supabase] : []),
       ...(supabaseWs ? [supabaseWs] : []),
       ...(sentry ? [sentry] : []),
+      ...(posthog ? [posthog] : []),
       ...(dev ? ["ws:"] : []),
     ],
     "frame-src": ["https://www.youtube-nocookie.com", "https://www.tiktok.com"],
@@ -61,6 +66,7 @@ export function contentSecurityPolicy({
 export function securityHeaders(opts: {
   supabaseUrl?: string | undefined;
   sentryDsn?: string | undefined;
+  posthogHost?: string | undefined;
   dev: boolean;
 }): { key: string; value: string }[] {
   return [
