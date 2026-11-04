@@ -43,7 +43,7 @@
     "settings": "Settings",
     "notJoined": "No XP this week yet. Solve an exercise or complete a lesson to join.",
     "tier": "{tier} league",
-    "shared": "For now there is one shared league: until fewer than {n} people learn in a week, everyone plays together and nobody moves up or down.",
+    "shared": "For now there is one shared league: as long as fewer than {n} people learn in a week, everyone plays together and nobody moves up or down.",
     "split": "The top 20% move up, the bottom 20% move down.",
     "endsOn": "The week ends on Sunday {date} at midnight (Polish time).",
     "rank": "Place",
@@ -94,7 +94,7 @@
       "description": "Solve 500 exercises."
     },
     "za-pierwszym-razem": {
-      "name": "First time",
+      "name": "First try",
       "description": "Solve 10 exercises on the first try."
     },
     "bez-podpowiedzi": {
@@ -179,7 +179,7 @@
     },
     "animator-rynku": {
       "name": "Market maker",
-      "description": "Finish a market-making game in profit."
+      "description": "Finish a market-making session in profit."
     },
     "awans": {
       "name": "Promoted",

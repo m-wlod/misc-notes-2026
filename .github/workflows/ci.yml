@@ -97,6 +97,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm build
+      # Every public content page is prerendered (Phase 20c).
+      - if: matrix.shard == 1
+        run: pnpm check:static
 
       - name: Playwright version
         id: pw

@@ -10,7 +10,7 @@ import { createAdminClient } from "@/lib/db/admin";
 import { isSupabaseConfigured } from "@/lib/db/config";
 import { getSession, type Session } from "@/lib/db/session";
 
-import { MAX_POST_CHARS } from "./markdown";
+import { MAX_POST_CHARS } from "./limits";
 import { MIN_POST_CHARS, rateOk, screen } from "./policy";
 
 /**

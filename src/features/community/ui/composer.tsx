@@ -1,12 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useId, useState, useTransition } from "react";
+import { useEffect, useId, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 
 import type { CommunityResult } from "../actions";
-import { MAX_POST_CHARS, renderMarkdown } from "../markdown";
+import { MAX_POST_CHARS } from "../limits";
+import type { renderMarkdown } from "../markdown";
 
 export const inputClass =
   "w-full rounded border border-rule-strong bg-surface px-3 py-2 font-sans text-base text-ink";
@@ -52,7 +53,16 @@ export function Composer({
   const [tab, setTab] = useState<"write" | "preview">("write");
   const [result, setResult] = useState<CommunityResult | null>(null);
   const [pending, startTransition] = useTransition();
-  const preview = renderMarkdown(body, { links: linksAllowed });
+  // The renderer (with KaTeX) loads on the first preview: every lesson, exercise and
+  // debunk page carries this composer, and most visitors never preview a post.
+  const [render, setRender] = useState<typeof renderMarkdown | null>(null);
+  useEffect(() => {
+    if (tab !== "preview" || render) return;
+    void import("../markdown").then((m) => {
+      setRender(() => m.renderMarkdown);
+    });
+  }, [tab, render]);
+  const preview = render ? render(body, { links: linksAllowed }) : null;
   return (
     <form
       data-composer=""
@@ -107,7 +117,10 @@ export function Composer({
           className="community-body min-h-24 rounded border border-rule px-3 py-2 font-serif text-reading"
           // Output of the escape-first renderer (markdown.ts): no raw HTML path.
           dangerouslySetInnerHTML={{
-            __html: preview || `<p class="text-ink-muted">${t("previewEmpty")}</p>`,
+            __html:
+              preview === null
+                ? ""
+                : preview || `<p class="text-ink-muted">${t("previewEmpty")}</p>`,
           }}
         />
       ) : null}

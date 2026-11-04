@@ -34,7 +34,7 @@
   "track": "Track {number}",
   "module": "Module {number}",
   "openTrack": "Open track",
-  "allTracks": "Whole path",
+  "allTracks": "Whole learning path",
   "stubNote": "Lessons in preparation already have their place in the curriculum, level and prerequisites. Content will arrive gradually.",
   "map": {
     "title": "Prerequisite map",

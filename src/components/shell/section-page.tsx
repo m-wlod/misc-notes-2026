@@ -49,10 +49,10 @@ export function alternatesFor(href: StaticPathname, locale: Locale) {
 
 /**
  * Builds a placeholder page for a top-level section: a real h1, one honest sentence
- * about what will be there, and the phase it arrives in. No fake content.
+ * about what will be there. No fake content.
  */
 export function sectionPage(key: SectionKey) {
-  const { href, phase } = SECTIONS[key];
+  const { href } = SECTIONS[key];
 
   async function generateMetadata({
     params,
@@ -86,7 +86,7 @@ export function sectionPage(key: SectionKey) {
         </p>
         <div className="max-w-(--measure) border-l-2 border-rule-strong py-1 pl-5" role="note">
           <p className="mb-2 text-base text-ink">{t(`${key}.body`)}</p>
-          <p className="num text-xs text-ink-muted">{c("comingSoon", { phase })}</p>
+          <p className="num text-xs text-ink-muted">{c("comingSoon")}</p>
         </div>
       </div>
     );

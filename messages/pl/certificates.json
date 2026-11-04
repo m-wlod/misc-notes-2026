@@ -13,13 +13,13 @@
     "notFound": "Nie znaleźliśmy takiego certyfikatu.",
     "notFoundNote": "Sprawdź, czy adres został skopiowany w całości.",
     "name": "Osoba",
-    "track": "Ścieżka",
+    "track": "Dział",
     "date": "Wystawiony",
     "pdf": "Pobierz PDF"
   },
   "pdf": {
     "heading": "Certyfikat ukończenia",
-    "completed": "ukończył(a) ścieżkę",
+    "completed": "ukończył(a) dział",
     "verify": "Weryfikacja"
   }
 }

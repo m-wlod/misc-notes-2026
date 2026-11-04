@@ -16,7 +16,7 @@
     "meanEquity": "Average capital after {n} trades",
     "belowStart": "Chance of ending below the start",
     "positive": "With these numbers the strategy has a positive expected value. That's necessary, not sufficient: check that the numbers aren't luck or curve fitting.",
-    "negative": "With these numbers every trade loses on average. Breaking even needs a win rate of {breakEven}; this has {p}. A high win rate means nothing when the losses are much bigger than the wins.",
+    "negative": "With these numbers every trade loses on average. Breaking even needs a win rate of {breakEven}; yours is {p}. A high win rate means nothing when the losses are much bigger than the wins.",
     "start": "start",
     "ruinLine": "ruin",
     "chart": "Distribution of capital after {n} trades (exact, not simulated)",
@@ -42,7 +42,7 @@
     "anySharpe": "Chance at least one of {m} tries reaches it",
     "bestSharpe": "The best Sharpe to expect from {m} tries with no edge",
     "lucky": "Luck explains this result easily, especially when many people or strategies tried and only the best one is shown.",
-    "notLucky": "Luck alone hardly explains this result. That's not yet proof of an edge: check costs, the period, and whether the result was fitted to the past."
+    "notLucky": "Luck alone is unlikely to explain this result. That's not yet proof of an edge: check costs, the period, and whether the result was fitted to the past."
   },
   "mlm": {
     "price": "Course price",

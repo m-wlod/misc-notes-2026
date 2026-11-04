@@ -33,7 +33,7 @@
     "footer": "Dostajesz tę wiadomość, bo masz konto i włączone to powiadomienie.",
     "unsubscribe": "Nie wysyłaj mi tego więcej",
     "streak": {
-      "subject": "Twoja seria: {days, plural, one {# dzień} few {# dni} other {# dni}}. Dziś jeszcze cel?",
+      "subject": "Twoja seria: {days, plural, one {# dzień} few {# dni} other {# dni}}. Cel dnia jeszcze przed Tobą",
       "line1": "Masz serię {days, plural, one {# dnia} other {# dni}}. Dziś cel dnia jeszcze nie jest zrobiony.",
       "line2": "Kilka minut wystarczy: jedno zadanie albo krótka powtórka.",
       "cta": "Wróć do nauki"
@@ -46,7 +46,7 @@
     },
     "league": {
       "subject": "Liga {tier}: miejsce {rank} z {size}",
-      "line1": "Tydzień w lidze {tier} skończył się na miejscu {rank} z {size}.",
+      "line1": "Ten tydzień w lidze {tier} kończysz na miejscu {rank} z {size}.",
       "promoted": "Awans do wyższej ligi.",
       "stayed": "Zostajesz w tej samej lidze.",
       "demoted": "Spadek do niższej ligi. W tym tygodniu można to odrobić.",

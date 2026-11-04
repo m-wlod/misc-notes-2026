@@ -17,7 +17,7 @@
   "debunk": {
     "title": "Debunk Lab",
     "description": "Popularne obietnice tradingowe sprawdzone matematyką i symulacją.",
-    "body": "Tu będą twierdzenia z kursów i reklam, sprawdzone liczbami, oraz kalkulatory: wartość oczekiwana strategii, szczęście czy umiejętność, ekonomia kursów."
+    "body": "Tu będą hasła z kursów i reklam, sprawdzone liczbami, oraz kalkulatory: wartość oczekiwana strategii, szczęście czy umiejętność, ekonomia kursów."
   },
   "glossary": {
     "title": "Słowniczek",
@@ -45,7 +45,7 @@
     "body": "Regulamin powstanie przed uruchomieniem kont użytkowników."
   },
   "cookies": {
-    "title": "Pliki cookies",
+    "title": "Pliki cookie",
     "description": "Jakich plików cookies używamy.",
     "body": "Obecnie używamy jednego niezbędnego pliku cookie, który zapamiętuje wybrany język. Pełna polityka powstanie razem z analityką."
   },

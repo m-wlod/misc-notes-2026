@@ -5,7 +5,7 @@
     "goalMet": "Cel dnia zrobiony",
     "streak": "Seria: {days, plural, one {# dzień} other {# dni}}",
     "repaired": "Seria uratowana",
-    "achievement": "Nowa odznaka: {name}",
+    "achievement": "Nowe osiągnięcie: {name}",
     "soundOn": "Wycisz dźwięk",
     "soundOff": "Włącz dźwięk",
     "close": "Zamknij"
@@ -67,7 +67,7 @@
     "skillsLabel": "Ocena umiejętności w poszczególnych tematach",
     "skillsEmpty": "Rozwiąż kilka zadań, żeby zobaczyć ocenę umiejętności.",
     "skillsNote": "Ocena rośnie, gdy rozwiązujesz trudniejsze zadania; 1000 to start.",
-    "achievements": "Odznaki",
+    "achievements": "Osiągnięcia",
     "achievementsCount": "{n} z {total}",
     "earned": "Zdobyta",
     "locked": "Do zdobycia"
@@ -167,7 +167,7 @@
     },
     "rozmowa": {
       "name": "Rozmowa",
-      "description": "Ukończ pierwszą sesję rozmowy kwalifikacyjnej."
+      "description": "Ukończ pierwszą sesję rozmowy rekrutacyjnej."
     },
     "wszystkie-rozmowy": {
       "name": "Pełna rozmowa",
@@ -178,8 +178,8 @@
       "description": "Pobij swój rekord w liczeniu w pamięci."
     },
     "animator-rynku": {
-      "name": "Animator rynku",
-      "description": "Zakończ grę w animatora rynku na plusie."
+      "name": "Market maker",
+      "description": "Zakończ sesję market making na plusie."
     },
     "awans": {
       "name": "Awans",

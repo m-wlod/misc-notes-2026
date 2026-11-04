@@ -313,7 +313,7 @@ for (const theme of ["light", "dark"] as const) {
     await open(page, "przyklad-otwarte");
     await page.getByLabel("Twoja odpowiedź").fill("Sumuję i dzielę.");
     await page.getByRole("button", { name: "Porównaj z rozwiązaniem" }).click();
-    await expect(page.getByRole("heading", { name: "Sprawdź się sam" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sprawdź się" })).toBeVisible();
     const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
     expect(
       violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`),

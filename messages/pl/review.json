@@ -18,9 +18,9 @@
   "rate": "Jak dobrze to pamiętasz?",
   "grade": {
     "again": "Nie pamiętam",
-    "hard": "Trudne",
+    "hard": "Trudno",
     "good": "Dobrze",
-    "easy": "Łatwe"
+    "easy": "Łatwo"
   },
   "saveFailed": "Nie udało się zapisać oceny. Spróbuj jeszcze raz.",
   "keys": "Spacja pokazuje odpowiedź, klawisze 1–4 oceniają.",

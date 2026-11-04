@@ -8,7 +8,7 @@
   },
   "error": {
     "title": "Coś poszło nie tak",
-    "body": "To błąd po naszej stronie, nie twojej. Spróbuj jeszcze raz za chwilę.",
+    "body": "To błąd po naszej stronie, nie Twojej. Spróbuj jeszcze raz za chwilę.",
     "retry": "Spróbuj ponownie"
   },
   "forbidden": {

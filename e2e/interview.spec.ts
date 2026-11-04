@@ -110,7 +110,7 @@ test("mental math offline: answer, time runs out, scorecard, personal best, hist
   await context.setOffline(false);
   await page.goto("/pl/rozmowa/historia");
   await expect(
-    page.getByRole("img", { name: /Liczenie w pamięci: 1 sesji, ostatni wynik 4%/ }),
+    page.getByRole("img", { name: /Liczenie w pamięci: 1 sesja, ostatni wynik 4%/ }),
   ).toBeVisible();
   await expect(page.getByRole("row").nth(1)).toContainText(/4%\s*\(rekord\)/);
 });
@@ -181,7 +181,7 @@ for (const theme of ["light", "dark"] as const) {
     );
     await page.goto("/pl/rozmowa/historia");
     await expect(
-      page.getByRole("img", { name: /3 sesji, ostatni wynik 55%, najlepszy 60%/ }),
+      page.getByRole("img", { name: /3 sesje, ostatni wynik 55%, najlepszy 60%/ }),
     ).toBeVisible();
     await expect(page.getByRole("row")).toHaveCount(4);
     await axe(page);

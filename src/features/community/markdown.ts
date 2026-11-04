@@ -8,7 +8,9 @@ import katex from "katex";
  * so \href, \url and \html* are inert), and http(s) links with rel="nofollow ugc noopener".
  * New accounts' links are shown as plain text (anti-spam).
  */
-export const MAX_POST_CHARS = 5000;
+import { MAX_POST_CHARS } from "./limits";
+
+export { MAX_POST_CHARS };
 
 const esc = (s: string) =>
   s.replace(

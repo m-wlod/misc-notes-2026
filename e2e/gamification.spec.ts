@@ -88,7 +88,7 @@ test.describe("style guide specimens (sample data)", () => {
     await expect(toast).toContainText("+45 XP");
     await expect(toast).toContainText("Cel dnia zrobiony");
     await expect(toast).toContainText("Seria: 7 dni");
-    await expect(toast).toContainText("Nowa odznaka: Tydzień");
+    await expect(toast).toContainText("Nowe osiągnięcie: Tydzień");
     await toast.getByRole("button", { name: "Wycisz dźwięk" }).click();
     expect(await page.evaluate(() => localStorage.getItem("qla:sound:v1"))).toBe("off");
     await page.reload();

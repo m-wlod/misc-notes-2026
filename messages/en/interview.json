@@ -11,7 +11,7 @@
   },
   "kinds": {
     "mental_math": {
-      "title": "Mental math",
+      "title": "Mental maths",
       "description": "80 calculations in 8 minutes: addition, multiplication, division, percentages and fractions. Scored at once, with a personal best.",
       "unit": "calculations"
     },
@@ -115,7 +115,7 @@
     "history": "History",
     "reviewTitle": "Answer review",
     "yourAnswer": "Your answer: {given}",
-    "correctAnswer": "Correct: {answer}",
+    "correctAnswer": "Correct answer: {answer}",
     "skipped": "no answer"
   },
   "topics": {
@@ -135,7 +135,7 @@
     "lead": "Your sessions saved in this browser, and your progress in each type.",
     "empty": "You have no sessions yet.",
     "chartTitle": "{kind}: score per session",
-    "chartLabel": "{kind}: {count} sessions, last score {last}%, best {best}%.",
+    "chartLabel": "{kind}: {count, plural, one {# session} other {# sessions}}, last score {last}%, best {best}%.",
     "date": "Date",
     "kind": "Type",
     "level": "Level",
