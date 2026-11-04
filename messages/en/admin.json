@@ -13,7 +13,8 @@
     "flags": "Flags",
     "announcements": "Announcements",
     "system": "System",
-    "social": "Video calendar"
+    "social": "Video calendar",
+    "learning": "Learning"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -295,5 +296,42 @@
     "admin": "admin",
     "moderator": "moderator",
     "reviewer": "reviewer"
+  },
+  "learning": {
+    "title": "Learning",
+    "range": "Range",
+    "from": "From",
+    "to": "To",
+    "show": "Show",
+    "empty": "No data in this range.",
+    "dropoff": {
+      "title": "Where learners stop in lessons",
+      "lead": "For each lesson: how many started, finished, and got stuck (in progress, unchanged for 14 days). Lowest completion first; lessons with fewer than 5 starts last.",
+      "lesson": "Lesson",
+      "started": "Started",
+      "completed": "Completed",
+      "rate": "Completion",
+      "stalled": "Stuck"
+    },
+    "failures": {
+      "title": "Exercises with unusual success rates",
+      "lead": "From the nightly calibration: exercises whose success rate doesn’t fit their level (at least 30 attempts). The level may be wrong, or the wording unclear.",
+      "none": "No exercise stands out (or there are too few attempts).",
+      "exercise": "Exercise",
+      "level": "Level",
+      "success": "Success rate",
+      "verdict": "Verdict",
+      "too-easy": "too easy for this level",
+      "too-hard": "too hard for this level"
+    },
+    "hints": {
+      "title": "Hint use by level",
+      "lead": "Hints per attempt, and the share of solves that used a hint. Server-graded attempts only.",
+      "level": "Level",
+      "attempts": "Attempts",
+      "perAttempt": "Hints per attempt",
+      "solves": "Solves",
+      "hinted": "With a hint"
+    }
   }
 }

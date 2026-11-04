@@ -723,6 +723,16 @@ isOneToOne: false
               "banned": boolean,"created_at": string,"display_name": string,"email": string,"handle": string,"id": string,"last_sign_in_at": string,"roles": string
             }[]
                            },
+"admin_learning_hints":
+{ Args: { "from_day": string,"to_day": string }; Returns: {
+              "attempts": number,"exercise_id": string,"hints": number,"solves": number,"solves_with_hints": number
+            }[]
+                           },
+"admin_learning_lessons":
+{ Args: { "from_day": string,"to_day": string }; Returns: {
+              "completed": number,"lesson_id": string,"stalled": number,"started": number
+            }[]
+                           },
 "admin_metrics":
 { Args: { "from_day": string,"to_day": string }; Returns: {
               "active_users": number,"attempts": number,"day": string,"lessons_completed": number,"signups": number,"wau": number
