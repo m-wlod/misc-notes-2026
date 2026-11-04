@@ -11,7 +11,13 @@
  */
 import { execSync, spawnSync } from "node:child_process";
 
-type Status = { API_URL: string; PUBLISHABLE_KEY: string; SECRET_KEY: string };
+type Status = {
+  API_URL: string;
+  PUBLISHABLE_KEY: string;
+  SECRET_KEY: string;
+  MAILPIT_URL?: string;
+  INBUCKET_URL?: string;
+};
 
 function status(): Status | null {
   try {
@@ -44,6 +50,8 @@ const env = {
   ENABLE_STYLEGUIDE: "1",
   // Signs newsletter unsubscribe links: a fixed test value (e2e-db/newsletter.spec.ts).
   EMAIL_TOKEN_SECRET: "e2e-email-token-secret",
+  // The stack's mail catcher: sign-up links are read from it (e2e-db/journeys.spec.ts).
+  MAILPIT_URL: s.MAILPIT_URL ?? s.INBUCKET_URL ?? "http://127.0.0.1:54324",
 };
 
 const run = (cmd: string) => {
