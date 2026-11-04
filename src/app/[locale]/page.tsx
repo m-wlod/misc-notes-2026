@@ -97,7 +97,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       </section>
 
       <section aria-label={t("newsletter")} className="rounded-md border border-rule px-5 py-5">
-        <NewsletterForm />
+        <NewsletterForm place="landing" />
       </section>
 
       <section aria-labelledby="landing-sections">

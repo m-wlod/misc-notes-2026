@@ -4,6 +4,7 @@ import { Suspense, type ReactNode } from "react";
 import { StatTicker } from "@/components/content/data";
 import { siteConfig } from "@/config/site";
 import { env } from "@/env";
+import { AnalyticsBoot, AnalyticsUser } from "@/features/analytics/boot";
 import { AnnouncementBanner } from "@/features/announcements/banner";
 import { ConsentBanner } from "@/features/consent/consent-ui";
 import { Celebration } from "@/features/gamification/celebration";
@@ -39,6 +40,10 @@ export async function AppShell({ children }: { children: ReactNode }) {
       <Celebration />
       <UtmBeacon />
       <ConsentBanner analyticsConfigured={Boolean(env.NEXT_PUBLIC_POSTHOG_KEY)} />
+      <AnalyticsBoot
+        posthogKey={env.NEXT_PUBLIC_POSTHOG_KEY ?? null}
+        host={env.NEXT_PUBLIC_POSTHOG_HOST}
+      />
     </>
   );
 }
@@ -94,10 +99,18 @@ async function HeaderStats() {
   if (!isSupabaseConfigured()) return <SignedOutStats />;
   const session = await getSession();
   const me = session ? await readMe(session) : null;
-  if (!me) return <SignedOutStats />;
+  if (!session || !me) {
+    return (
+      <>
+        <SignedOutStats />
+        <AnalyticsUser userId={null} />
+      </>
+    );
+  }
   const t = await getTranslations("common.stats");
   return (
     <>
+      <AnalyticsUser userId={session.user.id} />
       <StatTicker label={t("streak")} value={String(me.streak.current)} />
       <StatTicker label={t("xp")} value={String(me.totalXp)} />
     </>

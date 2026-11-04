@@ -28,6 +28,9 @@ const nextConfig: NextConfig = {
         headers: securityHeaders({
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
           sentryDsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+          posthogHost: process.env.NEXT_PUBLIC_POSTHOG_KEY
+            ? (process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://eu.i.posthog.com")
+            : undefined,
           dev: process.env.NODE_ENV === "development",
         }),
       },

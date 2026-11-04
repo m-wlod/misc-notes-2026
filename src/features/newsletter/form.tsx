@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useId, useState, useTransition, type SubmitEvent } from "react";
 
 import { Button } from "@/components/ui/button";
+import { track } from "@/features/analytics/client";
 import { cx } from "@/lib/cx";
 
 import { subscribe, type SubscribeResult } from "./actions";
@@ -12,7 +13,14 @@ import { subscribe, type SubscribeResult } from "./actions";
  * "Problem tygodnia + Debunk" sign-up (Phase 19c). Double opt-in: the answer is always
  * "check your inbox", whether or not the address was already on the list.
  */
-export function NewsletterForm({ compact = false }: { compact?: boolean }) {
+export function NewsletterForm({
+  compact = false,
+  place = "footer",
+}: {
+  compact?: boolean;
+  /** Where the form is, for the analytics funnel (Phase 22b). */
+  place?: "landing" | "footer" | "links";
+}) {
   const t = useTranslations("newsletter");
   const locale = useLocale();
   const id = useId();
@@ -31,6 +39,7 @@ export function NewsletterForm({ compact = false }: { compact?: boolean }) {
         () => ({ status: "unavailable" as const }),
       );
       setStatus(r.status);
+      if (r.status === "sent") track("newsletter_subscribed", { place });
     });
   };
 

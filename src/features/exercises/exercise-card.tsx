@@ -7,6 +7,7 @@ import { useCallback, useEffect, useId, useRef, useState, useTransition } from "
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/display";
 import { OpenPanel } from "@/features/ai-grading/open-panel";
+import { contextOf, track } from "@/features/analytics/client";
 import { celebrate } from "@/features/gamification/celebrate";
 import {
   DAILY_KEY,
@@ -144,6 +145,12 @@ export function ExerciseCard({
           return;
         }
         setResult({ result: res.result, score: res.score, feedback: res.feedback });
+        track("exercise_attempted", {
+          exercise_id: view.id,
+          level: view.level,
+          result: res.result,
+          context: daily ? "daily" : contextOf(window.location.pathname),
+        });
         recordAttempt({ exerciseId: view.id, score: res.score, answer: sub });
         recordDaily(res.result === "correct");
         celebrate(res.rewards);

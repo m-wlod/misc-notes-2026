@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { track } from "@/features/analytics/client";
 import { celebrate } from "@/features/gamification/celebrate";
 
 import { saveInterviewSession } from "./actions";
@@ -86,6 +87,7 @@ export function useSessionRunner<Q>(kind: SessionKind) {
     (opts: { level: number; seed: number; questions: readonly Q[]; durationMs: number }) => {
       const t = Date.now();
       const sessionId = `${kind}-${String(t)}-${String(opts.seed)}`;
+      track("feature_used", { feature: "interview", id: kind });
       ref.current.id = sessionId;
       setId(sessionId);
       setNow(t);

@@ -12,6 +12,7 @@ import { alternatesForPaths } from "@/components/shell/section-page";
 import { Skeleton } from "@/components/ui/display";
 import { isStyleguideEnabled } from "@/config/runtime";
 import { env } from "@/env";
+import { TrackVideoView } from "@/features/analytics/track-view";
 import { getLesson } from "@/features/content/lessons";
 import { lessonHref, lessonNodes } from "@/features/curriculum";
 import { listEntries } from "@/features/debunk/entries";
@@ -111,6 +112,7 @@ async function VideoLanding({ params }: Pick<Props, "params">) {
 
   return (
     <article data-video={v.id} className="mx-auto grid max-w-4xl gap-10 px-4 pt-10 pb-16 sm:px-6">
+      <TrackVideoView slug={v.slug} />
       <JsonLd data={structured} />
       <header className="grid gap-3">
         {v.sample ? (

@@ -3,6 +3,8 @@
 import { useLocale } from "next-intl";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
+import { track } from "@/features/analytics/client";
+
 import { getRuntime, type RuntimeState } from "./client";
 import { emptyOutput, reduceOutput, type OutputEvent, type RunOutput } from "./protocol";
 
@@ -42,6 +44,7 @@ export function useRun(ns = "main") {
 
   const run = useCallback(
     async (code: string, timeoutMs?: number) => {
+      track("feature_used", { feature: "notebook" });
       const rt = getRuntime();
       rt.warm(lang);
       let last = emptyOutput();

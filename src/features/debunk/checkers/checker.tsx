@@ -1,5 +1,9 @@
 "use client";
 
+import { useRef } from "react";
+
+import { track } from "@/features/analytics/client";
+
 import { EvChecker, type EvPreset } from "./ev-checker";
 import type { CheckerId } from "./ids";
 import { IndicatorChecker } from "./indicator-checker";
@@ -15,8 +19,22 @@ export function Checker({
   id: CheckerId;
   preset?: Partial<EvPreset & LuckPreset & MlmPreset & { kind: IndicatorKind; seed: number }>;
 }) {
-  if (id === "ev") return <EvChecker preset={preset} />;
-  if (id === "luck") return <LuckChecker preset={preset} />;
-  if (id === "mlm") return <MlmChecker preset={preset} />;
-  return <IndicatorChecker preset={preset} />;
+  const used = useRef(false);
+  // The first change to any input counts as using the checker (Phase 22b analytics).
+  const onChange = () => {
+    if (used.current) return;
+    used.current = true;
+    track("feature_used", { feature: "debunk_checker", id });
+  };
+  const inner =
+    id === "ev" ? (
+      <EvChecker preset={preset} />
+    ) : id === "luck" ? (
+      <LuckChecker preset={preset} />
+    ) : id === "mlm" ? (
+      <MlmChecker preset={preset} />
+    ) : (
+      <IndicatorChecker preset={preset} />
+    );
+  return <div onChangeCapture={onChange}>{inner}</div>;
 }
