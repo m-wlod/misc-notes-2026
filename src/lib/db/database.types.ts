@@ -51,6 +51,20 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"alert_log": {
+                  Row: {
+                    "created_at": string,"day": string,"key": string,"subject": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"day": string,"key": string,"subject": string
+                  }
+                  Update: {
+                    "created_at"?: string,"day"?: string,"key"?: string,"subject"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"announcements": {
                   Row: {
                     "body_en": string,"body_pl": string,"created_at": string,"created_by": string | null,"ends_at": string | null,"id": number,"starts_at": string
@@ -753,6 +767,9 @@ isOneToOne: false
                            },
 "is_staff":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"prune_alert_log":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "record_utm_visit":
 { Args: { "camp": string,"med": string,"path": string,"src": string }; Returns: undefined

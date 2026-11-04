@@ -267,7 +267,14 @@
     "groups": "Grupy",
     "activeMembers": "Z XP w tym tygodniu",
     "lastRoll": "Ostatnio rozliczony tydzień",
-    "none": "brak"
+    "none": "brak",
+    "health": "Zdrowie",
+    "healthStatus": {
+      "ok": "w porządku",
+      "late": "spóźnione",
+      "failed": "błąd",
+      "never": "nie uruchomione"
+    }
   },
   "social": {
     "title": "Kalendarz wideo",

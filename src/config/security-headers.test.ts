@@ -34,3 +34,13 @@ describe("security headers (Phase 21)", () => {
     ]);
   });
 });
+
+describe("Sentry in the CSP (Phase 22a)", () => {
+  it("adds the DSN's ingest host only when Sentry is configured", () => {
+    const dsn = "https://abc@o1.ingest.de.sentry.io/123";
+    expect(contentSecurityPolicy({ sentryDsn: dsn, dev: false })).toContain(
+      "https://o1.ingest.de.sentry.io",
+    );
+    expect(contentSecurityPolicy({ dev: false })).not.toContain("sentry");
+  });
+});

@@ -1,5 +1,7 @@
 import "server-only";
 
+import { sendAlert } from "@/features/alerts/send";
+
 import type { Admin } from "./server";
 
 /**
@@ -8,6 +10,15 @@ import type { Admin } from "./server";
  * never breaks the job: if the row can't be written, the job runs anyway.
  */
 export type CronJob = "leagues" | "calibrate" | "notify" | "newsletter" | "retention";
+
+/** A failed run alerts at once (Phase 22a); late runs are found by /api/health/crons. */
+async function alertFailed(job: CronJob, why: string) {
+  await sendAlert({
+    key: `cron-failed-${job}`,
+    subject: `Cron job failed: ${job}`,
+    text: `The ${job} job failed (${why}). Details on /admin/system.`,
+  }).catch(() => undefined);
+}
 
 export async function recordRun(admin: Admin, job: CronJob, run: () => Promise<Response>) {
   let runId: number | null = null;
@@ -39,9 +50,13 @@ export async function recordRun(admin: Admin, job: CronJob, run: () => Promise<R
       .json()
       .catch(() => null);
     await finish(res.ok, { status: res.status, body });
+    // A job that answers 503 is dormant (not configured), not failing.
+    if (!res.ok && res.status !== 503) await alertFailed(job, `HTTP ${String(res.status)}`);
     return res;
   } catch (e) {
-    await finish(false, { error: e instanceof Error ? e.message.slice(0, 300) : "failed" });
+    const message = e instanceof Error ? e.message.slice(0, 300) : "failed";
+    await finish(false, { error: message });
+    await alertFailed(job, message);
     throw e;
   }
 }

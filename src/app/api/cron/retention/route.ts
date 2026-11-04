@@ -32,6 +32,13 @@ export async function GET(request: NextRequest) {
     // XP anomaly checks (Phase 21c): flags for a person to review, nothing is taken away.
     const flags = await admin.rpc("flag_xp_anomalies");
     if (flags.error) return NextResponse.json({ error: "xp check failed" }, { status: 500 });
-    return NextResponse.json({ ok: true, removed: data, xpFlags: flags.data });
+    // Operational alert log (Phase 22a): 90 days.
+    const alerts = await admin.rpc("prune_alert_log");
+    return NextResponse.json({
+      ok: true,
+      removed: data,
+      alertLog: alerts.data ?? null,
+      xpFlags: flags.data,
+    });
   });
 }

@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { Skeleton, Table, Td, Th } from "@/components/ui/display";
 import type { CronJob } from "@/features/admin/cron-runs";
 import { requirePage } from "@/features/admin/server";
+import { cronHealth } from "@/features/alerts/rules";
 import { leagueWeek } from "@/features/gamification/days";
 
 /** Cron jobs' last runs and this week's league (Phase 18c, admins only). */
@@ -23,8 +24,9 @@ async function System() {
   const { admin } = await requirePage("system");
   const t = await getTranslations("admin.system");
   const format = await getFormatter();
-  const week = leagueWeek(new Date());
-  const [runs, members, rolled] = await Promise.all([
+  const today = new Date();
+  const week = leagueWeek(today);
+  const [runs, members, rolled, recent] = await Promise.all([
     Promise.all(
       JOBS.map((job) =>
         admin
@@ -47,7 +49,16 @@ async function System() {
       .order("week_start", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    // Health (Phase 22a): the same rule as /api/health/crons, which the monitor watches.
+    admin
+      .from("cron_runs")
+      .select("job, started_at, ok")
+      .gte("started_at", new Date(today.getTime() - 9 * 86_400_000).toISOString())
+      .limit(500),
   ]);
+  const health = new Map(
+    cronHealth(recent.data ?? [], today.getTime()).map((h) => [h.job, h.status]),
+  );
   const rows = members.data ?? [];
   const groups = new Set(rows.map((r) => `${String(r.league_id)}:${String(r.group_no)}`)).size;
   const when = (iso: string) =>
@@ -70,6 +81,7 @@ async function System() {
               <Th>{t("job")}</Th>
               <Th>{t("lastRun")}</Th>
               <Th>{t("status")}</Th>
+              <Th>{t("health")}</Th>
               <Th>{t("details")}</Th>
             </tr>
           </thead>
@@ -88,6 +100,11 @@ async function System() {
                   <Td>{t(`jobs.${job}`)}</Td>
                   <Td>{run ? when(run.started_at) : ""}</Td>
                   <Td>{status}</Td>
+                  <Td>
+                    <span data-health={health.get(job) ?? "never"}>
+                      {t(`healthStatus.${health.get(job) ?? "never"}`)}
+                    </span>
+                  </Td>
                   <Td>
                     {run?.details ? (
                       <code className="text-xs break-all">
