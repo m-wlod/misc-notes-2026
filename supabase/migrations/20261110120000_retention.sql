@@ -149,3 +149,55 @@ as $$
   )
   where (select auth.uid()) is not null;
 $$;
+
+-- The admin's copy of a user's data (Phase 18) has the same keys as the user's own.
+create or replace function public.admin_export_user(target uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  if not public.has_role('admin') then
+    raise exception 'forbidden' using errcode = '42501';
+  end if;
+  return (
+    select jsonb_build_object(
+      'exported_at', now(),
+      'user_id', target,
+      'profile', (select to_jsonb(p) from public.profiles p where p.id = target),
+      'entitlements', coalesce((select jsonb_agg(to_jsonb(t)) from public.entitlements t where t.user_id = target), '[]'::jsonb),
+      'streak', (select to_jsonb(t) from public.streaks t where t.user_id = target),
+      'lesson_progress', coalesce((select jsonb_agg(to_jsonb(t)) from public.lesson_progress t where t.user_id = target), '[]'::jsonb),
+      'exercise_attempts', coalesce((select jsonb_agg(to_jsonb(t)) from public.exercise_attempts t where t.user_id = target), '[]'::jsonb),
+      'review_cards', coalesce((select jsonb_agg(to_jsonb(t)) from public.review_cards t where t.user_id = target), '[]'::jsonb),
+      'lesson_notes', coalesce((select jsonb_agg(to_jsonb(t)) from public.lesson_notes t where t.user_id = target), '[]'::jsonb),
+      'highlights', coalesce((select jsonb_agg(to_jsonb(t)) from public.highlights t where t.user_id = target), '[]'::jsonb),
+      'bookmarks', coalesce((select jsonb_agg(to_jsonb(t)) from public.bookmarks t where t.user_id = target), '[]'::jsonb),
+      'notebooks', coalesce((select jsonb_agg(to_jsonb(t)) from public.notebooks t where t.user_id = target), '[]'::jsonb),
+      'xp_events', coalesce((select jsonb_agg(to_jsonb(t)) from public.xp_events t where t.user_id = target), '[]'::jsonb),
+      'achievements', coalesce((select jsonb_agg(to_jsonb(t)) from public.user_achievements t where t.user_id = target), '[]'::jsonb),
+      'league_memberships', coalesce((select jsonb_agg(to_jsonb(t)) from public.league_memberships t where t.user_id = target), '[]'::jsonb),
+      'topic_ratings', coalesce((select jsonb_agg(to_jsonb(t)) from public.topic_ratings t where t.user_id = target), '[]'::jsonb),
+      'certificates', coalesce((select jsonb_agg(to_jsonb(t)) from public.certificates t where t.user_id = target), '[]'::jsonb),
+      'challenge_submissions', coalesce((select jsonb_agg(to_jsonb(t)) from public.challenge_submissions t where t.user_id = target), '[]'::jsonb),
+      'interview_sessions', coalesce((select jsonb_agg(to_jsonb(t)) from public.interview_sessions t where t.user_id = target), '[]'::jsonb),
+      'interview_answers', coalesce((select jsonb_agg(to_jsonb(t)) from public.interview_answers t where t.user_id = target), '[]'::jsonb),
+      'comments', coalesce((select jsonb_agg(to_jsonb(t)) from public.comments t where t.user_id = target), '[]'::jsonb),
+      'votes', coalesce((select jsonb_agg(to_jsonb(t)) from public.votes t where t.user_id = target), '[]'::jsonb),
+      'reports', coalesce((select jsonb_agg(to_jsonb(t)) from public.reports t where t.user_id = target), '[]'::jsonb),
+      'notifications', coalesce((select jsonb_agg(to_jsonb(t)) from public.notifications t where t.user_id = target), '[]'::jsonb),
+      'notification_prefs', (select to_jsonb(t) from public.notification_prefs t where t.user_id = target),
+      'push_subscriptions', coalesce((select jsonb_agg(to_jsonb(t) - 'auth' - 'p256dh') from public.push_subscriptions t where t.user_id = target), '[]'::jsonb),
+      'shared_solutions', coalesce((select jsonb_agg(to_jsonb(t)) from public.shared_solutions t where t.user_id = target), '[]'::jsonb),
+      'content_error_reports', coalesce((select jsonb_agg(to_jsonb(t)) from public.content_error_reports t where t.user_id = target), '[]'::jsonb),
+      'debunk_submissions', coalesce((select jsonb_agg(to_jsonb(t)) from public.debunk_submissions t where t.user_id = target), '[]'::jsonb),
+      'grading_disputes', coalesce((select jsonb_agg(to_jsonb(t)) from public.grading_disputes t where t.user_id = target), '[]'::jsonb),
+      'ai_grading_usage', coalesce((select jsonb_agg(to_jsonb(t)) from public.ai_grading_usage t where t.user_id = target), '[]'::jsonb),
+      'roles', coalesce((select jsonb_agg(to_jsonb(t)) from public.user_roles t where t.user_id = target), '[]'::jsonb),
+      'bans', coalesce((select jsonb_agg(to_jsonb(t)) from public.bans t where t.user_id = target), '[]'::jsonb)
+    )
+  );
+end;
+$$;
