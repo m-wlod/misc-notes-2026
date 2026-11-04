@@ -395,8 +395,15 @@ describe.each(OWNED)("$table", (t) => {
 
   it(`own update is ${t.can.update ? "allowed" : "denied"}`, async () => {
     const res = await untyped(A.client).from(t.table).update(t.patch).eq(owner, A.id).select();
-    expect(res.error).toBeNull();
-    expect((res.data ?? []).length > 0).toBe(t.can.update);
+    if (t.can.update) {
+      expect(res.error).toBeNull();
+      expect((res.data ?? []).length).toBeGreaterThan(0);
+    } else {
+      // Denied either by RLS (no row matches) or by a missing table privilege (42501,
+      // e.g. comments since Phase 21c): nothing changes in both cases.
+      expect(res.error === null || res.error.code === "42501").toBe(true);
+      expect(res.data ?? []).toEqual([]);
+    }
   });
 
   it(`own insert is ${t.can.insert ? "allowed" : "denied"}`, async () => {
