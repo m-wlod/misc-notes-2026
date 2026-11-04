@@ -25,7 +25,11 @@ export const localProgressSchema = z.object({
         clientId: z.uuid(),
         exerciseId: id,
         score: z.number().check(z.gte(0), z.lte(1)),
-        answer: z.json().check(z.refine((v) => v !== null, "answer is required")),
+        answer: z.json().check(
+          z.refine((v) => v !== null, "answer is required"),
+          // Imported answers are small (a number, a choice, a short text): Phase 21.
+          z.refine((v) => JSON.stringify(v).length <= 4096, "answer too large"),
+        ),
         createdAt: z.iso.datetime(),
       }),
     )

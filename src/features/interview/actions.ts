@@ -7,6 +7,7 @@ import { onInterviewSaved } from "@/features/gamification/server/hooks";
 import { createAdminClient } from "@/lib/db/admin";
 import type { Json } from "@/lib/db/database.types";
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 import { SESSION_KINDS } from "./session";
 
@@ -24,16 +25,27 @@ const input = z.object({
       level: z.number().int().min(1).max(5),
       score: z.number().min(0).max(1),
       finishedAt: z.iso.datetime(),
-      durationMs: z.number().min(0),
+      // Sessions last minutes; two hours bounds the stored start time (Phase 21).
+      durationMs: z
+        .number()
+        .min(0)
+        .max(2 * 3_600_000),
+      // The scorecard fields `entryFrom` writes (store.ts); nothing else is stored.
+      correct: z.number().int().min(0).max(1000),
+      answered: z.number().int().min(0).max(1000),
+      total: z.number().int().min(0).max(1000),
+      avgMs: z.number().min(0).max(3_600_000).nullable(),
+      review: z.array(z.string().max(60)).max(20),
+      pnl: z.number().min(-1e9).max(1e9).optional(),
     })
-    .loose(),
+    .strict(),
   answers: z
     .array(
       z.object({
         questionId: z.string().max(120),
         given: z.string().max(2000),
         score: z.number().min(0).max(1),
-        ms: z.number().min(0),
+        ms: z.number().min(0).max(3_600_000),
         topic: z.string().max(60),
       }),
     )
@@ -48,6 +60,7 @@ export async function saveInterviewSession(
   const session = await getSession();
   const admin = createAdminClient();
   if (!session || !admin) return { ok: false };
+  if (!(await allowWrite("saveInterviewSession", session.user.id))) return { ok: false };
   const { entry, answers } = parsed.data;
   const started = new Date(new Date(entry.finishedAt).getTime() - entry.durationMs).toISOString();
   const { data, error } = await admin

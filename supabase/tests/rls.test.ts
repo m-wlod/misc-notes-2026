@@ -498,8 +498,55 @@ describe("public profiles view", () => {
   });
 });
 
+describe("policies (Phase 21 audit)", () => {
+  it("no policy lets anonymous visitors write anything", async () => {
+    const db = sql();
+    try {
+      const rows = await db<{ tablename: string; policyname: string }[]>`
+        select tablename, policyname from pg_policies
+         where schemaname = 'public' and 'anon' = any(roles) and cmd <> 'SELECT'`;
+      expect(rows).toEqual([]);
+    } finally {
+      await db.end();
+    }
+  });
+
+  it("no policy lets staff write directly: staff changes go through audited server code", async () => {
+    const db = sql();
+    try {
+      const rows = await db<{ tablename: string; policyname: string }[]>`
+        select tablename, policyname from pg_policies
+         where schemaname = 'public' and cmd <> 'SELECT'
+           and (coalesce(qual, '') || coalesce(with_check, '')) ~ '(is_staff|has_role)'`;
+      expect(rows).toEqual([]);
+    } finally {
+      await db.end();
+    }
+  });
+});
+
 describe("staff", () => {
-  it("a moderator can resolve reports; a normal user cannot", async () => {
+  it("a moderator can't publish an announcement or edit someone's comment directly", async () => {
+    const mod = await createUser("mod2");
+    try {
+      await admin().from("user_roles").insert({ user_id: mod.id, role: "moderator" });
+      const ann = await mod.client
+        .from("announcements")
+        .insert({ body_pl: "x", body_en: "x" })
+        .select();
+      expect(ann.data ?? []).toEqual([]);
+      const edit = await mod.client
+        .from("comments")
+        .update({ status: "hidden" })
+        .eq("user_id", B.id)
+        .select();
+      expect(edit.data ?? []).toEqual([]);
+    } finally {
+      await deleteUser(mod);
+    }
+  });
+
+  it("nobody resolves reports directly, not even a moderator (only the audited app path)", async () => {
     const mod = await createUser("mod");
     try {
       await admin().from("user_roles").insert({ user_id: mod.id, role: "moderator" });
@@ -514,8 +561,10 @@ describe("staff", () => {
         .update({ status: "approved" })
         .eq("user_id", B.id)
         .select();
-      expect(asMod.error).toBeNull();
-      expect((asMod.data ?? []).length).toBeGreaterThan(0);
+      expect(asMod.data ?? []).toEqual([]);
+      // Staff still read the queue.
+      const read = await mod.client.from("reports").select("id").eq("user_id", B.id);
+      expect((read.data ?? []).length).toBeGreaterThan(0);
     } finally {
       await deleteUser(mod);
     }

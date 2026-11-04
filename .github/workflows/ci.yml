@@ -63,6 +63,8 @@ jobs:
       - run: pnpm content:verify
       - run: pnpm content:qa
       - run: pnpm test:coverage
+      # Dependency audit (Phase 21): fails on high or critical advisories.
+      - run: pnpm audit --prod --audit-level high
 
   e2e:
     # The public Playwright suite, split across runners (Phase 20: one runner took 21 min).
@@ -100,6 +102,9 @@ jobs:
       # Every public content page is prerendered (Phase 20c).
       - if: matrix.shard == 1
         run: pnpm check:static
+      # No secret in the client bundles (Phase 21; the db job repeats it with real values).
+      - if: matrix.shard == 1
+        run: pnpm check:client-secrets
 
       - name: Playwright version
         id: pw

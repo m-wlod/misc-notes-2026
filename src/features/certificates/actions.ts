@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { createAdminClient } from "@/lib/db/admin";
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 import { eligible } from "./eligibility";
 import { readTrackProgress, TRACK_IDS } from "./server";
@@ -24,6 +25,9 @@ export async function claimCertificate(
   const session = await getSession();
   const admin = createAdminClient();
   if (!session || !admin) return { ok: false, reason: "invalid" };
+  if (!(await allowWrite("claimCertificate", session.user.id))) {
+    return { ok: false, reason: "failed" };
+  }
   const progress = (await readTrackProgress(session)).get(parsed.data.trackId);
   if (!progress || !eligible(progress)) return { ok: false, reason: "not-eligible" };
 

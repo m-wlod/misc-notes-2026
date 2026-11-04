@@ -4,12 +4,13 @@ import { headers } from "next/headers";
 import { redirect as redirectExternal } from "next/navigation";
 import { z } from "zod";
 
-import { resolveSiteUrl } from "@/config/runtime";
+import { authOrigin } from "@/config/runtime";
 import { env } from "@/env";
 import { getPathname, redirect } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { createClient } from "@/lib/db/server";
 import { formText } from "@/lib/form";
+import { allowWrite, clientIp } from "@/lib/rate/write";
 
 export type MagicLinkState =
   | { status: "idle" }
@@ -22,14 +23,15 @@ export type MagicLinkState =
 
 const localeSchema = z.enum(routing.locales);
 
-/** Origin of the current request, so links work on localhost, previews and production alike. */
+/**
+ * Origin for sign-in links: the site URL in production; the request's own origin on
+ * localhost and previews, if it is a known host (`authOrigin`, Phase 21).
+ */
 async function requestOrigin(): Promise<string> {
   const h = await headers();
-  const origin = h.get("origin");
-  if (origin) return origin;
   const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "https";
-  return host ? `${proto}://${host}` : resolveSiteUrl(env).origin;
+  const proto = h.get("x-forwarded-proto") ?? "http";
+  return authOrigin(env, h.get("origin") ?? (host ? `${proto}://${host}` : null));
 }
 
 // Not exported: every export of a "use server" file is a callable endpoint.
@@ -47,6 +49,13 @@ export async function requestMagicLink(
   const email = formText(form, "email").trim();
   const locale = localeSchema.catch("pl").parse(form.get("locale"));
   if (!z.email().safeParse(email).success) return { status: "error", error: "invalidEmail", email };
+  // Per IP, and per address so nobody floods one inbox from many IPs (Phase 21).
+  if (
+    !(await allowWrite("signIn", `ip:${await clientIp()}`)) ||
+    !(await allowWrite("mailTo", `email:${email.toLowerCase()}`))
+  ) {
+    return { status: "error", error: "rateLimited", email };
+  }
 
   const supabase = await createClient();
   if (!supabase) return { status: "error", error: "notConfigured", email };
@@ -65,14 +74,17 @@ export async function requestMagicLink(
 }
 
 export async function signInWithProvider(form: FormData) {
-  const provider = z.enum(["google", "github"]).parse(form.get("provider"));
   const locale = localeSchema.catch("pl").parse(form.get("locale"));
+  const provider = z.enum(["google", "github"]).safeParse(form.get("provider"));
+  if (!provider.success || !(await allowWrite("signIn", `ip:${await clientIp()}`))) {
+    return redirect({ href: { pathname: "/sign-in", query: { error: "failed" } }, locale });
+  }
   const supabase = await createClient();
   if (!supabase)
     return redirect({ href: { pathname: "/sign-in", query: { error: "notConfigured" } }, locale });
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider,
+    provider: provider.data,
     options: { redirectTo: await callbackUrl(locale, getPathname({ href: "/profile", locale })) },
   });
   if (error)

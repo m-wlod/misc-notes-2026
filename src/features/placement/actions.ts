@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { getSession } from "@/lib/db/session";
 import { formText } from "@/lib/form";
+import { allowWrite, clientIp } from "@/lib/rate/write";
 
 import { gradePlacement, type QuestionResult } from "./grade";
 import { PLACEMENT_IDS, PLACEMENT_QUESTIONS } from "./questions";
@@ -26,11 +27,14 @@ export async function submitPlacement(
   const raw = Object.fromEntries(PLACEMENT_IDS.map((id) => [id, formText(form, id)]));
   const parsed = answersSchema.safeParse(raw);
   if (!parsed.success) return { status: "error" };
+  const session = await getSession();
+  if (!(await allowWrite("placement", session ? session.user.id : `ip:${await clientIp()}`))) {
+    return { status: "error" };
+  }
 
   const { results, suggested } = gradePlacement(PLACEMENT_QUESTIONS, parsed.data);
 
   let saved = false;
-  const session = await getSession();
   if (session) {
     const { error } = await session.supabase
       .from("profiles")

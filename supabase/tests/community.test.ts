@@ -167,7 +167,15 @@ describe("moderation", () => {
       .single();
     expect(still?.status).toBe("approved");
 
-    const { error } = await as(mod)
+    // A moderator hides it through the app (server code, secret key): Phase 21 removed
+    // direct staff writes, so the moderator's own client changes nothing.
+    const { data: direct } = await as(mod)
+      .from("comments")
+      .update({ status: "hidden" })
+      .eq("id", lessonCommentId)
+      .select("id");
+    expect(direct ?? []).toEqual([]);
+    const { error } = await admin()
       .from("comments")
       .update({ status: "hidden" })
       .eq("id", lessonCommentId);

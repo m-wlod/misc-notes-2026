@@ -6,7 +6,7 @@ import type { GraderModel, ModelReply } from "@/lib/ai/grader";
 import { memoryKV } from "@/lib/kv/store";
 
 import { cacheKey, normaliseAnswer } from "./cache";
-import { checkQuota, recordUse, type QuotaConfig } from "./quota";
+import { checkQuota, dayStart, recordUse, type QuotaConfig } from "./quota";
 
 vi.mock("server-only", () => ({}));
 const { gradeOpenAnswer } = await import("./service");
@@ -56,6 +56,19 @@ describe("quota", () => {
       reason: "budget",
     });
     expect((await checkQuota(kv, config, { userId: "b", ip: "2", now: NEXT_DAY })).ok).toBe(true);
+  });
+});
+
+describe("quota day", () => {
+  it("starts at midnight UTC, the window the usage log is summed over", () => {
+    expect(dayStart(Date.UTC(2026, 10, 9, 23, 59))).toBe("2026-11-09T00:00:00.000Z");
+  });
+
+  it("the usage log's spend switches grading off even when this instance counted nothing", async () => {
+    const kv = memoryKV(() => T0);
+    expect(
+      await checkQuota(kv, config, { userId: "u", ip: "1", now: T0, recordedSpend: 5 }),
+    ).toEqual({ ok: false, reason: "budget" });
   });
 });
 
@@ -178,5 +191,29 @@ describe("gradeOpenAnswer", () => {
       reason: "user-quota",
     });
     expect(m.calls).toBe(1);
+  });
+
+  it("an exhausted user can't replay a cached answer either (Phase 21)", async () => {
+    const kv = memoryKV(() => T0);
+    const m = model({ ok: true, output: good, usage: { input_tokens: 1, output_tokens: 1 } });
+    const deps = { kv, model: m, config: { ...config, userDailyQuota: 1 }, now: T0, log: log() };
+    await gradeOpenAnswer(ex, req, deps);
+    expect(await gradeOpenAnswer(ex, req, deps)).toEqual({ ok: false, reason: "user-quota" });
+  });
+
+  it("the budget holds across instances: the usage log's spend counts (Phase 21)", async () => {
+    const m = model({ ok: true, output: good, usage: { input_tokens: 1, output_tokens: 1 } });
+    const spend = () => Promise.resolve(config.dailyBudgetUsd);
+    expect(
+      await gradeOpenAnswer(ex, req, {
+        kv: memoryKV(() => T0),
+        model: m,
+        config,
+        now: T0,
+        log: log(),
+        spend,
+      }),
+    ).toEqual({ ok: false, reason: "budget" });
+    expect(m.calls).toBe(0);
   });
 });

@@ -3,6 +3,7 @@
 import { z } from "zod";
 
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 import { onClaim } from "./server/hooks";
 
@@ -16,5 +17,6 @@ export async function claimAchievement(input: unknown): Promise<{ ok: boolean }>
   if (!parsed.success) return { ok: false };
   const session = await getSession();
   if (!session) return { ok: false };
+  if (!(await allowWrite("claimAchievement", session.user.id))) return { ok: false };
   return { ok: (await onClaim(session.user.id, parsed.data.id)) === true };
 }

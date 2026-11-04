@@ -60,4 +60,6 @@ const run = (cmd: string) => {
 };
 
 if (!process.argv.includes("--no-build")) run("pnpm build");
+// This build has real (local) secrets in its environment: none may reach the client.
+run("pnpm check:client-secrets");
 run("pnpm exec playwright test -c playwright.db.config.ts");

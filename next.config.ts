@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
+import { securityHeaders } from "./src/config/security-headers";
+
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 // Content (Velite): `pnpm build` runs `velite build` first; in `next dev` we start it in
@@ -15,6 +17,18 @@ const nextConfig: NextConfig = {
   // its own folder, so it never replaces the regular build.
   ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   cacheComponents: true,
+  // Security headers on every response (Phase 21, src/config/security-headers.ts).
+  headers() {
+    return Promise.resolve([
+      {
+        source: "/:path*",
+        headers: securityHeaders({
+          supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+          dev: process.env.NODE_ENV === "development",
+        }),
+      },
+    ]);
+  },
   partialPrefetching: true,
   turbopack: {
     rules: {

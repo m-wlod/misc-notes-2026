@@ -3,6 +3,7 @@
 import { z } from "zod";
 
 import { getSession } from "@/lib/db/session";
+import { allowWrite } from "@/lib/rate/write";
 
 /**
  * Notification preferences and push subscriptions (Phase 15), written as the signed-in
@@ -26,6 +27,7 @@ export async function saveNotificationPrefs(input: unknown): Promise<{ ok: boole
   if (!parsed.success) return { ok: false };
   const session = await getSession();
   if (!session) return { ok: false };
+  if (!(await allowWrite("settings", session.user.id))) return { ok: false };
   const p = parsed.data;
   // Both ends or neither: a half-set window would mean nothing.
   const quiet = p.quietStart && p.quietEnd ? [p.quietStart, p.quietEnd] : [null, null];
@@ -54,6 +56,7 @@ export async function setPush(input: unknown): Promise<{ ok: boolean }> {
   if (!parsed.success) return { ok: false };
   const session = await getSession();
   if (!session) return { ok: false };
+  if (!(await allowWrite("settings", session.user.id))) return { ok: false };
   const db = session.supabase;
   if (parsed.data.on && parsed.data.sub) {
     const { error } = await db.from("push_subscriptions").upsert(
